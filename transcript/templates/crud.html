@@ -1,0 +1,18 @@
+<!-- user.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des utilisateurs</title>
+</head>
+<body>
+    <h1>Liste des utilisateurs</h1>
+    <ul>
+        {% for user in users %}
+        <li>Nom: {{ user.name }}</li>
+        {% empty %}
+        <li>Aucun utilisateur trouvé.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
