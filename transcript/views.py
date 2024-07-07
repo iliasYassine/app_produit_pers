@@ -13,7 +13,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Users,Produit
 from .serializers import UsersSerializer,ProduitSerializer
-
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 ## users
 
 # def get(request):
@@ -30,6 +34,10 @@ class UsersList(APIView):
         serializer = UsersSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+    
+#@method_decorator(csrf_exempt, name='dispatch')    
+class UsersCreate(APIView):
+    permission_classes = [AllowAny]
     def post(self,request,format=None):
         serializers=UsersSerializer(data=request.data)
         if serializers.is_valid():
