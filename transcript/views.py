@@ -2,6 +2,7 @@
 from urllib import request
 from django.shortcuts import render
 from .models.personne import Users
+from django.shortcuts import get_object_or_404
 #from vosk import Model, KaldiRecognizer
 import wave
 import json
@@ -28,6 +29,34 @@ class UsersList(APIView):
         users = Users.objects.all()
         serializer = UsersSerializer(users, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self,request,format=None):
+        serializers=UsersSerializer(data=request.data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data ,status=status.HTTP_201_CREATED)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class UserDetail(APIView):
+    # GET, PUT, DELETE /users/<id>/
+    def get(self, request, pk, format=None):
+        user = get_object_or_404(Users, pk=pk)
+        serializer = UsersSerializer(user)
+        return Response(serializer.data)
+    
+    def put(self, request, pk, format=None):
+        user = get_object_or_404(Users, pk=pk)
+        serializer = UsersSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk, format=None):
+        user = get_object_or_404(Users, pk=pk)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)    
 
 
 class ProduitList(APIView):
@@ -35,3 +64,5 @@ class ProduitList(APIView):
         produit = Produit.objects.all()
         serializer = ProduitSerializer(produit, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)    
+    
+ 
