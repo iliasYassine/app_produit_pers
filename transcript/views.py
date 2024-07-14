@@ -73,4 +73,14 @@ class ProduitList(APIView):
         serializer = ProduitSerializer(produit, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)    
     
- 
+class ProduitCreate(APIView):
+    permission_classes = [AllowAny]
+    def post(self,request,format=None):
+        serializers=ProduitSerializer(data=request.data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data ,status=status.HTTP_201_CREATED)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+  
+        
