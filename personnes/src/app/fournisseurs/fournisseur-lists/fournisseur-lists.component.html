@@ -1,0 +1,14 @@
+
+
+<div id="test">
+    <h1>Liste des fournisseur </h1>
+  </div>
+  
+  <ul *ngIf="fournisseur?.length">
+    <li *ngFor="let fourni of fournisseur">
+      <strong>Nom :</strong> {{ fourni.nom}}<br>
+      <strong>Téléphone :</strong> {{ fourni.tel}}<br>
+      <strong>Adresse :</strong> {{ fourni.adresse }}<br>
+      <strong>Email :</strong> {{ fourni.email }}
+    </li>
+  </ul>

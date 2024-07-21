@@ -1,0 +1,24 @@
+<h2>Liste des personnes</h2>
+<div *ngFor="let personne of personnes">
+  <div class="person-container">
+    <!-- Affichage du nom -->
+    <label for="nom-{{personne.name}}">Nom :</label>
+    <h1 class="person-name">{{ personne.name }}</h1>
+
+    <!-- Formulaire de mise à jour pour chaque personne -->
+    <form (ngSubmit)="updateUser(personne)">
+      <label for="prenom-{{personne.id}}">Prénom :</label>
+      <p>{{ personne.prenom }}</p>
+      <input type="text" id="prenom-{{personne.id}}" name="prenom" [(ngModel)]="personne.prenom" placeholder="Entrez le prénom" required>
+      
+      <label for="tel-{{personne.id}}">Téléphone :</label>
+      <p>{{ personne.tel }}</p>
+      <input type="text" id="tel-{{personne.id}}" name="tel" [(ngModel)]="personne.tel" placeholder="Entrez le téléphone" required>
+      
+      <button type="submit">Mettre à jour</button>
+    </form>
+
+    <!-- Bouton de suppression. Le bouton est affiché uniquement si personne.id est défini. -->
+    <button *ngIf="personne.id" class="delete-button" (click)="deleteUser(personne.id)">Supprimer</button>
+  </div>
+</div>

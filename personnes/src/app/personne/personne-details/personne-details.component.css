@@ -1,0 +1,85 @@
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  /* Container for each person */
+  .person-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    transition: transform 0.3s;
+  }
+  
+  .person-container:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Name styles */
+  .person-name {
+    color: #007bff;
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  /* Form styles */
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  form p {
+    margin: 0 0 10px 0;
+    color: #666;
+  }
+  
+  form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+  
+  form input::placeholder {
+    color: #aaa;
+  }
+  
+  /* Button styles */
+  button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  button[type="submit"] {
+    background-color: #28a745;
+    color: #fff;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #218838;
+  }
+  
+  .delete-button {
+    background-color: #dc3545;
+    color: #fff;
+    margin-top: 10px;
+  }
+  
+  .delete-button:hover {
+    background-color: #c82333;
+  }
+  

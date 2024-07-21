@@ -1,0 +1,15 @@
+
+<h1>Liste des produit du magasin </h1>
+
+ <ul *ngIf="produit?.length">
+  <li *ngFor="let prod of produit">
+    <strong>Nom du Produit:</strong> {{ prod.nomProd }}<br>
+    <strong>Prix d'Achat:</strong> {{ prod.prixAchat }}<br>
+    <strong>Prix de Vente:</strong> {{ prod.prixVente }}<br>
+    <strong>Quantité:</strong> {{ prod.qte }}<br>
+    <strong>Code Barre:</strong> {{ prod.codeBarre }}<br>
+    <strong>>Fournisseur id:</strong> {{ prod.fournisseur_id }}<br>
+    
+    <
+  </li>
+</ul>

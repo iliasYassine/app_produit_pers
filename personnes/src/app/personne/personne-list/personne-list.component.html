@@ -1,0 +1,13 @@
+
+
+  <div id="test">
+    <h1>Liste du personnel présent dans la société</h1>
+  </div>
+  
+  <ul *ngIf="personne?.length">
+    <li *ngFor="let user of personne">
+      <strong>Nom :</strong> {{ user.name }}<br>
+      <strong>Prénom :</strong> {{ user.prenom }}<br>
+      <strong>Téléphone :</strong> {{ user.tel }}
+    </li>
+  </ul>
