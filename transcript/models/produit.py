@@ -1,4 +1,5 @@
 from django.db import models
+from .fournisseur import Fournisseur
   #python manage.py makemigrations
         #python manage.py migrate
 
@@ -9,9 +10,9 @@ class Produit(models.Model):
     prixAchat = models.DecimalField(max_digits=6, decimal_places=2)   
     prixVente = models.DecimalField(max_digits=6, decimal_places=2) 
     qte = models.DecimalField(max_digits=6, decimal_places=2) 
-    nomFournisseur = models.CharField(max_length=100)
-    telFourniseur = models.CharField(max_length=100)
-    adrFournisseur = models.CharField(max_length=100)
+    codeBarre = models.CharField(max_length=100)
+    fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE, default=1)
+    
     
     class Meta:  
         db_table = "produits" 

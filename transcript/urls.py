@@ -9,4 +9,8 @@ urlpatterns = [
    path('create/',views.UsersCreate.as_view(),name='users-create'),
    path('produits/', views.ProduitList.as_view(), name='produit-list'),
    path('create_produits/',views.ProduitCreate.as_view(),name='produit-create'),
+   path('produits/<int:pk>/', views.ProduitDetails.as_view(), name='produit-detail'),
+   path('fournisseur/', views.FournisseurList.as_view(), name='fournisseur-list'),
+   path('create_fournisseur/',views.FournisseurCreate.as_view(),name='fournisseur-create'),
+   path('fournisseur/<int:pk>/', views.FournisseurDetails.as_view(), name='fournisseur-detail'),
 ]
