@@ -1,0 +1,21 @@
+<!-- Dans caisse-enregistreuse.component.html -->
+<div class="caisse-container">
+  <div class="scan-panel">
+    <input type="text" #codeBarreInput placeholder="Scanner le code-barre ici" (keypress)="checkIfEnterKey($event, codeBarreInput.value)">
+    <button (click)="scanProduit(codeBarreInput.value)">Ajouter</button>
+  </div>
+  
+  <div class="transactions">
+    <h3>Liste des produits:</h3>
+    <div *ngFor="let ligne of ligneTransaction" class="transaction-line">
+      <span>Produit ID: {{ ligne.produit_id }}</span>
+      <span>{{ ligne.quantite }} x {{ ligne.prix_unitaire }} €</span>
+      <span>Total ligne: {{ ligne.total }} €</span>
+    </div>
+  </div>
+
+  <div class="total-panel">
+    <h3>Total transaction: {{ totalTransaction }} €</h3>
+    <button (click)="finalizeTransaction()">Finaliser la transaction</button>
+  </div>
+</div>

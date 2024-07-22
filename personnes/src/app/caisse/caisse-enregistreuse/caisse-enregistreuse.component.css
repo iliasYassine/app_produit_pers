@@ -1,0 +1,26 @@
+/* Dans caisse-enregistreuse.component.css */
+.caisse-container {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.scan-panel {
+  margin-bottom: 20px;
+}
+
+.transactions {
+  margin-bottom: 20px;
+}
+
+.transaction-line {
+  background-color: #f0f0f0;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+.total-panel {
+  background-color: #d1e7dd;
+  padding: 10px;
+}

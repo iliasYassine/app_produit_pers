@@ -9,10 +9,11 @@ import { ProduitDetailsComponent } from './produit/produit-details/produit-detai
 import { NavbarComponent } from './navbar/navbar.component';
 import { FournisseurComponent } from './fournisseurs/fournisseur-create/fournisseur.component';
 import { FournisseurListsComponent } from './fournisseurs/fournisseur-lists/fournisseur-lists.component';
+import { CaisseEnregistreuseComponent } from './caisse/caisse-enregistreuse/caisse-enregistreuse.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,PersonneListComponent,ProduitListComponent,PersonneDetailsComponent,ReportsComponent,ProduitDetailsComponent,NavbarComponent,FournisseurComponent,FournisseurListsComponent],
+  imports: [RouterOutlet,PersonneListComponent,ProduitListComponent,PersonneDetailsComponent,ReportsComponent,ProduitDetailsComponent,NavbarComponent,FournisseurComponent,FournisseurListsComponent,CaisseEnregistreuseComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

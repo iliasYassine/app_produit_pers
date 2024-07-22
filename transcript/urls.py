@@ -13,4 +13,7 @@ urlpatterns = [
    path('fournisseur/', views.FournisseurList.as_view(), name='fournisseur-list'),
    path('create_fournisseur/',views.FournisseurCreate.as_view(),name='fournisseur-create'),
    path('fournisseur/<int:pk>/', views.FournisseurDetails.as_view(), name='fournisseur-detail'),
+   path('scan-produit/',views.scanProduit.as_view(),name='scan-produit'),
+   path('finalize-transaction/',views.FinalizeTransaction.as_view(),name='finalize-transaction'),
+   
 ]

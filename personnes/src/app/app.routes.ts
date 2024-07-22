@@ -8,6 +8,7 @@ import { ProduitDetailsComponent } from './produit/produit-details/produit-detai
 import { ProduitCreateComponent } from './produit/produit-create/produit-create.component';
 import { FournisseurComponent } from './fournisseurs/fournisseur-create/fournisseur.component';
 import { FournisseurListsComponent } from './fournisseurs/fournisseur-lists/fournisseur-lists.component';
+import { CaisseEnregistreuseComponent } from './caisse/caisse-enregistreuse/caisse-enregistreuse.component';
 
 export const routes: Routes = [
     { path: 'personnes', component: PersonneListComponent, pathMatch: 'full' },
@@ -19,5 +20,5 @@ export const routes: Routes = [
     { path: 'cout', component: ReportsComponent },
     { path: 'fournisseur', component: FournisseurListsComponent },
     { path: 'create_fournisseur', component: FournisseurComponent },
-    
+    { path: 'caisse', component: CaisseEnregistreuseComponent },
 ];

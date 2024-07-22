@@ -9,12 +9,19 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Users,Produit,Fournisseur,LigneTransaction,Transaction
 from .serializers import FournisseurSerializer, UsersSerializer,ProduitSerializer,TransactionSerializer,LigneTransactionSerializer
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from django.shortcuts import get_object_or_404
+from django.db import transaction as db_transaction
+from rest_framework.decorators import api_view
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from django.shortcuts import get_object_or_404
+from django.db import transaction as db_transaction
+from .models import Produit, Transaction, LigneTransaction
+from .serializers import LigneTransactionSerializer
+from django.db.models import Sum
 
 
 class UsersList(APIView):
@@ -135,5 +142,67 @@ class FournisseurDetails(APIView):
     
     
     
+class  scanProduit(APIView):
+    permission_classes = [AllowAny]
     
-    
+    def post(self,request,format=None):
+        code_barre =request.data.get('codeBarre')
+        if not code_barre:
+            return Response({'erreur': 'Un code-barre est requis.'}, status=status.HTTP_400_BAD_REQUEST) 
+             
+                
+        with db_transaction.atomic():
+            produit=get_object_or_404(Produit,codeBarre=code_barre)
+            if produit.qte <= 0:
+                return Response({'erreur': 'Stock insuffisant pour le produit demandé.'}, status=status.HTTP_400_BAD_REQUEST)
+            #on gere la transaction mtn qu'on a le produit
+            transaction_id = request.session.get('transaction_id', None)
+            if not transaction_id:
+                transaction = Transaction()
+                transaction.save()
+                request.session['transaction_id'] = transaction.id
+            else:
+                transaction = Transaction.objects.get(id=transaction_id)
+                
+            # Gestion de la ligne de transaction
+            ligne_transaction, created = LigneTransaction.objects.get_or_create(
+                transaction=transaction,
+                produit=produit,
+                defaults={'quantite': 1, 'prix_unitaire': produit.prixVente}
+            )
+            if not created:
+                ligne_transaction.quantite += 1
+                ligne_transaction.total = ligne_transaction.quantite * ligne_transaction.prix_unitaire
+                ligne_transaction.save()
+
+            # Mise à jour du stock du produit
+            produit.qte -= 1
+            produit.save()
+
+            # Sérialisation de la ligne de transaction pour la réponse
+            ligne_serializer = LigneTransactionSerializer(ligne_transaction)
+            return Response(ligne_serializer.data, status=status.HTTP_201_CREATED)                  
+        
+class FinalizeTransaction(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        transaction_id = request.session.get('transaction_id', None)
+        if not transaction_id:
+            return Response({'erreur': 'Aucune transaction en cours.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        with db_transaction.atomic():
+            transaction = get_object_or_404(Transaction, id=transaction_id)
+            # Vous implémenterez ici votre logique de finalisation de transaction
+            # Par exemple, appliquer des remises, calculer les taxes, confirmer le paiement, etc.
+             # Calculez le total en additionnant les totaux de toutes les ligne_transactions liées
+            transaction_total = LigneTransaction.objects.filter(transaction=transaction).aggregate(Sum('total'))['total__sum'] or 0
+            transaction.total = transaction_total
+            
+            
+            transaction.save()  # Enregistrer les modifications finales de la transaction
+            request.session.pop('transaction_id', None)  # Nettoyer la session après finalisation
+
+            # Sérialiser la transaction pour l'envoyer en réponse
+            transaction_serializer = TransactionSerializer(transaction)
+            return Response(transaction_serializer.data, status=status.HTTP_200_OK)        
