@@ -1,5 +1,7 @@
 # views.py
 
+from decimal import Decimal
+from itertools import count
 from .models.personne import Users
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
@@ -19,9 +21,10 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404
 from django.db import transaction as db_transaction
-from .models import Produit, Transaction, LigneTransaction
+from .models import Produit, Transaction, LigneTransaction  
 from .serializers import LigneTransactionSerializer
 from django.db.models import Sum
+from django.db.models import Count
 
 
 class UsersList(APIView):
@@ -140,7 +143,7 @@ class FournisseurDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT) 
     
     
-    
+
     
 class  scanProduit(APIView):
     permission_classes = [AllowAny]
@@ -174,6 +177,17 @@ class  scanProduit(APIView):
                 ligne_transaction.quantite += 1
                 ligne_transaction.total = ligne_transaction.quantite * ligne_transaction.prix_unitaire
                 ligne_transaction.save()
+            
+            
+            # mise a jour total dans transaction
+            # Mise à jour du total de la transaction
+            transaction_total = transaction.lignes.all().aggregate(
+            total_sum=Sum('total')
+            )['total_sum'] or 0
+            transaction.total = transaction_total  
+            transaction.save()    
+                   
+
 
             # Mise à jour du stock du produit
             produit.qte -= 1
@@ -206,3 +220,33 @@ class FinalizeTransaction(APIView):
             # Sérialiser la transaction pour l'envoyer en réponse
             transaction_serializer = TransactionSerializer(transaction)
             return Response(transaction_serializer.data, status=status.HTTP_200_OK)        
+        
+        
+         
+
+class ChiffreAffaires(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        chiffre_affaire_total = Transaction.objects.aggregate(chiffre_affaire_total=Sum('total'))['chiffre_affaire_total'] or 0
+        return Response({'chiffre_affaires': chiffre_affaire_total})
+    
+class ListTotal(APIView):
+    
+    def get(self,request,*args, **kwargs):
+        affiche=Transaction.objects.values_list('total',flat=True)
+        
+        # faire une liste
+        total_list=list(affiche)
+        
+        return Response({'top_vente': total_list}, status=200)    
+    
+    
+class TopVente(APIView):
+    
+    def get(self,request,*args, **kwargs):
+        topVente=LigneTransaction.objects.values('produit_id').annotate(count_id=Count('produit_id')).order_by('-count_id').first()
+        
+        
+        return Response({'top_vente': topVente}, status=200)     
+    
