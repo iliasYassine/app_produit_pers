@@ -243,10 +243,9 @@ class ListTotal(APIView):
     
     
 class TopVente(APIView):
-    
+    permission_classes = [AllowAny]
     def get(self,request,*args, **kwargs):
         topVente=LigneTransaction.objects.values('produit_id').annotate(count_id=Count('produit_id')).order_by('-count_id').first()
-        
-        
-        return Response({'top_vente': topVente}, status=200)     
+        nom_produit=Produit.objects.get(id=topVente['produit_id']).nomProd
+        return Response({'top_vente': topVente,'nomProd':nom_produit}, status=200)     
     
