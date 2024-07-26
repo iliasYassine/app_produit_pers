@@ -25,6 +25,8 @@ from .models import Produit, Transaction, LigneTransaction
 from .serializers import LigneTransactionSerializer
 from django.db.models import Sum
 from django.db.models import Count
+from django.core.mail import send_mail
+from django.db.models import F
 
 
 class UsersList(APIView):
@@ -249,3 +251,18 @@ class TopVente(APIView):
         nom_produit=Produit.objects.get(id=topVente['produit_id']).nomProd
         return Response({'top_vente': topVente,'nomProd':nom_produit}, status=200)     
     
+    
+class sendMail(APIView):
+    permission_classes=[AllowAny]
+    def get(self,request):
+        produits = Produit.objects.filter(qte__lte=F('qteMin'))
+        for produit in produits:      
+
+            send_mail(
+                    'Alerte produit min atteint a recommander',
+                    f'vous avez atteint le min penser a commander ce produit: {produit.nomProd}',
+                    'iliashasbi@gmail.com',
+                    ['iliashasbi@gmail.com'],
+                    fail_silently=False,
+                )
+        return Response('okok',status=200)

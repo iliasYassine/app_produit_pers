@@ -17,7 +17,8 @@ urlpatterns = [
    path('finalize-transaction/',views.FinalizeTransaction.as_view(),name='finalize-transaction'),
    path('chiffre_affaire_total/',views.ChiffreAffaires.as_view(),name='chiffre-affaire'),
    path('list_total/',views.ListTotal.as_view(),name='top-vente'),
-   path('top-vente/',views.TopVente.as_view(),name='top-vente')
+   path('top-vente/',views.TopVente.as_view(),name='top-vente'),
+   path('send-mail/', views.sendMail.as_view(), name='send_mail'),
    
    
 ]

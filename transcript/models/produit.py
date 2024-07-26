@@ -10,6 +10,7 @@ class Produit(models.Model):
     prixAchat = models.DecimalField(max_digits=6, decimal_places=2)   
     prixVente = models.DecimalField(max_digits=6, decimal_places=2) 
     qte = models.DecimalField(max_digits=6, decimal_places=2) 
+    qteMin = models.DecimalField(max_digits=6, decimal_places=2) 
     codeBarre = models.CharField(max_length=100)
     fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE, default=1)
     
