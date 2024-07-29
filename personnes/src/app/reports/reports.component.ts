@@ -3,6 +3,7 @@ import { Produit } from '../produit/produit.model';
 import { ReportServiceService } from './report-service.service';
 import { Chart,registerables } from 'chart.js';
 import { Transaction } from '../caisse/transaction.model';
+import { LignesTransaction } from '../caisse/ligne.model';
 
 
 @Component({
@@ -19,6 +20,14 @@ export class ReportsComponent implements OnInit{
   coutTotal: number = 0;
   topVente:number=0;
   nom_prod:string='';
+  chiffreAffaireTotal: number = 0;
+
+  
+  getChiffreAffairesTotal():void{
+    this.report_service.getChiffreAffairesTotal().subscribe((data)=>{
+      this.chiffreAffaireTotal=data.chiffre_affaires;
+    })
+  }
 
 
   getjsondatatopvente(): void {
@@ -29,10 +38,6 @@ export class ReportsComponent implements OnInit{
       
     });
   }
-///this.report_service.getProduitReport() : on fait appel a une methode de service 
-///.subscribe : permet de sabonner a un observable que veut dire saboner ? 
-///la variable represente les datas 
-////
 
   getcout():void{
     this.report_service.getProduitReport().subscribe( (produits) => {
@@ -41,11 +46,12 @@ export class ReportsComponent implements OnInit{
       });
   }
 
+  
 
 
   ngOnInit(): void {
         this.getcout();
-          
+        this.getChiffreAffairesTotal();
         this.getjsondatatopvente();
       }
     

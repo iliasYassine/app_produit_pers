@@ -1,12 +1,19 @@
-
-
-<div>
-    Coût total de mes produits actuellement: {{ coutTotal }}
+<div class="dashboard-container">
+  <div class="card">
+    <div class="card-title">Coût des produits</div>
+    <div class="card-value">{{ coutTotal }}€</div>
   </div>
-<div>
- id produit top vente : {{topVente}}
-  <br>
- mon produit {{nom_prod}} : est le mieux vendu actuellement
+
+  <div class="card">
+    <div class="card-title">Top vente</div>
+    <div class="card-subtitle">ID Produit: {{ topVente }}</div>
+    <div class="card-subtitle">Nom: {{ nom_prod }}</div>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">Chiffre d'affaires</div>
+    <div class="card-value">{{ chiffreAffaireTotal }}€</div>
+  </div>
 </div>
 
 

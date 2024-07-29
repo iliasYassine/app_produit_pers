@@ -13,6 +13,7 @@ urlpatterns = [
    path('fournisseur/', views.FournisseurList.as_view(), name='fournisseur-list'),
    path('create_fournisseur/',views.FournisseurCreate.as_view(),name='fournisseur-create'),
    path('fournisseur/<int:pk>/', views.FournisseurDetails.as_view(), name='fournisseur-detail'),
+   path('ligneTransaction/<int:pk>/', views.LigneTransactionDetails.as_view(), name='ligneTransaction-detail'),
    path('scan-produit/',views.scanProduit.as_view(),name='scan-produit'),
    path('finalize-transaction/',views.FinalizeTransaction.as_view(),name='finalize-transaction'),
    path('chiffre_affaire_total/',views.ChiffreAffaires.as_view(),name='chiffre-affaire'),
