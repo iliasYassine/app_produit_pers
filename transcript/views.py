@@ -27,6 +27,11 @@ from django.db.models import Sum
 from django.db.models import Count
 from django.core.mail import send_mail
 from django.db.models import F
+from rest_framework.test import APIClient
+from django.contrib.auth import authenticate, login
+from rest_framework.authtoken.models import Token    
+from django.contrib.auth.models import User
+from django.contrib.auth import logout
 
 
 class UsersList(APIView):
@@ -284,3 +289,70 @@ class sendMail(APIView):
                     fail_silently=False,
                 )
         return Response('okok',status=200)
+    
+    
+class ChiffreAffaires(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        chiffre_affaire_total = Transaction.objects.aggregate(chiffre_affaire_total=Sum('total'))['chiffre_affaire_total'] or 0
+        print("chifre affaire")
+        return Response({'chiffre_affaires': chiffre_affaire_total})
+    
+class ListTotal(APIView):
+    
+    def get(self,request,*args, **kwargs):
+        affiche=Transaction.objects.values_list('total',flat=True)
+        
+        # faire une liste
+        total_list=list(affiche)
+        
+        return Response({'top_vente': total_list}, status=200)    
+    
+    
+class TopVente(APIView):
+    permission_classes = [AllowAny]
+    def get(self,request,*args, **kwargs):
+        topVente=LigneTransaction.objects.values('produit_id').annotate(count_id=Count('produit_id')).order_by('-count_id').first()
+        nom_produit=Produit.objects.get(id=topVente['produit_id']).nomProd
+        return Response({'top_vente': topVente,'nomProd':nom_produit}, status=200)     
+    
+    
+class sendMail(APIView):
+    permission_classes=[AllowAny]
+    def get(self,request):
+        produits = Produit.objects.filter(qte__lte=F('qteMin'))
+        for produit in produits:      
+
+            send_mail(
+                    'Alerte produit min atteint a recommander',
+                    f'vous avez atteint le min penser a commander ce produit: {produit.nomProd}',
+                    'iliashasbi@gmail.com',
+                    ['iliashasbi@gmail.com'],
+                    fail_silently=False,
+                )
+        return Response('okok',status=200)
+    
+class login(APIView):   
+    
+    def post(self,request):
+        print("koko")
+        username = request.POST['username']
+        print("nono")
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        print("user contient",user)
+        #sa verifi si il y a un valeur dans user on conitnu lalgo
+        if user :
+            print("on entre dans la parti token")
+            token,created=Token.objects.get_or_create(user=user)
+            print("token : ",token)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
+        else:
+            # Si l'authentification échoue, vous devez renvoyer une réponse d'erreur.
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST) 
+        
+class Logout(APIView):
+    def post(self,request):
+        logout(request)
+        return Response({"tu es bien deconnecter"}, status=status.HTTP_200_OK)

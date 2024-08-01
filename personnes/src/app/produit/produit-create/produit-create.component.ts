@@ -17,6 +17,7 @@ export class ProduitCreateComponent {
     prixAchat :0,  
     prixVente :0,
     qte  :0,
+    qteMin:0,
     codeBarre:'',
     fournisseur_id:0,
     // initialisation des autres propriétés…

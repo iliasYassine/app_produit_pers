@@ -5,8 +5,8 @@
     margin-top: 50px;
   }
   
-  .card {
-    background-color: #fff;
+  .card-1 {
+    background-color: rgb(131, 225, 64);
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     padding: 20px;
@@ -14,3 +14,21 @@
     box-sizing: border-box;
   }
  
+  .card-2 {
+    background-color: rgb(108, 166, 240);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 300px;
+    box-sizing: border-box;
+  }
+  .card-3 {
+    background-color: rgb(234, 117, 197);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 300px;
+    box-sizing: border-box;
+  }
+
+

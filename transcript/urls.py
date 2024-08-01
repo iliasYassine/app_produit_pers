@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from rest_framework.authtoken import views as auth_views
+
 
 urlpatterns = [
     
@@ -20,6 +22,10 @@ urlpatterns = [
    path('list_total/',views.ListTotal.as_view(),name='top-vente'),
    path('top-vente/',views.TopVente.as_view(),name='top-vente'),
    path('send-mail/', views.sendMail.as_view(), name='send_mail'),
+   path('api-token-auth/', auth_views.obtain_auth_token),
+   path('login/',views.login.as_view(),name='login'),
+   path('logout/',views.Logout.as_view(),name='logout'),
+   
    
    
 ]
