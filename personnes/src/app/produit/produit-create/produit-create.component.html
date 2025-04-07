@@ -1,37 +1,34 @@
-
-
- <form (ngSubmit)="createProduit()">
-    <div>
-        <label for="nomprod">Nom produit :</label>
-        <input type="text" id="nomprod" [(ngModel)]="produit.nomProd" name="nomprod" required>
+<div class="table-container">
+    <h1>Créer un Produit</h1>
+  
+    <!-- Formulaire pour ajouter un produit -->
+    <div class="add-produit-form">
+      <h2>Ajouter un Produit</h2>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Nom du Produit</th>
+            <th>Prix d'Achat</th>
+            <th>Prix de Vente</th>
+            <th>Quantité</th>
+            <th>Fournisseur</th>
+            <th>Code Barre</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" [(ngModel)]="produit.nomProd" placeholder="Nom du Produit" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="produit.prixAchat" placeholder="Prix d'Achat" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="produit.prixVente" placeholder="Prix de Vente" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="produit.qte" placeholder="Quantité" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="produit.fournisseur_id" placeholder="Fournisseur" class="input-field" required /></td>
+            <td><input type="text" [(ngModel)]="produit.codeBarre" placeholder="Code Barre" class="input-field" required /></td>
+            <td>
+              <button class="btn btn-save" (click)="createProduit()">Créer Produit</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
-    <div>
-        <label for="prixAchat">Prix d'achat :</label>
-        <input type="number" id="prixAchat" [(ngModel)]="produit.prixAchat" name="prixAchat" required>
-    </div>
-
-    <div>
-        <label for="prixVente">Prix de vente :</label>
-        <input type="number" id="prixVente" [(ngModel)]="produit.prixVente" name="prixVente" required>
-    </div>
-
-    <div>
-        <label for="qte">Quantité :</label>
-        <input type="number" id="qte" [(ngModel)]="produit.qte" name="qte" required>
-    </div>
-
-    <div>
-        <label for="nomFournisseur">Fournisseur id :</label>
-        <input type="number" id="nomFournisseur" [(ngModel)]="produit.fournisseur_id" name="nomFournisseur" required>
-    </div>
-
-    <div>
-        <label for="code_barre">Code barre:</label>
-        <input type="text" id="telFournisseur" [(ngModel)]="produit.codeBarre" name="code_barre" required>
-    </div>
-
-   
-
-    <button type="submit">Créer Produit</button>
-</form>
+  

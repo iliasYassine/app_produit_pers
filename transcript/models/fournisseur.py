@@ -5,13 +5,12 @@ from django.db import models
 # Create your models here.
 from django.db import models  
 class Fournisseur(models.Model):  
-    nom = models.CharField(max_length=100)  
-    tel = models.CharField(max_length=100)
-    adresse = models.CharField(max_length=100)   
-    email  = models.CharField(max_length=100)  
-     
-    
-    class Meta:  
-        db_table = "fournisseurs" 
+  nom = models.CharField(max_length=100, blank=True, null=True)  
+  tel = models.CharField(max_length=100, blank=True, null=True)
+  adresse = models.CharField(max_length=100, blank=True, null=True)   
+  email  = models.CharField(max_length=100, blank=True, null=True)  
+   
+  class Meta:  
+    db_table = "fournisseurs" 
 
      

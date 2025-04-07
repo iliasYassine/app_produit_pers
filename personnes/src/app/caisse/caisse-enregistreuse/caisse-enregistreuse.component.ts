@@ -28,16 +28,7 @@ export class CaisseEnregistreuseComponent {
     );
   }
 
-  // finalizeTransaction() {
-  //   this.caisseService.finalizeTransaction().subscribe(
-  //     response => {
-  //       console.log('Transaction finalisée avec succès:', response);
-  //       this.ligneTransaction = [];
-  //       this.totalTransaction = 0;
-  //     },
-  //     error => console.error('Erreur lors de la finalisation de la transaction:', error)
-  //   );
-  // }
+
   finalizeTransaction() {
     // Récupération de l'ID de transaction stocké, ici posé un exemple avec localStorage
     const transactionId = localStorage.getItem('transaction_id');
