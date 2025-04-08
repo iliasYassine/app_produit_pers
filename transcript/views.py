@@ -356,3 +356,9 @@ class Logout(APIView):
     def post(self,request):
         logout(request)
         return Response({"tu es bien deconnecter"}, status=status.HTTP_200_OK)
+    
+class Test(APIView):
+    def get(self, request, code_barre, format=None):
+        produit = get_object_or_404(Produit, codeBarre=code_barre)
+        print(produit)
+        return Response( {"nomProd": produit.nomProd}, status=status.HTTP_200_OK)        

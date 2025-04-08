@@ -25,7 +25,7 @@ urlpatterns = [
    path('api-token-auth/', auth_views.obtain_auth_token),
    path('login/',views.login.as_view(),name='login'),
    path('logout/',views.Logout.as_view(),name='logout'),
-   
+   path('nom_prod/<str:code_barre>/',views.Test.as_view(),name='nom_prod'),
    
    
 ]
