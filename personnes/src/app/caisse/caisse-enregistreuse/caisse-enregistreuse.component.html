@@ -3,6 +3,10 @@
     <input type="text" #codeBarreInput [(ngModel)]="codebarre" placeholder="Scanner le code-barre ici" (keypress)="checkIfEnterKey($event)">
     <button (click)="scanProduit()">Ajouter</button>
   </div>
+    <!-- Affichage du message d'erreur -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
   
   <div class="transactions">
     <h3>Liste des produits:</h3>

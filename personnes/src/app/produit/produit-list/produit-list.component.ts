@@ -16,11 +16,13 @@ export class ProduitListComponent implements OnInit{
   constructor(private produitService: ProduitService) {}
 
   ngOnInit(): void {
-    this.produitService.getProduit().subscribe(
-      (data: Produit[]) => { 
-        this.produit = data;
-      }
-    );
+   this.getproduitlist();
   }
+
+  getproduitlist(){
+    this.produitService.getProduit().subscribe(data=>{
+      this.produit = data;
+      console.log("produitlist:",this.produit);
+    })}
 
 }

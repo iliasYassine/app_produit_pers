@@ -27,7 +27,11 @@ export class ReportServiceService {
   }
 
   calculCout(produits: Produit[]): number {
-    return produits.reduce((acc, produit) => acc + produit.prixAchat * produit.qte, 0);
+    return produits.reduce((acc, produit) => {
+      const prixAchat = produit.prixAchat || 0; // Assure que prixAchat n'est pas null
+      const qte = produit.qte || 0; // Assure que qte n'est pas null
+      return acc + prixAchat * qte;
+    }, 0);
   }
 
  

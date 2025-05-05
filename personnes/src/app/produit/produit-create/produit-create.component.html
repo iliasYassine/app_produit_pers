@@ -18,12 +18,12 @@
         </thead>
         <tbody>
           <tr>
-            <td><input type="text" [(ngModel)]="produit.nomProd" placeholder="Nom du Produit" class="input-field" required /></td>
-            <td><input type="number" [(ngModel)]="produit.prixAchat" placeholder="Prix d'Achat" class="input-field" required /></td>
-            <td><input type="number" [(ngModel)]="produit.prixVente" placeholder="Prix de Vente" class="input-field" required /></td>
-            <td><input type="number" [(ngModel)]="produit.qte" placeholder="Quantité" class="input-field" required /></td>
-            <td><input type="number" [(ngModel)]="produit.fournisseur_id" placeholder="Fournisseur" class="input-field" required /></td>
-            <td><input type="text" [(ngModel)]="produit.codeBarre" placeholder="Code Barre" class="input-field" required /></td>
+            <td><input type="text" [(ngModel)]="nomprod" placeholder="Nom du Produit" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="prixachat" placeholder="Prix d'Achat" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="prixvente" placeholder="Prix de Vente" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="qte" placeholder="Quantité" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="fournisseur_id" placeholder="Fournisseur" class="input-field" required /></td>
+            <td><input type="text" [(ngModel)]="codebarre" placeholder="Code Barre" class="input-field" required /></td>
             <td>
               <button class="btn btn-save" (click)="createProduit()">Créer Produit</button>
             </td>

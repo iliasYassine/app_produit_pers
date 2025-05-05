@@ -32,6 +32,7 @@ from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token    
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
+from icecream import ic
 
 
 class UsersList(APIView):
@@ -227,6 +228,7 @@ class FinalizeTransaction(APIView):
 
     def post(self, request, *args, **kwargs):
         transaction_id = request.session.get('transaction_id', None)
+        ic(transaction_id)
         if not transaction_id:
             return Response({'erreur': 'Aucune transaction en cours.'}, status=status.HTTP_400_BAD_REQUEST)
 

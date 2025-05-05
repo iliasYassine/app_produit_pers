@@ -9,24 +9,40 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule],
   templateUrl: './produit-create.component.html',
   styleUrl: './produit-create.component.css'
-})
+})  
 export class ProduitCreateComponent {
-  produit: Produit = {
-    id:null,
-    nomProd :'',
-    prixAchat :0,  
-    prixVente :0,
-    qte  :0,
-    qteMin:0,
-    codeBarre:'',
-    fournisseur_id:0,
-    // initialisation des autres propriétés…
-  };
+  
+  nomprod = "";
+  prixachat: number | null = null;
+  prixvente: number | null = null;
+  qte: number | null = null;
+  qtemin: number | null = null;  
+  codebarre = "";
+  fournisseur_id: number | null = null;
+
+
   
   constructor(private produitService: ProduitService) {}
 
   createProduit(): void {
-    this.produitService.createProduit(this.produit).subscribe({
+  
+    const produitData: Produit = {
+      id: null, // Laissez l'ID null pour la création
+      nomProd: this.nomprod,    
+      prixAchat: this.prixachat,
+      prixVente: this.prixvente,    
+      qte: this.qte,
+      qteMin: this.qtemin,
+      codeBarre: this.codebarre,
+      fournisseur: this.fournisseur_id
+    };
+    console.log("produitdata:",produitData);
+
+
+
+
+
+    this.produitService.createProduit(produitData).subscribe({
       next: (response) => {
         console.log('produit créée avec succès', response);
         // Implémentez une redirection ou une notification ici si nécessaire

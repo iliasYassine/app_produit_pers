@@ -16,8 +16,8 @@ export class ProduitService {
     return this.httpClient.get<Produit[]>(this.PRODUIT_URL);
   }
   
-  createProduit(personne: Produit): Observable<Produit> {
-    return this.httpClient.post<Produit>(`${this.CREATE_ENDPOINT}`, personne); 
+  createProduit(produit: Produit): Observable<Produit> {
+    return this.httpClient.post<Produit>(`${this.CREATE_ENDPOINT}`, produit); 
   }
 
  

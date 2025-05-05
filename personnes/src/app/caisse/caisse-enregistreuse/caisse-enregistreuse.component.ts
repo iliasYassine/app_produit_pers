@@ -19,10 +19,12 @@ export class CaisseEnregistreuseComponent implements OnInit {
   totalTransaction = 0;
   codebarre: string = "";
   produits!: Partial<Produit>;
+  errorMessage: string = '';
 
   ngOnInit() {
     console.log("codebarre1:",this.codebarre);
     console.log("produit1:",this.produits);
+    
     
     
   }
@@ -33,9 +35,10 @@ export class CaisseEnregistreuseComponent implements OnInit {
   scanProduit() {
     // Ajoutez une condition pour vous assurer que le code-barre n'est pas vide
     if (this.codebarre.trim() === '') {
-      console.error('Erreur: Le code-barre est vide.');
+      this.errorMessage='Erreur: Le code-barre est vide.';
       return; // Arrêter l'exécution si le code-barres est vide
     }
+    console.log("dans la fonction scan produit ");
   
     this.caisseService.scanProduit(this.codebarre).subscribe(
       response => {
@@ -43,6 +46,7 @@ export class CaisseEnregistreuseComponent implements OnInit {
         this.totalTransaction += parseFloat(response.total);
         console.log("response",response);
         this.ligneTransaction.push(response);
+        console.log("resp:",response);
         this.getnameproduit(); 
         console.log("produit2:",this.produits);
         
@@ -51,30 +55,14 @@ export class CaisseEnregistreuseComponent implements OnInit {
     );
   }
 
+  
 
   finalizeTransaction() {
-    // Récupération de l'ID de transaction stocké, ici posé un exemple avec localStorage
-    const transactionId = localStorage.getItem('transaction_id');
-
-    // S'assurer que transactionId n'est pas nul
-    if (transactionId) {
-      this.caisseService.finalizeTransaction(+transactionId).subscribe(
-        response => {
-          console.log('Transaction finalisée avec succès:', response);
-
-          // Réinitialisation des transactions en cours sur le front-end
-          this.ligneTransaction = [];
-          this.totalTransaction = 0;
-
-          // Supprimer l'ID de transaction du stockage local une fois la transaction finalisée
-          localStorage.removeItem('transaction_id');
-        },
-        error => console.error('Erreur lors de la finalisation de la transaction:', error)
-      );
-    } else {
-      console.error('Erreur: Aucune transaction en cours.');
-      // Ici, vous pouvez gérer l'erreur, comme afficher un message à l'utilisateur
-    }
+    this.ligneTransaction = []; // Réinitialiser le tableau des lignes de transaction
+    this.totalTransaction = 0;   // Réinitialiser le montant total
+    this.codebarre = "";         // Réinitialiser le champ du code-barre
+    this.errorMessage = '';  
+   
   }
 
   
