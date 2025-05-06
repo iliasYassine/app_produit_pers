@@ -364,3 +364,12 @@ class Test(APIView):
         produit = get_object_or_404(Produit, codeBarre=code_barre)
         print(produit)
         return Response( {"nomProd": produit.nomProd}, status=status.HTTP_200_OK)        
+
+
+class ResetTransactions(APIView):
+
+    def post(self, request, format=None):
+        # Supprime toutes les transactions
+        Transaction.objects.all().delete()  
+        
+        return Response({'message': 'Toutes les transactions ont été réinitialisées.'}, status=status.HTTP_204_NO_CONTENT)

@@ -26,6 +26,7 @@ urlpatterns = [
    path('login/',views.login.as_view(),name='login'),
    path('logout/',views.Logout.as_view(),name='logout'),
    path('nom_prod/<str:code_barre>/',views.Test.as_view(),name='nom_prod'),
+   path('reset-transactions/', views.ResetTransactions.as_view(), name='reset-transactions'),
    
    
 ]

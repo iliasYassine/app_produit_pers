@@ -6,7 +6,7 @@
 
   <div class="card-2">
     <div class="card-title">Top vente</div>
-    <div class="card-subtitle">ID Produit: {{ topVente }}</div>
+    
     <div class="card-subtitle">Nom: {{ nom_prod }}</div>
   </div>
   
@@ -14,6 +14,13 @@
     <div class="card-title">Chiffre d'affaires</div>
     <div class="card-value">{{ chiffreAffaireTotal }}€</div>
   </div>
+
+  <div class="card-4">
+    <div class="card-title">Valeurs stocks</div>
+    <div class="card-value">{{ benefice }}€</div>
+  </div>
+  
+  <div class="btn-ini"><button (click)="reinitilise()">réinitilisé le chiffre d'affaire </button></div>
 </div>
 
 

@@ -21,12 +21,27 @@ export class ReportsComponent implements OnInit{
   topVente:number=0;
   nom_prod:string='';
   chiffreAffaireTotal: number = 0;
+  benefice:number=0;
+
+  ngOnInit(): void {
+    this.getcout();
+    this.getChiffreAffairesTotal();
+    this.getjsondatatopvente();
+    
+  }
 
   
   getChiffreAffairesTotal():void{
     this.report_service.getChiffreAffairesTotal().subscribe((data)=>{
       this.chiffreAffaireTotal=data.chiffre_affaires;
+      this.getBenefice();
     })
+  }
+  getBenefice(){
+    this.benefice=this.chiffreAffaireTotal-this.coutTotal;
+    console.log(this.benefice);
+    console.log(this.coutTotal);
+    console.log(this.chiffreAffaireTotal);
   }
 
 
@@ -42,18 +57,19 @@ export class ReportsComponent implements OnInit{
   getcout():void{
     this.report_service.getProduitReport().subscribe( (produits) => {
         this.produit_report = produits;
-        this.coutTotal = this.report_service.calculCout(this.produit_report);
+        this.coutTotal = parseFloat(this.report_service.calculCout(this.produit_report).toFixed(2));
       });
   }
 
+  reinitilise(){
+    this.report_service.reinitilsie().subscribe(data=>{
+      this.getChiffreAffairesTotal();
+    })
+    
+    
+  }
+
   
-
-
-  ngOnInit(): void {
-        this.getcout();
-        this.getChiffreAffairesTotal();
-        this.getjsondatatopvente();
-      }
     
   }
 
