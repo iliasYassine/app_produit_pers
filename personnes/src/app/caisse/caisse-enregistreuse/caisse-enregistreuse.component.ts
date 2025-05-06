@@ -32,24 +32,59 @@ export class CaisseEnregistreuseComponent implements OnInit {
 
   constructor(private caisseService: CaisseService) {}
 
+  // scanProduit() {
+  //   if (this.codebarre.trim() === '') {
+  //     this.errorMessage = 'Erreur: Le code-barre est vide.';
+  //     return;
+  //   }
+  
+  //   console.log("dans la fonction scan produit");
+  
+  //   this.caisseService.scanProduit(this.codebarre).subscribe(
+  //     response => {
+  //       console.log("response", response);
+  //       this.totalTransaction += parseFloat(response.total);
+  
+  //       // Ajouter une ligne de transaction avec un produit associé
+  //       const ligne = { ...response, produit: null }; // Ajouter une propriété `produit`
+  //       this.ligneTransaction.push(ligne);
+  
+  //       // Récupérer le nom du produit pour cette ligne
+  //       this.caisseService.getnomprod(this.codebarre).subscribe((data: Partial<Produit>) => {
+  //         ligne.produit = data; // Associer le produit à la ligne
+  //         console.log("Produit associé à la ligne :", ligne);
+  //       });
+  
+  //       this.errorMessage = ''; // Réinitialiser le message d'erreur
+  //     },
+  //     error => console.error('Erreur lors du scan du produit:', error)
+  //   );
+  // }
+
   scanProduit() {
-    // Ajoutez une condition pour vous assurer que le code-barre n'est pas vide
     if (this.codebarre.trim() === '') {
-      this.errorMessage='Erreur: Le code-barre est vide.';
-      return; // Arrêter l'exécution si le code-barres est vide
+      this.errorMessage = 'Erreur: Le code-barre est vide.';
+      return;
     }
-    console.log("dans la fonction scan produit ");
+  
+    console.log("dans la fonction scan produit");
   
     this.caisseService.scanProduit(this.codebarre).subscribe(
       response => {
-        console.log("response",response);
+        console.log("response", response);
         this.totalTransaction += parseFloat(response.total);
-        console.log("response 2",response);
-        this.ligneTransaction.push(response);
-        console.log("resp 3:",response);
-        this.getnameproduit(); 
-        console.log("produit2:",this.produits);
-        
+  
+        // Ajouter une ligne de transaction avec un produit associé
+        const ligne: LignesTransaction = { ...response, produit: null }; // Ajouter une propriété produit
+        this.ligneTransaction.push(ligne);
+  
+        // Récupérer les détails du produit et les associer à la ligne
+        this.caisseService.getnomprod(this.codebarre).subscribe((data: Partial<Produit>) => {
+          ligne.produit = data; // Associer le produit à la ligne
+          console.log("Produit associé à la ligne :", ligne);
+        });
+  
+        this.errorMessage = ''; // Réinitialiser le message d'erreur
       },
       error => console.error('Erreur lors du scan du produit:', error)
     );

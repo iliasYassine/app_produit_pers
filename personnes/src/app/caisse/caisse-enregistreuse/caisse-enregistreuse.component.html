@@ -8,16 +8,16 @@
       {{ errorMessage }}
     </div>
   
-  <div class="transactions">
-    <h3>Liste des produits:</h3>
-    <div *ngFor="let ligne of ligneTransaction" class="transaction-line">
-      <div *ngIf="produits">
-        <span>Nom produit: {{ produits.nomProd }}</span> 
+    <div class="transactions">
+      <h3>Liste des produits:</h3>
+      <div *ngFor="let ligne of ligneTransaction" class="transaction-line">
+        <div *ngIf="ligne.produit">
+          <span>Nom produit: {{ ligne.produit.nomProd }}</span>
+        </div>
+        <span>{{ ligne.quantite }} x {{ ligne.prix_unitaire }} €</span>
+        <span>Total ligne: {{ ligne.total }} €</span>
       </div>
-      <span>{{ ligne.quantite }} x {{ ligne.prix_unitaire }} €</span>
-      <span>Total ligne: {{ ligne.total }} €</span>
     </div>
-  </div>
 
   <div class="total-panel">
     <h3>Total transaction: {{ totalTransaction }} €</h3>

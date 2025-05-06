@@ -1,3 +1,4 @@
+import { Produit } from "../produit/produit.model";
 
 export interface LignesTransaction {
     id: number | null;
@@ -6,6 +7,7 @@ export interface LignesTransaction {
     total:number;
     produit_id:number;
     transaction_id:number;
+    produit?: Partial<Produit>;
 
     
   }
