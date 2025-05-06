@@ -44,9 +44,9 @@ export class CaisseEnregistreuseComponent implements OnInit {
       response => {
         console.log("response",response);
         this.totalTransaction += parseFloat(response.total);
-        console.log("response",response);
+        console.log("response 2",response);
         this.ligneTransaction.push(response);
-        console.log("resp:",response);
+        console.log("resp 3:",response);
         this.getnameproduit(); 
         console.log("produit2:",this.produits);
         

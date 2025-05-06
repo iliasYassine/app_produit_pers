@@ -1,6 +1,6 @@
 <div class="caisse-container">
   <div class="scan-panel">
-    <input type="text" #codeBarreInput [(ngModel)]="codebarre" placeholder="Scanner le code-barre ici" (keypress)="checkIfEnterKey($event)">
+    <input type="text"  [(ngModel)]="codebarre" placeholder="Scanner le code-barre ici" (keypress)="checkIfEnterKey($event)">
     <button (click)="scanProduit()">Ajouter</button>
   </div>
     <!-- Affichage du message d'erreur -->
