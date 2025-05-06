@@ -13,6 +13,8 @@ import { FormsModule, NgModel } from '@angular/forms';
 })
 export class ProduitDetailsComponent implements OnInit{
   produit: Produit[]=[];
+  filteredProduits: Produit[] = []; 
+  searchTerm: string = ''; 
   //private route = inject(ActivatedRoute);
   private produitService = inject(ProduitService);
 
@@ -21,6 +23,11 @@ export class ProduitDetailsComponent implements OnInit{
   ngOnInit(): void {
     this.loadProduit();
    
+  }
+  filterProduits(): void {
+    this.filteredProduits = this.produit.filter(prod =>
+      prod.nomProd.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
   }
 
   loadProduit():void{

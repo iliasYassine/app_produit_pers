@@ -1,5 +1,12 @@
 <div class="produit-container">
     <h1>Détails des Produits</h1>
+    <input
+    type="text"
+    placeholder="Rechercher un produit par nom"
+    [(ngModel)]="searchTerm"
+    (input)="filterProduits()" 
+    class="search-bar"
+  />
     <table class="produit-table">
       <!-- Table Headings -->
       <thead>
@@ -16,7 +23,7 @@
       </thead>
       <!-- Table Body -->
       <tbody>
-        <tr *ngFor="let prod of produit; let i = index">
+        <tr *ngFor="let prod of filteredProduits; let i = index">
           <td>{{ prod.id }}</td>
           <td><input type="text" [(ngModel)]="prod.nomProd" placeholder="Nom du produit" /></td>
           <td><input type="number" [(ngModel)]="prod.prixAchat" placeholder="Prix d'achat" /></td>

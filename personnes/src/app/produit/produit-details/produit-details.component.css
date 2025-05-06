@@ -131,3 +131,19 @@ button:nth-child(2):hover {
     padding: 6px 10px;
   }
 }
+
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.no-data {
+  color: red;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+}
