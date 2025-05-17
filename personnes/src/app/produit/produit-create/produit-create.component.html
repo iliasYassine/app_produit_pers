@@ -1,0 +1,36 @@
+<div class="table-container">
+    <h1>Créer un Produit</h1>
+  
+    <!-- Formulaire pour ajouter un produit -->
+    <div class="add-produit-form">
+      <h2>Ajouter un Produit</h2>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Nom du Produit</th>
+            <th>Prix d'Achat</th>
+            <th>Prix de Vente</th>
+            <th>Quantité</th>
+            <th>Quantité min</th>
+            <th>Fournisseur</th>
+            <th>Code Barre</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" [(ngModel)]="nomprod" placeholder="Nom du Produit" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="prixachat" placeholder="Prix d'Achat" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="prixvente" placeholder="Prix de Vente" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="qte" placeholder="Quantité" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="qtemin" placeholder="Quantité min" class="input-field" required /></td>
+            <td><input type="number" [(ngModel)]="fournisseur_id" placeholder="Fournisseur" class="input-field" required /></td>
+            <td><input type="text" [(ngModel)]="codebarre" placeholder="Code Barre" class="input-field" required /></td>
+            <td>
+              <button class="btn btn-save" (click)="createProduit()">Créer Produit</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  

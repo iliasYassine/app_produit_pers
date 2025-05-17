@@ -1,0 +1,40 @@
+<div class="table-container">
+  <h1>Liste des produits du magasin</h1>
+
+  <input
+  type="text"
+  placeholder="Rechercher un produit par nom"
+  [(ngModel)]="searchTerm"
+  (input)="filterProduits()" 
+  class="search-bar"
+/>
+
+  <table class="styled-table" *ngIf="produit?.length">
+    <thead>
+      <tr>
+        <th>Nom du Produit</th>
+        <th>Prix d'Achat</th>
+        <th>Prix de Vente</th>
+        <th>Quantité</th>
+        <th>Code Barre</th>
+        <th>Fournisseur ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let prod of filteredProduits">
+        <td>{{ prod.nomProd }}</td>
+        <td>{{ prod.prixAchat }} €</td>
+        <td>{{ prod.prixVente }} €</td>
+        <td>{{ prod.qte }}</td>
+        <td>{{ prod.codeBarre }}</td>
+        <td>{{ prod.fournisseur }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!produit?.length" class="no-data">Aucun produit trouvé.</p>
+</div>
+
+<div> 
+  <p>Veuiillez cliquer sur ce bouton lorsque vous souhaitez recevoir la liste des produits en rupture par email</p>
+  <button (click)="sendemail()">Rupture </button></div>

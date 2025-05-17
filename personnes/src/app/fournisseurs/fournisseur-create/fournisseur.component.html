@@ -1,0 +1,68 @@
+<div class="table-container">
+  <h1>Créer un Fournisseur</h1>
+
+  <form (ngSubmit)="createFournisseur()">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Téléphone</th>
+          <th>Adresse</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <input
+              type="text"
+              id="nom"
+              [(ngModel)]="fournisseur.nom"
+              name="nom"
+              placeholder="Nom"
+              class="input-field"
+              required
+            />
+          </td>
+          <td>
+            <input
+              type="tel"
+              id="tel"
+              [(ngModel)]="fournisseur.tel"
+              name="tel"
+              placeholder="Téléphone"
+              class="input-field"
+              required
+            />
+          </td>
+          <td>
+            <input
+              type="text"
+              id="adresse"
+              [(ngModel)]="fournisseur.adresse"
+              name="adresse"
+              placeholder="Adresse"
+              class="input-field"
+              required
+            />
+          </td>
+          <td>
+            <input
+              type="email"
+              id="email"
+              [(ngModel)]="fournisseur.email"
+              name="email"
+              placeholder="Email"
+              class="input-field"
+              required
+            />
+          </td>
+          <td>
+            <button type="submit" class="btn btn-save">Créer Fournisseur</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>

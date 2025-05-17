@@ -1,0 +1,27 @@
+<div class="caisse-container">
+  <div class="scan-panel">
+    <input type="text"  [(ngModel)]="codebarre" placeholder="Scanner le code-barre ici" (keypress)="checkIfEnterKey($event)">
+    <button (click)="scanProduit()">Ajouter</button>
+  </div>
+    <!-- Affichage du message d'erreur -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  
+    <div class="transactions">
+      <h3>Liste des produits:</h3>
+      <div *ngFor="let ligne of ligneTransaction" class="transaction-line">
+        <div *ngIf="ligne.produit">
+          <span>Nom produit: {{ ligne.produitDetails?.nomProd }}</span>
+        </div>
+        <span>{{ ligne.quantite }} x {{ ligne.prix_unitaire }} €</span>
+        <span>Total ligne: {{ ligne.total }} €</span>
+      </div>
+    </div>
+
+  <div class="total-panel">
+    <h3>Total transaction: {{ totalTransaction }} €</h3>
+    <button (click)="finalizeTransaction()">Finaliser la transaction</button>
+  </div>
+</div>
+

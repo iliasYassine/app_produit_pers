@@ -1,0 +1,22 @@
+<div class="table-container">
+  <h1>Liste du personnel présent dans la société</h1>
+
+  <table class="styled-table" *ngIf="personne?.length">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Téléphone</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of personne">
+        <td>{{ user.name }}</td>
+        <td>{{ user.prenom }}</td>
+        <td>{{ user.tel }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!personne?.length" class="no-data">Aucune personne trouvée.</p>
+</div>

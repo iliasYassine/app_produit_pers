@@ -1,0 +1,47 @@
+<div class="table-container">
+  <h1>Liste des Personnes</h1>
+
+  <table class="styled-table">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Téléphone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let personne of personnes">
+        <td>{{ personne.name }}</td>
+        <td>
+          <input
+            type="text"
+            [(ngModel)]="personne.prenom"
+            placeholder="Entrez le prénom"
+            class="input-field"
+            required
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            [(ngModel)]="personne.tel"
+            placeholder="Entrez le téléphone"
+            class="input-field"
+            required
+          />
+        </td>
+        <td>
+          <button class="btn btn-edit" (click)="updateUser(personne)">Mettre à jour</button>
+          <button
+            *ngIf="personne.id"
+            class="btn btn-delete"
+            (click)="deleteUser(personne.id)"
+          >
+            Supprimer
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

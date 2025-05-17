@@ -1,0 +1,24 @@
+<div class="table-container">
+  <h1>Liste des Fournisseurs</h1>
+
+  <table class="styled-table" *ngIf="fournisseur?.length">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Téléphone</th>
+        <th>Adresse</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let fourni of fournisseur">
+        <td>{{ fourni.nom }}</td>
+        <td>{{ fourni.tel }}</td>
+        <td>{{ fourni.adresse }}</td>
+        <td>{{ fourni.email }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!fournisseur?.length" class="no-data">Aucun fournisseur trouvé.</p>
+</div>

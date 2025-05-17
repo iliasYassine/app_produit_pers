@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Audio pour Transcription</title>
+</head>
+<body>
+    <form method="post" action="/transcript/test/" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="audio_file">
+        <input type="submit" value="Transcrire">
+    </form>
+    <p id="transcription">{{ transcription|default:"La transcription apparaîtra ici..." }}</p>
+</body>
+</html>

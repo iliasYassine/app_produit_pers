@@ -1,0 +1,26 @@
+<div class="table-container">
+  <h1>Créer une Personne</h1>
+
+  <form (ngSubmit)="createPersonne()">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Téléphone</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="text" id="name" [(ngModel)]="personne.name" name="name" placeholder="Nom" class="input-field" required /></td>
+          <td><input type="text" id="prenom" [(ngModel)]="personne.prenom" name="prenom" placeholder="Prénom" class="input-field" required /></td>
+          <td><input type="text" id="tel" [(ngModel)]="personne.tel" name="tel" placeholder="Téléphone" class="input-field" required /></td>
+          <td>
+            <button type="submit" class="btn btn-save">Créer Personne</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>

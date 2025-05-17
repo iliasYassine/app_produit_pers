@@ -1,0 +1,33 @@
+<div class="table-container">
+  <h1>Liste des transactions en caisse</h1>
+
+  <table class="styled-table" *ngIf="ligneTransaction?.length">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Quantité</th>
+        <th>Prix</th>
+        <th>Total</th>
+      
+         <th>nom prod</th>
+        <th>Actions</th>
+       
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let i of ligneTransaction">
+    <td>{{i.id}}</td>
+    <td>{{i.quantite}}</td>
+    <td>{{i.prix_unitaire}}</td>
+    <td>{{i.total}}</td>
+  
+    <td>{{i.produitDetails?.nomProd}}</td>
+    
+    <td><button class="btn-delete" (click)="deleteLigne(i.id)">Supprimer</button>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!ligneTransaction?.length" class="no-data">Aucune lignes trouvé.</p>
+</div>

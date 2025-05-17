@@ -1,0 +1,67 @@
+<!-- src/app/formulaire/formulaire.component.html -->
+<div class="container">
+  <h2>Formulaire de Création d'un Client et Une Commande</h2>
+
+  <!-- Formulaire de Client -->
+  <form>
+    <h3>Informations Client</h3>
+    <div class="form-group">
+      <label for="nom">Nom</label>
+      <input type="text" [(ngModel)]="nom" name="nom" class="form-control" id="nom" required>
+    </div>
+    <div class="form-group">
+      <label for="prenom">Prénom</label>
+      <input type="text" [(ngModel)]="prenom" name="prenom" class="form-control" id="prenom" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" [(ngModel)]="email" name="email" class="form-control" id="email" required>
+    </div>
+    <div class="form-group">
+      <label for="telephone">Téléphone</label>
+      <input type="tel" [(ngModel)]="tel" name="telephone" class="form-control" id="telephone" required>
+    </div>
+    <div class="form-group">
+      <label for="adresse">Adresse</label>
+      <textarea [(ngModel)]="adr" name="adresse" class="form-control" id="adresse" required></textarea>
+    </div>
+    <button type="submit" (click)="onSubmitClient()" class="btn btn-primary">Valider les infos</button>
+  </form>
+
+  <!-- Détails de la Commande -->
+  <div class="commande-details">
+    <h3>Détails de la Commande</h3>
+    <form >
+      <div class="form-group">
+        <label for="montantTotal">Montant Total</label>
+        <input type="number" [(ngModel)]="montantTotal1" name="montantTotal" class="form-control" id="montantTotal" required>
+      </div>
+      <div class="form-group">
+        <label for="typeExpedition">Type d'Expédition</label>
+        <select [(ngModel)]="typeExpedition1" name="typeExpedition" class="form-control" id="typeExpedition">
+          
+          <option value="Mondial Relay">Mondial Relay (6€)</option>
+          <option value="Chronoposte">Chronoposte</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="commentaire">Commentaire</label>
+        <textarea [(ngModel)]="commentaire1" name="commentaire" class="form-control" id="commentaire"></textarea>
+      </div>
+      <button type="submit" [disabled]="clientId1 === null" (click)="onSubmitCommande()" class="btn btn-primary">Valider la commande</button>
+    </form>
+  </div>
+</div>
+
+
+
+
+<!-- Paiement dynamique Stripe -->
+<div class="paiement-details" style="margin-top: 30px;">
+  <h3>Étape 3 : Paiement</h3>
+  <button class="btn btn-success"
+    (click)="payerAvecStripe()"
+    [disabled]="!montantTotal1 || montantTotal1 <= 0">
+    Procéder au paiement
+  </button>
+</div>

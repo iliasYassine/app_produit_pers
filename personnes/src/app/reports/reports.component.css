@@ -1,0 +1,68 @@
+.dashboard-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 50px;
+  }
+  
+  .card-1 {
+    background-color: rgb(169, 14, 14);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 300px;
+    box-sizing: border-box;
+  }
+ 
+  .card-2 {
+    background-color: rgb(108, 166, 240);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 300px;
+    box-sizing: border-box;
+  }
+  .card-3 {
+    background-color: rgb(234, 117, 197);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 300px;
+    box-sizing: border-box;
+  }
+
+  .card-4 {
+    background-color: rgb(26, 182, 243);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    width: 300px;
+    box-sizing: border-box;
+  }
+
+
+/* Style pour le bouton */
+.btn-ini button {
+  background-color: #3498db; /* Couleur de fond bleue */
+  color: #ffffff; /* Couleur du texte */
+  font-size: 16px; /* Taille du texte */
+  font-weight: bold; /* Texte en gras */
+  padding: 10px 20px; /* Espacement interne */
+  border: none; /* Supprimer les bordures */
+  border-radius: 5px; /* Coins arrondis */
+  cursor: pointer; /* Curseur en forme de main */
+  transition: all 0.3s ease; /* Transition fluide pour les effets */
+}
+
+/* Effet au survol */
+.btn-ini button:hover {
+  background-color: #2980b9; /* Couleur plus foncée au survol */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre subtile */
+  transform: scale(1.05); /* Légère mise en avant */
+}
+
+/* Effet au clic */
+.btn-ini button:active {
+  background-color: #1c598a; /* Couleur encore plus foncée au clic */
+  transform: scale(0.98); /* Légère réduction */
+}

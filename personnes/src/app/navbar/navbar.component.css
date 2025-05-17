@@ -1,0 +1,141 @@
+/* Conteneur principal de la navbar */
+.navbar {
+  background-color: #2c3e50; /* Couleur de fond sombre */
+  padding: 10px 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Liste des liens */
+.nav-links {
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* Liens individuels */
+.nav-links li {
+  margin: 0 10px;
+}
+
+/* Style des liens */
+.nav-links a {
+  text-decoration: none;
+  color: #ecf0f1; /* Couleur claire pour le texte */
+  font-size: 16px;
+  font-weight: bold;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: all 0.3s ease; /* Transition fluide */
+}
+
+/* Effet au survol */
+.nav-links a:hover {
+  background-color: #3498db; /* Couleur bleue au survol */
+  color: #ffffff; /* Texte blanc */
+  transform: scale(1.1); /* Agrandissement léger */
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3); /* Ombre subtile */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nav-links {
+    flex-direction: column; /* Empile les liens verticalement */
+    align-items: flex-start;
+  }
+
+  .nav-links li {
+    margin: 5px 0;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+}
+
+/* Style de la navbar */
+.navbar {
+  background-color: #2c3e50;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  position: relative;
+  margin: 0 15px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #ecf0f1;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+  background-color: #3498db;
+  color: #ffffff;
+}
+
+/* Style pour les dropdowns */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #34495e;
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.dropdown-menu li {
+  margin: 0;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 8px 15px;
+  color: #ecf0f1;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.dropdown-menu a:hover {
+  background-color: #3498db;
+  color: #ffffff;
+}
+
+/* Afficher le menu déroulant au survol */
+.dropdown:hover .dropdown-menu {
+  display: block;
+}

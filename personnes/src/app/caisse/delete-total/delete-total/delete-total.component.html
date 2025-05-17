@@ -1,0 +1,29 @@
+<div class="table-container">
+  <h1>Liste des transactions en caisse</h1>
+
+  <table class="styled-table" *ngIf="total?.length">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Date Heure</th>
+        <th>Total</th>
+        <th>Employé</th>
+        <th>Actions</th>
+       
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let i of total">
+        <td>{{i.id}}</td>
+        <td>{{i.date_heure}}</td>
+        <td>{{i.total}}</td>  
+        <td>{{i.employe_id}}</td>
+    
+    <td><button class="btn-delete" (click)="deleteTotal(i.id)">Supprimer</button></td>
+
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!total?.length" class="no-data">Aucune lignes trouvé.</p>
+</div>

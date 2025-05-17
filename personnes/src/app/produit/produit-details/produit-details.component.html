@@ -1,0 +1,42 @@
+<div class="produit-container">
+    <h1>Détails des Produits</h1>
+    <input
+    type="text"
+    placeholder="Rechercher un produit par nom"
+    [(ngModel)]="searchTerm"
+    (input)="filterProduits()" 
+    class="search-bar"
+  />
+    <table class="produit-table">
+      <!-- Table Headings -->
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nom du produit</th>
+          <th>Prix d'achat</th>
+          <th>Prix de vente</th>
+          <th>Quantité</th>
+          <th>Fournisseur id</th>
+          <th>Code barre</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <!-- Table Body -->
+      <tbody>
+        <tr *ngFor="let prod of filteredProduits; let i = index">
+          <td>{{ prod.id }}</td>
+          <td><input type="text" [(ngModel)]="prod.nomProd" placeholder="Nom du produit" /></td>
+          <td><input type="number" [(ngModel)]="prod.prixAchat" placeholder="Prix d'achat" /></td>
+          <td><input type="number" [(ngModel)]="prod.prixVente" placeholder="Prix de vente" /></td>
+          <td><input type="number" [(ngModel)]="prod.qte" placeholder="Quantité" /></td>
+          <td><input type="text" [(ngModel)]="prod.fournisseur" placeholder="Fournisseur_id" /></td>
+          <td><input type="text" [(ngModel)]="prod.codeBarre" placeholder="Code barre" /></td>
+          
+          <td>
+            <button (click)="updateProduit(prod)">Modifier</button>
+            <button (click)="deleteProduit(prod.id)">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

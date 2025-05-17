@@ -1,0 +1,167 @@
+/* Conteneur principal */
+.caisse-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  font-family: 'Arial', sans-serif;
+}
+
+/* Panneau de scan */
+.scan-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.scan-panel input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.scan-panel input:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+.scan-panel button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #ffffff;
+  background-color: #3498db;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.scan-panel button:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+}
+
+.scan-panel button:active {
+  background-color: #1c5985;
+  transform: scale(0.95);
+}
+
+/* Liste des transactions */
+.transactions {
+  margin-bottom: 20px;
+}
+
+.transactions h3 {
+  font-size: 20px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 5px;
+}
+
+.transaction-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-line span {
+  font-size: 16px;
+  color: #34495e;
+}
+
+.transaction-line span:nth-child(2) {
+  font-weight: bold;
+  color: #2ecc71;
+}
+
+.transaction-line span:nth-child(3) {
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+/* Panneau total */
+.total-panel {
+  text-align: center;
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.total-panel h3 {
+  font-size: 22px;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.total-panel button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #ffffff;
+  background-color: #e74c3c;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}
+.total-panel button:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
+}
+
+.total-panel button:active {
+  background-color: #96281b;
+  transform: scale(0.95);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .scan-panel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .scan-panel input {
+    margin-bottom: 10px;
+  }
+
+  .transaction-line {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .transaction-line span {
+    margin-bottom: 5px;
+  }
+
+  .total-panel h3 {
+    font-size: 18px;
+  }
+
+  .total-panel button {
+    font-size: 14px;
+  }
+}
