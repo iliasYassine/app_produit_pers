@@ -64,7 +64,7 @@ export class FormulaireComponent implements OnInit {
       commentaire: this.commentaire1,
       facture: this.factureUrl1,
       client: this.clientId1, // Use the clientId obtained from the client creation
-      dateCommande: new Date() // Setting the current date as a Date object
+      date_commande: new Date().toISOString() // Setting the current date as a Date object
     };
     
     console.log("ff", this.clientId1);
@@ -77,7 +77,11 @@ export class FormulaireComponent implements OnInit {
   
 
   payerAvecStripe() {
-  this.service_formulaire.createStripeSession(this.montantTotal1).subscribe({
+    let montant=this.montantTotal1
+    if(this.typeExpedition1==='MondialRelay'){
+        montant+=6.90;
+    }
+  this.service_formulaire.createStripeSession(montant).subscribe({
     next: (res) => {
       window.location.href = res.url; // Redirige vers Stripe Checkout
     },

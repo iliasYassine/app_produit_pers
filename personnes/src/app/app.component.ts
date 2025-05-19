@@ -13,10 +13,11 @@ import { CaisseEnregistreuseComponent } from './caisse/caisse-enregistreuse/cais
 import { DeleteLignesComponent } from './caisse/delete-lignes/delete-lignes.component';
 import { DeleteTotalComponent } from './caisse/delete-total/delete-total/delete-total.component';
 import { FormulaireComponent } from './formulaire/formulaire/formulaire.component';
+import { CommandeComponent } from './commande/commande/commande.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,PersonneListComponent,ProduitListComponent,PersonneDetailsComponent,ReportsComponent,ProduitDetailsComponent,NavbarComponent,FournisseurComponent,FournisseurListsComponent,CaisseEnregistreuseComponent,DeleteLignesComponent,DeleteTotalComponent,FormulaireComponent],
+  imports: [RouterOutlet,PersonneListComponent,ProduitListComponent,PersonneDetailsComponent,ReportsComponent,ProduitDetailsComponent,NavbarComponent,FournisseurComponent,FournisseurListsComponent,CaisseEnregistreuseComponent,DeleteLignesComponent,DeleteTotalComponent,FormulaireComponent,CommandeComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

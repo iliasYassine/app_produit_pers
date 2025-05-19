@@ -501,5 +501,3 @@ class CreateStripeCheckoutSession(APIView):
             return Response({'url': session.url})
         except Exception as e:
             return Response({'error': str(e)}, status=500)    
-print("ici")
-print("ici")

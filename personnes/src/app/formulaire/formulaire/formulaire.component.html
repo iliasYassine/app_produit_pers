@@ -40,7 +40,7 @@
         <label for="typeExpedition">Type d'Expédition</label>
         <select [(ngModel)]="typeExpedition1" name="typeExpedition" class="form-control" id="typeExpedition">
           
-          <option value="Mondial Relay">Mondial Relay (6€)</option>
+          <option value="MondialRelay">Mondial Relay (6€)</option>
           <option value="Chronoposte">Chronoposte</option>
         </select>
       </div>
@@ -59,6 +59,7 @@
 <!-- Paiement dynamique Stripe -->
 <div class="paiement-details" style="margin-top: 30px;">
   <h3>Étape 3 : Paiement</h3>
+  <img src="assets/cb.jpg" alt="Carte bancaire" class="cb-image" >
   <button class="btn btn-success"
     (click)="payerAvecStripe()"
     [disabled]="!montantTotal1 || montantTotal1 <= 0">

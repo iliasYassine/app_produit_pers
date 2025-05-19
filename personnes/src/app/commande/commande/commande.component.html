@@ -1,0 +1,42 @@
+<!-- Table des commandes -->
+<div class="table-container">
+  <h1>Liste des commandes</h1>
+
+  <table class="styled-table" *ngIf="commande?.length">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Client</th>
+        <th>Date</th>
+        <th>Montant total</th>
+        <th>Statut</th>
+        <th>Type expédition</th>
+        <th>Numéro suivi</th>
+        <th>Commentaire</th>
+        <th>Facture</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of commande">
+        <td>{{c.id}}</td>
+        <td>{{c.client}}</td>
+        <td>{{c.date_commande | date:'short'}}</td>
+        <td>{{c.montant_total | number:'1.2-2'}} €</td>
+        <td>{{c.statut}}</td>
+        <td>{{c.type_expedition}}</td>
+        <td>{{c.numero_suivi}}</td>
+        <td>{{c.commentaire}}</td>
+        <td>
+          <a *ngIf="c.facture" [href]="c.facture" target="_blank">Voir</a>
+          <span *ngIf="!c.facture">-</span>
+        </td>
+        <td>
+          <!-- <button class="btn-delete" (click)="deleteCommande(c.id)">Supprimer</button> -->
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!commande?.length" class="no-data">Aucune commande trouvée.</p>
+</div>
