@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommandeService } from '../commande.service';
 import { Commande } from '../commande.model';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-commande',

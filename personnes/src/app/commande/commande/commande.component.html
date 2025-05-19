@@ -21,7 +21,7 @@
       <tr *ngFor="let c of commande">
         <td>{{c.id}}</td>
         <td>{{c.client}}</td>
-        <td>{{c.date_commande | date:'short'}}</td>
+        <td>{{c.date_commande | date:'dd/MM/yyyy HH:mm':'':'fr'}}</td>
         <td>{{c.montant_total | number:'1.2-2'}} €</td>
         <td>{{c.statut}}</td>
         <td>{{c.type_expedition}}</td>
@@ -32,8 +32,7 @@
           <span *ngIf="!c.facture">-</span>
         </td>
         <td>
-          <!-- <button class="btn-delete" (click)="deleteCommande(c.id)">Supprimer</button> -->
-        </td>
+          <button class="btn-delete" [disabled]="!c.id" (click)="deleteCommande(c.id!)">Supprimer</button>        </td>
       </tr>
     </tbody>
   </table>

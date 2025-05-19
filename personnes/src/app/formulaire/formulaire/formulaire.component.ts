@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormulaireService } from '../formulaire.service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-formulaire',
   standalone: true,
@@ -47,6 +48,13 @@ export class FormulaireComponent implements OnInit {
       console.log(data);
       console.log(data.id);
       this.clientId1=data.id;
+      Swal.fire({
+    icon: 'success',
+    title: 'Client enregistré !',
+    text: 'Les informations client ont bien été enregistrées.',
+    timer: 2000,
+    showConfirmButton: false
+  });
        
       
       
@@ -72,6 +80,13 @@ export class FormulaireComponent implements OnInit {
 
     this.service_formulaire.createCommande(commande).subscribe(data=>{
       console.log(data);
+      Swal.fire({
+    icon: 'success',
+    title: 'Commande envoyée !',
+    text: 'La commande a bien été enregistrée.',
+    timer: 2000,
+    showConfirmButton: false
+  });
     })
   }
   
