@@ -58,7 +58,7 @@ export class FormulaireComponent implements OnInit {
     const commande = {
       id: 0, // Assuming you want to create a new commande with ID 0
       montant_total: this.montantTotal1,
-      statut: this.statut1,
+      
       type_expedition: this.typeExpedition1,
       numero_suivi: this.numeroSuivi1,
       commentaire: this.commentaire1,

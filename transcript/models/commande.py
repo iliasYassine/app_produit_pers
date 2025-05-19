@@ -8,7 +8,7 @@ class CommandeModel(models.Model):
     client = models.ForeignKey(ClientModel, on_delete=models.CASCADE, blank=True, null=True)  
     date_commande = models.DateTimeField(auto_now_add=True, blank=True, null=True)  
     montant_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    statut = models.CharField(max_length=20, blank=True, null=True)
+    statut = models.CharField(max_length=20, blank=True, null=True,default="En préparation")
     type_expedition = models.CharField(max_length=20,blank=True, null=True )
     numero_suivi = models.CharField(max_length=100, blank=True, null=True)
     commentaire = models.TextField(blank=True, null=True)

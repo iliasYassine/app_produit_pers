@@ -61,6 +61,11 @@ class CommandeSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommandeModel
         fields = '__all__'   
+    def create(self, validated_data):
+        # Si 'statut' n'est pas fourni ou vide, on force la valeur par défaut
+        if not validated_data.get('statut'):
+            validated_data['statut'] = "En préparation"
+        return super().create(validated_data)    
         
 ############CLIENT#####################
 class ClientSerializer(serializers.ModelSerializer):
