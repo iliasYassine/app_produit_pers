@@ -13,6 +13,7 @@ import { DeleteLignesComponent } from './caisse/delete-lignes/delete-lignes.comp
 import { DeleteTotalComponent } from './caisse/delete-total/delete-total/delete-total.component';
 import { FormulaireComponent } from './formulaire/formulaire/formulaire.component';
 import { CommandeComponent } from './commande/commande/commande.component';
+import { SuiviCommandeClientComponent } from './commande/suivi-commande-client/suivi-commande-client.component';
 
 export const routes: Routes = [
     { path: 'personnes', component: PersonneListComponent, pathMatch: 'full' },
@@ -29,4 +30,5 @@ export const routes: Routes = [
     { path: 'delete_total', component: DeleteTotalComponent },
     { path: 'formulaire', component: FormulaireComponent },
     { path: 'commande', component: CommandeComponent },
+    { path: 'suivie_client', component: SuiviCommandeClientComponent },
 ];

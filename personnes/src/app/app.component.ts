@@ -14,10 +14,11 @@ import { DeleteLignesComponent } from './caisse/delete-lignes/delete-lignes.comp
 import { DeleteTotalComponent } from './caisse/delete-total/delete-total/delete-total.component';
 import { FormulaireComponent } from './formulaire/formulaire/formulaire.component';
 import { CommandeComponent } from './commande/commande/commande.component';
+import { SuiviCommandeClientComponent } from './commande/suivi-commande-client/suivi-commande-client.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,PersonneListComponent,ProduitListComponent,PersonneDetailsComponent,ReportsComponent,ProduitDetailsComponent,NavbarComponent,FournisseurComponent,FournisseurListsComponent,CaisseEnregistreuseComponent,DeleteLignesComponent,DeleteTotalComponent,FormulaireComponent,CommandeComponent],
+  imports: [RouterOutlet,PersonneListComponent,ProduitListComponent,PersonneDetailsComponent,ReportsComponent,ProduitDetailsComponent,NavbarComponent,FournisseurComponent,FournisseurListsComponent,CaisseEnregistreuseComponent,DeleteLignesComponent,DeleteTotalComponent,FormulaireComponent,CommandeComponent,SuiviCommandeClientComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

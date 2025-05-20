@@ -24,4 +24,11 @@ export class CommandeService {
   deleteCommande(id:number):Observable<Commande>{
     return this.http.delete<Commande>(this.URL+id+"/");
   }
+  getCommandeById(id:number):Observable<Commande>{
+    return this.http.get<Commande>(this.URL+id+"/");
+  }
+
+  getCommandeByNumeroSuivi(numero_suivi: string): Observable<Commande> {
+  return this.http.get<Commande>(this.URL + 'suivi/' + numero_suivi + '/');
+}
 }

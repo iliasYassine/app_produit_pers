@@ -501,3 +501,8 @@ class CreateStripeCheckoutSession(APIView):
             return Response({'url': session.url})
         except Exception as e:
             return Response({'error': str(e)}, status=500)    
+class CommandeByNumeroSuivi(APIView):
+    def get(self, request, numero_suivi, format=None):
+        commande = get_object_or_404(CommandeModel, numero_suivi=numero_suivi)
+        serializer = CommandeSerializer(commande)
+        return Response(serializer.data, status=status.HTTP_200_OK)

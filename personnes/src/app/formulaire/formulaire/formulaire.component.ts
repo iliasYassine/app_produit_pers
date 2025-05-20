@@ -27,6 +27,7 @@ export class FormulaireComponent implements OnInit {
   commentaire1: string = '';
   factureUrl1: File | null = null;
   clientId1: number | null = null;
+  numero_expediteur1: string = '';
 
   constructor(private service_formulaire:FormulaireService) { }
 
@@ -51,7 +52,7 @@ export class FormulaireComponent implements OnInit {
       Swal.fire({
     icon: 'success',
     title: 'Client enregistré !',
-    text: 'Les informations client ont bien été enregistrées.',
+    text: 'Les informations client ont bien été enregistrées. Merci pour votre commande.',
     timer: 2000,
     showConfirmButton: false
   });

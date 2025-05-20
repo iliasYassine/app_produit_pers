@@ -12,6 +12,7 @@ class CommandeModel(models.Model):
     type_expedition = models.CharField(max_length=20,blank=True, null=True )
     numero_suivi = models.CharField(max_length=100, blank=True, null=True)
     commentaire = models.TextField(blank=True, null=True)
+    numero_expediteur= models.CharField(max_length=100, blank=True, null=True)
     facture= models.FileField(upload_to='factures/', blank=True, null=True)
     
     def generate_numero_suivi(self):

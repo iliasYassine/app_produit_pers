@@ -7,5 +7,6 @@ export interface Commande {
     type_expedition?: string | null;
     numero_suivi?: string | null;
     commentaire?: string | null;
+    numero_expediteur?: string | null;
     facture?: File | string | null; // URL du fichier facture ou objet File
 }
