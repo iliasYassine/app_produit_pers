@@ -33,8 +33,8 @@
        
         
         <td>
-          <a *ngIf="c.facture" [href]="c.facture" target="_blank">Voir</a>
-          <span *ngIf="!c.facture">-</span>
+           <a *ngIf="c.facture" [href]="'http://127.0.0.1:8000' + c.facture" target="_blank">Voir</a>
+            <span *ngIf="!c.facture">-</span>
         </td>
         <td>
           <button class="btn-delete" [disabled]="!c.id" (click)="deleteCommande(c.id!)">Supprimer</button>        </td>

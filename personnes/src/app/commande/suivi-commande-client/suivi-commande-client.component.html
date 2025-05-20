@@ -1,6 +1,6 @@
 <!-- Table des commandes -->
 <div class="table-container">
-  <h1>Liste des commandes</h1>
+  <h1>VOTRE</h1>
 
   <!-- Barre de recherche -->
   <div class="search-container" style="margin-bottom: 20px;">
@@ -20,6 +20,7 @@
         <th>Numéro d'éxpéditeur</th>
         <th>Numéro suivi</th>
         <th>Facture</th>
+        
       </tr>
     </thead>
     <tbody>
@@ -31,9 +32,12 @@
         <td>{{c.type_expedition}}</td>
         <td>{{c.numero_expediteur}}</td>
         <td>{{c.numero_suivi}}</td>
+        
         <td>
-          <a *ngIf="c.facture" [href]="c.facture" target="_blank">Voir</a>
-          <span *ngIf="!c.facture">-</span>
+          <!-- <a *ngIf="c.facture" [href]="c.facture" target="_blank">Voir</a> -->
+          <!-- <span *ngIf="!c.facture">-</span> -->
+           <a *ngIf="c.facture" [href]="'http://127.0.0.1:8000' + c.facture" target="_blank">Voir</a>
+            <span *ngIf="!c.facture">-</span>
         </td>
       </tr>
     </tbody>

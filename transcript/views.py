@@ -35,6 +35,10 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from icecream import ic
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from io import BytesIO
+from django.core.files.base import ContentFile
 
 
 class UsersList(APIView):
@@ -452,11 +456,17 @@ class Commande(APIView):
             serializer = CommandeSerializer(cmd, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+    
     def post(self, request, format=None):
         serializer = CommandeSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            commande = serializer.save()
+            # Générer le PDF
+            pdf_buffer = generate_facture_pdf(commande)
+            # Sauvegarder le PDF dans un champ FileField (ex: commande.facture)
+            commande.facture.save(f"facture_{commande.id}.pdf", ContentFile(pdf_buffer.read()))
+            commande.save()
+            return Response(CommandeSerializer(commande).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk, format=None):
@@ -472,7 +482,19 @@ class Commande(APIView):
         cmd.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)      
     
-
+def generate_facture_pdf(commande):
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A4)
+    p.setFont("Helvetica", 16)
+    p.drawString(100, 800, "Facture Commande")
+    p.setFont("Helvetica", 12)
+    p.drawString(100, 770, f"Numéro de commande : {commande.id}")
+    p.drawString(100, 750, f"Date : {commande.date_commande.strftime('%d/%m/%Y')}")
+    p.drawString(100, 730, f"Montant total : {commande.montant_total} €")
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return buffer
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -500,7 +522,8 @@ class CreateStripeCheckoutSession(APIView):
             )
             return Response({'url': session.url})
         except Exception as e:
-            return Response({'error': str(e)}, status=500)    
+            return Response({'error': str(e)}, status=500)   
+         
 class CommandeByNumeroSuivi(APIView):
     def get(self, request, numero_suivi, format=None):
         commande = get_object_or_404(CommandeModel, numero_suivi=numero_suivi)

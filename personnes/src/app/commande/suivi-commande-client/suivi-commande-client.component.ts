@@ -28,6 +28,7 @@ rechercherParNumeroSuivi() {
   if (this.searchNumeroSuivi.trim() !== '') {
     this.service_commande.getCommandeByNumeroSuivi(this.searchNumeroSuivi.trim()).subscribe(data => {
       this.commande = [data]; // Place la commande trouvée dans le tableau
+    console.log('facture:', data.facture);
     }, error => {
       this.commande = [];
       // Optionnel : afficher un message d'erreur si non trouvé

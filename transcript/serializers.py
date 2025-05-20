@@ -58,6 +58,7 @@ class FournisseurSerializer(serializers.ModelSerializer):
 #############COMMANDE#####################
 
 class CommandeSerializer(serializers.ModelSerializer):
+    facture = serializers.FileField(use_url=True, required=False, allow_null=True)
     class Meta:
         model = CommandeModel
         fields = '__all__'   
