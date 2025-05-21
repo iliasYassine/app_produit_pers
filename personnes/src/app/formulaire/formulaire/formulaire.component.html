@@ -25,6 +25,14 @@
       <label for="adresse">Adresse</label>
       <textarea [(ngModel)]="adr" name="adresse" class="form-control" id="adresse" required></textarea>
     </div>
+    <div class="form-group">
+      <label for="code_postal">Code Postal</label>
+      <input type="text" [(ngModel)]="code_postal1" name="code_postal" class="form-control" id="code_postal"
+       required pattern="[0-9]{5}" maxlength="5" placeholder="75000" title="Code postal à 5 chiffres">    </div>
+      <div class="form-group">
+      <label for="ville">Ville</label>
+      <textarea [(ngModel)]="ville1" name="ville" class="form-control" id="ville" required></textarea>
+    </div>
     <button type="submit" (click)="onSubmitClient()" class="btn btn-primary">Valider les infos</button>
   </form>
 

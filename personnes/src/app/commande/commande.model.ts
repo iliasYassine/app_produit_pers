@@ -9,4 +9,7 @@ export interface Commande {
     commentaire?: string | null;
     numero_expediteur?: string | null;
     facture?: File | string | null; // URL du fichier facture ou objet File
+    bordereau?:File | string | null; // URL du fichier bordereau ou objet File
+    adresse?: string | null; // Adresse de livraison
+    
 }

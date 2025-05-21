@@ -15,6 +15,7 @@
         <th>Numéro suivi</th>
         <th>Commentaire</th>
         <th>Facture</th>
+        <th>Bordereau mondial relay</th>
 
         <th>Actions</th>
       </tr>
@@ -36,6 +37,10 @@
            <a *ngIf="c.facture" [href]="'http://127.0.0.1:8000' + c.facture" target="_blank">Voir</a>
             <span *ngIf="!c.facture">-</span>
         </td>
+         <td>
+      <a *ngIf="c.bordereau" [href]="'http://localhost:8000' + c.bordereau" target="_blank">Bordereau</a>
+      <span *ngIf="!c.bordereau">-</span>
+    </td>
         <td>
           <button class="btn-delete" [disabled]="!c.id" (click)="deleteCommande(c.id!)">Supprimer</button>        </td>
       </tr>

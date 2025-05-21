@@ -28,6 +28,8 @@ export class FormulaireComponent implements OnInit {
   factureUrl1: File | null = null;
   clientId1: number | null = null;
   numero_expediteur1: string = '';
+  code_postal1: string = '';
+  ville1: string = '';
 
   constructor(private service_formulaire:FormulaireService) { }
 
@@ -41,7 +43,9 @@ export class FormulaireComponent implements OnInit {
       prenom: this.prenom,
       email: this.email,
       telephone: this.tel,
-      adresse: this.adr
+      adresse: this.adr,
+      code_postal: this.code_postal1,
+      ville: this.ville1,
     };
 
     
@@ -57,8 +61,6 @@ export class FormulaireComponent implements OnInit {
     showConfirmButton: false
   });
        
-      
-      
     })
     
   }
@@ -106,7 +108,5 @@ export class FormulaireComponent implements OnInit {
     }
   });
 }
-
-  
 
 }

@@ -32,8 +32,8 @@ urlpatterns = [
    path('reset-transactions/', views.ResetTransactions.as_view(), name='reset-transactions'),
    path('commande/', views.Commande.as_view(), name='commande'),
    path('commande/<int:pk>/', views.Commande.as_view(), name='commande'),
-   path('client/', views.Client.as_view(), name='client'),
-   path('client/<int:pk>/', views.Client.as_view(), name='client'),
+   path('client/', views.ClientApi.as_view(), name='client'),
+   path('client/<int:pk>/', views.ClientApi.as_view(), name='client'),
    path('create-stripe-session/', views.CreateStripeCheckoutSession.as_view(), name='create-stripe-session'),
    path('commande/suivi/<str:numero_suivi>/', views.CommandeByNumeroSuivi.as_view(), name='commande_by_numero_suivi'),
    

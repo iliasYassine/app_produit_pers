@@ -14,7 +14,9 @@ class CommandeModel(models.Model):
     commentaire = models.TextField(blank=True, null=True)
     numero_expediteur= models.CharField(max_length=100, blank=True, null=True)
     facture= models.FileField(upload_to='factures/', blank=True, null=True)
-    
+    bordereau = models.FileField(upload_to='bordereaux/', null=True, blank=True)
+   
+
     def generate_numero_suivi(self):
         date_part = self.date_commande.strftime('%Y%m%d') if self.date_commande else '000'
         random_part = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))

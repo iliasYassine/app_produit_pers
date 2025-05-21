@@ -6,6 +6,8 @@ class ClientModel(models.Model):
     email = models.EmailField(unique=True,blank=True, null=True)  
     telephone = models.CharField(max_length=15, blank=True, null=True)  
     adresse = models.TextField(blank=True, null=True)  
-
+    code_postal = models.CharField(max_length=10, blank=True, null=True)
+    ville = models.CharField(max_length=100, blank=True, null=True)
+    
     class Meta:  
         db_table = "clients"

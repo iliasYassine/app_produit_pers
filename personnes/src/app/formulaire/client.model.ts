@@ -7,6 +7,7 @@ prenom: string | null;
 email: string | null;
 telephone: string | null;
 adresse: string | null;
-
+code_postal?: string | null; // Code postal de livraison
+ville?: string | null; // Ville de livraison
     
   }

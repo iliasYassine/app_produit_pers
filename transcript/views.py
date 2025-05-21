@@ -39,6 +39,8 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from io import BytesIO
 from django.core.files.base import ContentFile
+import requests
+from zeep import Client, Transport
 
 
 class UsersList(APIView):
@@ -413,7 +415,7 @@ class ResetTransactions(APIView):
         return Response({'message': 'Toutes les transactions ont été réinitialisées.'}, status=status.HTTP_204_NO_CONTENT)
     
     
-class Client(APIView):
+class ClientApi(APIView):
     def get(self, request, pk=None, format=None):
         if pk:  # Si un ID est fourni, récupérer un client spécifique
             client = get_object_or_404(ClientModel, pk=pk)
@@ -465,6 +467,13 @@ class Commande(APIView):
             pdf_buffer = generate_facture_pdf(commande)
             # Sauvegarder le PDF dans un champ FileField (ex: commande.facture)
             commande.facture.save(f"facture_{commande.id}.pdf", ContentFile(pdf_buffer.read()))
+            etiquette_url = create_mondialrelay_shipment(commande)
+            if etiquette_url:
+                # Télécharge le PDF et sauvegarde-le dans le champ bordereau
+                import requests
+                response = requests.get(etiquette_url)
+                if response.status_code == 200:
+                    commande.bordereau.save(f"bordereau_{commande.id}.pdf", ContentFile(response.content))
             commande.save()
             return Response(CommandeSerializer(commande).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -496,8 +505,95 @@ def generate_facture_pdf(commande):
     buffer.seek(0)
     return buffer
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+def create_mondialrelay_shipment(commande):
+    enseigne = settings.MONDIAL_RELAY_ENSEIGNE
+    key = settings.MONDIAL_RELAY_KEY
 
+    client = commande.client  # Récupère le client lié à la commande
+    ic(client.nom, client.prenom, client.ville ,client.telephone, client.email,client.adresse,client.code_postal)
+    params = {
+        'Enseigne': enseigne,
+        'ModeCol': 'CCC',
+        'ModeLiv': '24R',
+        'NDossier': '',
+        'NClient': client.id,
+        'Expe_Langage': 'FR',
+        'Expe_Ad1': '3 rue du pont',
+        'Expe_Ad2': '',
+        'Expe_Ad3': '',
+        'Expe_Ad4': '',
+        'Expe_Ville': 'Cluses',
+        'Expe_CP': '74300',
+        'Expe_Pays': 'FR',
+        'Expe_Tel1': '0650378032',
+        'Expe_Tel2': '',
+        'Expe_Mail': 'ihpconcept74@gmail.com',
+        'Dest_Langage': 'FR',
+        'Dest_Ad1': client.nom if client else '',
+        'Dest_Ad2': client.prenom,
+        'Dest_Ad3': client.adresse,  # Tu peux parser client.adresse si besoin
+        'Dest_Ad4': '',
+        'Dest_Ville': client.ville,  # À extraire de client.adresse si possible
+        'Dest_CP': client.code_postal,     # À extraire de client.adresse si possible
+        'Dest_Pays': 'FR',
+        'Dest_Tel1': client.telephone if client else '',
+        'Dest_Tel2': '',
+        'Dest_Mail': client.email if client else '',
+        'Poids': '1000',
+        'Longueur': '20',
+        'Taille': '',
+        'NbColis': '1',
+        'CRT_Valeur': '',
+        'CRT_Devise': '',
+        'Exp_Valeur': '',
+        'Exp_Devise': '',
+        'COL_Rel_Pays': '',
+        'COL_Rel': '',
+        'LIV_Rel_Pays': '',
+        'LIV_Rel': '',
+        'TAvisage': '',
+        'TReprise': '',
+        'Montage': '',
+        'TRDV': '',
+        'Assurance': '',
+        'Instructions': '',
+        'Security': key,
+    }
+
+    # Si tu veux parser l'adresse pour remplir Dest_Ville et Dest_CP, fais-le ici
+    # Exemple si adresse = "75000 Paris\n12 rue de la paix"
+    if client and client.adresse:
+        lignes = client.adresse.split('\n')
+        if len(lignes) > 0:
+            params['Dest_CP'] = lignes[0].split(' ')[0]  # "75000"
+            params['Dest_Ville'] = ' '.join(lignes[0].split(' ')[1:])  # "Paris"
+        if len(lignes) > 1:
+            params['Dest_Ad3'] = lignes[1]  # "12 rue de la paix"
+
+    session = requests.Session()
+    session.verify = False
+    transport = Transport(session=session)
+    try:
+        client_zeep = Client(wsdl=settings.MONDIAL_RELAY_API_URL.strip() + "?WSDL", transport=transport)
+        result = client_zeep.service.WSI2_CreationExpedition(**params)
+        numero = result['ExpeditionNum']
+        etiquette = client_zeep.service.WSI3_GetEtiquettes(
+            Enseigne=enseigne,
+            Expeditions=numero,
+            Langue='FR',
+            Security=key
+        )
+        # Récupère l'URL du PDF si dispo
+        url_pdf = getattr(etiquette, 'URL_PDF_A4', None) or getattr(etiquette, 'URL_PDF_A5', None) or getattr(etiquette, 'URL_PDF_10x15', None)
+        if url_pdf:
+            return url_pdf
+        print("Aucune étiquette PDF générée, STAT =", getattr(etiquette, 'STAT', None))
+        return None
+    except Exception as e:
+        print("Erreur Mondial Relay:", e)
+        return None    
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 class CreateStripeCheckoutSession(APIView):
     def post(self, request):
         montant = request.data.get('montant')  # en euros
@@ -522,10 +618,11 @@ class CreateStripeCheckoutSession(APIView):
             )
             return Response({'url': session.url})
         except Exception as e:
-            return Response({'error': str(e)}, status=500)   
+            return Response({'error': str(e)}, status=500)
          
 class CommandeByNumeroSuivi(APIView):
     def get(self, request, numero_suivi, format=None):
         commande = get_object_or_404(CommandeModel, numero_suivi=numero_suivi)
         serializer = CommandeSerializer(commande)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
