@@ -17,6 +17,7 @@ export class ReportServiceService {
   private LIGNE_TRANSAC='http://127.0.0.1:8000/transcript/ligneTransaction/'
   private CH_URL='http://127.0.0.1:8000/transcript/chiffre_affaire_total/'
   private INITIALISE=' http://127.0.0.1:8000/transcript/reset-transactions/'
+  private BENEFICE_URL='http://127.0.0.1:8000/transcript/benefice/';
   constructor(private httpClient:HttpClient) { }
 
   getProduitReport():Observable<Produit[]>{
@@ -48,6 +49,9 @@ export class ReportServiceService {
   reinitilsie():Observable<any>{
     return this.httpClient.post<any>(this.INITIALISE,{});
 
+}
+getbenefice():Observable<{benefice: number}> {
+  return this.httpClient.get<{benefice:number}>(this.BENEFICE_URL); 
 }
 
 

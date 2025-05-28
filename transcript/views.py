@@ -353,7 +353,25 @@ class ListTotal(APIView):
         
         return Response({'top_vente': total_list}, status=200)    
     
-    
+class Benefice(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        # Chiffre d'affaires
+        chiffre_affaire_total = Transaction.objects.aggregate(
+            chiffre_affaire_total=Sum('total')
+        )['chiffre_affaire_total'] or 0
+
+        # Coût des produits vendus
+        cout_total = LigneTransaction.objects.aggregate(
+            cout_total=Sum(F('quantite') * F('produit__prixAchat'))
+        )['cout_total'] or 0
+
+        benefice = chiffre_affaire_total - cout_total
+
+        return Response({'benefice': benefice})
+        
+            
 class TopVente(APIView):
     permission_classes = [AllowAny]
     def get(self,request,*args, **kwargs):

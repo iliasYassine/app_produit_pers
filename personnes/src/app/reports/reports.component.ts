@@ -34,14 +34,15 @@ export class ReportsComponent implements OnInit{
   getChiffreAffairesTotal():void{
     this.report_service.getChiffreAffairesTotal().subscribe((data)=>{
       this.chiffreAffaireTotal=data.chiffre_affaires;
-      this.getBenefice();
+      this.getbenefice();
     })
   }
-  getBenefice(){
-    this.benefice=this.chiffreAffaireTotal-this.coutTotal;
-    console.log(this.benefice);
-    console.log(this.coutTotal);
-    console.log(this.chiffreAffaireTotal);
+ 
+  getbenefice(){
+    this.report_service.getbenefice().subscribe((data)=>{
+      this.benefice=data.benefice;
+      console.log("Benefice:", this.benefice);
+    });
   }
 
 

@@ -36,5 +36,7 @@ urlpatterns = [
    path('client/<int:pk>/', views.ClientApi.as_view(), name='client'),
    path('create-stripe-session/', views.CreateStripeCheckoutSession.as_view(), name='create-stripe-session'),
    path('commande/suivi/<str:numero_suivi>/', views.CommandeByNumeroSuivi.as_view(), name='commande_by_numero_suivi'),
+   path('benefice/', views.Benefice.as_view(), name='benefice')
+   
    
 ]
