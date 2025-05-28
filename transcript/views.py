@@ -41,6 +41,8 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 import requests
 from zeep import Client, Transport
+import urllib3  
+urllib3.disable_warnings()
 
 
 class UsersList(APIView):
@@ -504,71 +506,104 @@ def generate_facture_pdf(commande):
     p.save()
     buffer.seek(0)
     return buffer
+import hashlib
+
+def generate_security_key(params, private_key):
+    # Ordre exact des champs selon la doc Mondial Relay
+    fields = [
+        'Enseigne', 'ModeCol', 'ModeLiv', 'NDossier', 'NClient', 'Expe_Langage',
+        'Expe_Ad1', 'Expe_Ad2', 'Expe_Ad3', 'Expe_Ad4', 'Expe_Ville', 'Expe_CP', 'Expe_Pays',
+        'Expe_Tel1', 'Expe_Tel2', 'Expe_Mail', 'Dest_Langage', 'Dest_Ad1', 'Dest_Ad2', 'Dest_Ad3',
+        'Dest_Ad4', 'Dest_Ville', 'Dest_CP', 'Dest_Pays', 'Dest_Tel1', 'Dest_Tel2', 'Dest_Mail',
+        'Poids', 'Longueur', 'Taille', 'NbColis', 'CRT_Valeur', 'CRT_Devise', 'Exp_Valeur',
+        'Exp_Devise', 'COL_Rel_Pays', 'COL_Rel', 'LIV_Rel_Pays', 'LIV_Rel', 'TAvisage',
+        'TReprise', 'Montage', 'TRDV', 'Assurance', 'Instructions'
+    ]
+    chaine = ''.join(str(params.get(f, '')) for f in fields) + private_key
+    return hashlib.md5(chaine.encode('utf-8')).hexdigest().upper()
+
 
 def create_mondialrelay_shipment(commande):
     enseigne = settings.MONDIAL_RELAY_ENSEIGNE
     key = settings.MONDIAL_RELAY_KEY
 
-    client = commande.client  # Récupère le client lié à la commande
-    ic(client.nom, client.prenom, client.ville ,client.telephone, client.email,client.adresse,client.code_postal)
+    client = commande.client
+
+    # Civilité (à adapter dynamiquement si tu as l'info)
+    civilite = "MR"
+    nom = client.nom.upper()
+    prenom = client.prenom.upper()
+    adresse = client.adresse.upper()
+    ville = client.ville.upper()
+    code_postal = str(client.code_postal).zfill(5)  # 5 chiffres
+    # Téléphone au format Mondial Relay
+    telephone = client.telephone.replace(" ", "")
+    if telephone.startswith("+33"):
+        tel_ok = "0" + telephone[3:]
+    elif telephone.startswith("0033"):
+        tel_ok = "0" + telephone[4:]
+    else:
+        tel_ok = telephone
+    tel_ok = tel_ok[:10]  # 10 chiffres
+
+    # Email conforme RFC2822 et longueur
+    email = client.email.lower()
+    if len(email) < 7 or len(email) > 70:
+        email = "test@test.com"
+
     params = {
-        'Enseigne': enseigne,
-        'ModeCol': 'CCC',
-        'ModeLiv': '24R',
-        'NDossier': '',
-        'NClient': client.id,
+        'Enseigne': enseigne,  # 8 caractères fixes
+        'ModeCol': 'CCC',      # Collecte à domicile
+        'ModeLiv': '24R',      # Livraison Point Relais
+        'NDossier': '',        # Facultatif
+        'NClient': str(client.id)[:9],  # 9 caractères max
         'Expe_Langage': 'FR',
-        'Expe_Ad1': '3 rue du pont',
+        'Expe_Ad1': f'{civilite} HASBI ILIAS',  # Civilité + nom/prénom en MAJ
         'Expe_Ad2': '',
-        'Expe_Ad3': '',
+        'Expe_Ad3': '3 RUE DU PONT',
         'Expe_Ad4': '',
-        'Expe_Ville': 'Cluses',
+        'Expe_Ville': 'CLUSES',
         'Expe_CP': '74300',
         'Expe_Pays': 'FR',
         'Expe_Tel1': '0650378032',
         'Expe_Tel2': '',
         'Expe_Mail': 'ihpconcept74@gmail.com',
         'Dest_Langage': 'FR',
-        'Dest_Ad1': client.nom if client else '',
-        'Dest_Ad2': client.prenom,
-        'Dest_Ad3': client.adresse,  # Tu peux parser client.adresse si besoin
+        'Dest_Ad1': 'MR FRANCIS ALBERT',  # Civilité + nom en MAJ
+        'Dest_Ad2': '',               # Prénom en MAJ
+        'Dest_Ad3':'5 BIS RUE FAIDHERBE',              # Adresse en MAJ
         'Dest_Ad4': '',
-        'Dest_Ville': client.ville,  # À extraire de client.adresse si possible
-        'Dest_CP': client.code_postal,     # À extraire de client.adresse si possible
+        'Dest_Ville': 'SAVIGNY SUR ORGE',
+        'Dest_CP': '91600',
         'Dest_Pays': 'FR',
-        'Dest_Tel1': client.telephone if client else '',
+        'Dest_Tel1': '+33650378032',
         'Dest_Tel2': '',
-        'Dest_Mail': client.email if client else '',
-        'Poids': '1000',
-        'Longueur': '20',
-        'Taille': '',
-        'NbColis': '1',
-        'CRT_Valeur': '',
-        'CRT_Devise': '',
-        'Exp_Valeur': '',
-        'Exp_Devise': '',
-        'COL_Rel_Pays': '',
-        'COL_Rel': '',
-        'LIV_Rel_Pays': '',
-        'LIV_Rel': '',
-        'TAvisage': '',
-        'TReprise': '',
-        'Montage': '',
-        'TRDV': '',
-        'Assurance': '',
-        'Instructions': '',
-        'Security': key,
+        'Dest_Mail': 'meryem.soda',
+        'Poids': '1000',         # 1000g = 1kg
+        'Longueur': '20',        # Facultatif
+        'Taille': '',            # Facultatif, laisser vide sauf consigne contraire
+        'NbColis': '1',          # 1 ou 2 chiffres
+        'CRT_Valeur': '0',       # 0 si pas de contre-remboursement
+        'CRT_Devise': '',        # Facultatif
+        'Exp_Valeur': '',        # Facultatif
+        'Exp_Devise': '',        # Facultatif
+        'COL_Rel_Pays': '',      # Facultatif
+        'COL_Rel': '',           # Facultatif
+        'LIV_Rel_Pays': 'FR',    # Obligatoire pour 24R
+        'LIV_Rel': '',           # Facultatif (ou code Point Relais)
+        'TAvisage': '',          # Facultatif
+        'TReprise': '',          # Facultatif
+        'Montage': '',           # Facultatif
+        'TRDV': '',              # Facultatif
+        'Assurance': '',         # Facultatif
+        'Instructions': '',      # Facultatif
+        # Pas de 'Security' ici !
     }
 
-    # Si tu veux parser l'adresse pour remplir Dest_Ville et Dest_CP, fais-le ici
-    # Exemple si adresse = "75000 Paris\n12 rue de la paix"
-    if client and client.adresse:
-        lignes = client.adresse.split('\n')
-        if len(lignes) > 0:
-            params['Dest_CP'] = lignes[0].split(' ')[0]  # "75000"
-            params['Dest_Ville'] = ' '.join(lignes[0].split(' ')[1:])  # "Paris"
-        if len(lignes) > 1:
-            params['Dest_Ad3'] = lignes[1]  # "12 rue de la paix"
+    # Génération de la clé de sécurité
+    params['Security'] = generate_security_key(params, key)
+
+    print("Params envoyés à Mondial Relay :", params)
 
     session = requests.Session()
     session.verify = False
@@ -581,17 +616,114 @@ def create_mondialrelay_shipment(commande):
             Enseigne=enseigne,
             Expeditions=numero,
             Langue='FR',
-            Security=key
+            Security=params['Security']
         )
-        # Récupère l'URL du PDF si dispo
-        url_pdf = getattr(etiquette, 'URL_PDF_A4', None) or getattr(etiquette, 'URL_PDF_A5', None) or getattr(etiquette, 'URL_PDF_10x15', None)
+        url_pdf = (
+            getattr(etiquette, 'URL_PDF_A4', None)
+            or getattr(etiquette, 'URL_PDF_A5', None)
+            or getattr(etiquette, 'URL_PDF_10x15', None)
+        )
         if url_pdf:
             return url_pdf
         print("Aucune étiquette PDF générée, STAT =", getattr(etiquette, 'STAT', None))
         return None
     except Exception as e:
         print("Erreur Mondial Relay:", e)
-        return None    
+        return None
+
+# def create_mondialrelay_shipment(commande):
+#     enseigne = settings.MONDIAL_RELAY_ENSEIGNE
+#     key = settings.MONDIAL_RELAY_KEY
+
+#     client = commande.client  # Récupère le client lié à la commande
+
+#     # Mise en forme des champs selon la doc Mondial Relay
+#     civilite = "MR"  # ou adapte selon le genre du client si tu as l'info
+#     nom = client.nom.upper()
+#     prenom = client.prenom.upper()
+#     adresse = client.adresse.upper()
+#     ville = client.ville.upper()
+#     code_postal = client.code_postal
+#     telephone = client.telephone.replace("+33", "0") if client.telephone.startswith("+33") else client.telephone
+#     telephone = telephone.replace(" ", "")
+#     if telephone.startswith("0") and len(telephone) == 10:
+#         tel_ok = telephone
+#     elif telephone.startswith("+33") and len(telephone) == 12:
+#         tel_ok = "0" + telephone[3:]
+#     else:
+#         tel_ok = telephone  # fallback
+
+#     params = {
+#         'Enseigne': enseigne,
+#         'ModeCol': 'CCC',
+#         'ModeLiv': '24R',
+#         'NDossier': '',
+#         'NClient': str(client.id),
+#         'Expe_Langage': 'FR',
+#         'Expe_Ad1': f'{civilite} HASBI ILIAS',
+#         'Expe_Ad2': '',
+#         'Expe_Ad3': '3 RUE DU PONT',
+#         'Expe_Ad4': '',
+#         'Expe_Ville': 'CLUSSES',
+#         'Expe_CP': '74300',
+#         'Expe_Pays': 'FR',
+#         'Expe_Tel1': '0650378032',
+#         'Expe_Tel2': '',
+#         'Expe_Mail': 'ihpconcept74@gmail.com',
+#         'Dest_Langage': 'FR',
+#         'Dest_Ad1': f'{civilite} {nom}',
+#         'Dest_Ad2': prenom,
+#         'Dest_Ad3': adresse,
+#         'Dest_Ad4': '',
+#         'Dest_Ville': ville,
+#         'Dest_CP': code_postal,
+#         'Dest_Pays': 'FR',
+#         'Dest_Tel1': tel_ok,
+#         'Dest_Tel2': '',
+#         'Dest_Mail': client.email,
+#         'Poids': '1000',
+#         'Longueur': '20',
+#         'Taille': '',
+#         'NbColis': '1',
+#         'CRT_Valeur': '0',
+#         'CRT_Devise': '',
+#         'Exp_Valeur': '',
+#         'Exp_Devise': '',
+#         'COL_Rel_Pays': '',
+#         'COL_Rel': '',
+#         'LIV_Rel_Pays': 'FR',
+#         'LIV_Rel': '',
+#         'TAvisage': '',
+#         'TReprise': '',
+#         'Montage': '',
+#         'TRDV': '',
+#         'Assurance': '',
+#         'Instructions': '',
+#         'Security': key,
+#     }
+#     print("Params envoyés à Mondial Relay :", params)
+
+#     session = requests.Session()
+#     session.verify = False
+#     transport = Transport(session=session)
+#     try:
+#         client_zeep = Client(wsdl=settings.MONDIAL_RELAY_API_URL.strip() + "?WSDL", transport=transport)
+#         result = client_zeep.service.WSI2_CreationExpedition(**params)
+#         numero = result['ExpeditionNum']
+#         etiquette = client_zeep.service.WSI3_GetEtiquettes(
+#             Enseigne=enseigne,
+#             Expeditions=numero,
+#             Langue='FR',
+#             Security=key
+#         )
+#         url_pdf = getattr(etiquette, 'URL_PDF_A4', None) or getattr(etiquette, 'URL_PDF_A5', None) or getattr(etiquette, 'URL_PDF_10x15', None)
+#         if url_pdf:
+#             return url_pdf
+#         print("Aucune étiquette PDF générée, STAT =", getattr(etiquette, 'STAT', None))
+#         return None
+#     except Exception as e:
+#         print("Erreur Mondial Relay:", e)
+#         return None    
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 class CreateStripeCheckoutSession(APIView):

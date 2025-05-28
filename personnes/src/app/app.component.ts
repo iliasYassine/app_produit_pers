@@ -15,19 +15,26 @@ import { DeleteTotalComponent } from './caisse/delete-total/delete-total/delete-
 import { FormulaireComponent } from './formulaire/formulaire/formulaire.component';
 import { CommandeComponent } from './commande/commande/commande.component';
 import { SuiviCommandeClientComponent } from './commande/suivi-commande-client/suivi-commande-client.component';
+import { MiniNavBarComponent } from './mini-nav-bar/mini-nav-bar.component';
+import { NgIf } from '@angular/common';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,PersonneListComponent,ProduitListComponent,PersonneDetailsComponent,ReportsComponent,ProduitDetailsComponent,NavbarComponent,FournisseurComponent,FournisseurListsComponent,CaisseEnregistreuseComponent,DeleteLignesComponent,DeleteTotalComponent,FormulaireComponent,CommandeComponent,SuiviCommandeClientComponent],
+  imports: [NgIf,RouterOutlet,PersonneListComponent,ProduitListComponent,PersonneDetailsComponent,ReportsComponent,ProduitDetailsComponent,NavbarComponent,FournisseurComponent,FournisseurListsComponent,CaisseEnregistreuseComponent,DeleteLignesComponent,DeleteTotalComponent,FormulaireComponent,CommandeComponent,SuiviCommandeClientComponent,MiniNavBarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent  {
   title = 'personnes';
-  constructor(router: Router) {
+  constructor(public router: Router) {
     // Ajouter les routes à la configuration du routeur
     router.resetConfig(routes);
+    
   }
+  isSpecialRoute() {
+  return ['/formulaire', '/suivie_client'].includes(this.router.url);
+  
+}
 
 
 

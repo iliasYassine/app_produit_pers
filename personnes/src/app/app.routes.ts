@@ -14,6 +14,7 @@ import { DeleteTotalComponent } from './caisse/delete-total/delete-total/delete-
 import { FormulaireComponent } from './formulaire/formulaire/formulaire.component';
 import { CommandeComponent } from './commande/commande/commande.component';
 import { SuiviCommandeClientComponent } from './commande/suivi-commande-client/suivi-commande-client.component';
+import { MiniNavBarComponent } from './mini-nav-bar/mini-nav-bar.component';
 
 export const routes: Routes = [
     { path: 'personnes', component: PersonneListComponent, pathMatch: 'full' },
@@ -31,4 +32,5 @@ export const routes: Routes = [
     { path: 'formulaire', component: FormulaireComponent },
     { path: 'commande', component: CommandeComponent },
     { path: 'suivie_client', component: SuiviCommandeClientComponent },
+    
 ];

@@ -186,7 +186,15 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 load_dotenv()
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
-MONDIAL_RELAY_ENSEIGNE = 'BDTEST'
-MONDIAL_RELAY_KEY = 'ABCDEFGH'
-MONDIAL_RELAY_MARQUE = 'BD'
-MONDIAL_RELAY_API_URL = ' https://api.mondialrelay.com/WebService.asmx'
+
+#mondial relay
+# MONDIAL_RELAY_ENSEIGNE = 'BDTEST13'
+# MONDIAL_RELAY_KEY = 'PrivateK'
+# #MONDIAL_RELAY_MARQUE = 'BD'
+# MONDIAL_RELAY_API_URL = 'https://api.mondialrelay.com/WebService.asmx'
+
+MONDIAL_RELAY_ENSEIGNE = 'CC23IKVE'
+MONDIAL_RELAY_KEY = 'LEoQEajc'
+MONDIAL_RELAY_MARQUE = 'CC'
+MONDIAL_RELAY_API_URL = 'https://api.mondialrelay.com/WebService.asmx'
+

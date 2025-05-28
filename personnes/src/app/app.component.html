@@ -1,2 +1,10 @@
-<app-navbar></app-navbar>
+<!-- <app-navbar></app-navbar>
+<router-outlet></router-outlet> -->
+
+<!-- Affiche la navbar principale sauf sur les routes spéciales -->
+<app-navbar *ngIf="!isSpecialRoute()"></app-navbar>
+
+<!-- Affiche la mini-navbar SEULEMENT sur les routes spéciales -->
+<app-mini-nav-bar *ngIf="isSpecialRoute()"></app-mini-nav-bar>
+
 <router-outlet></router-outlet>
