@@ -41,6 +41,7 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 import requests
 from zeep import Client, Transport
+from django.db.models.functions import TruncMonth
 import urllib3  
 urllib3.disable_warnings()
 
@@ -371,7 +372,82 @@ class Benefice(APIView):
 
         return Response({'benefice': benefice})
         
-            
+class BeneficeParMois(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        # Chiffre d'affaires par mois
+        ca_par_mois = (
+            Transaction.objects
+            .annotate(mois=TruncMonth('date_heure'))
+            .values('mois')
+            .annotate(chiffre_affaires=Sum('total'))
+            .order_by('mois')
+        )
+
+        # Coût des produits vendus par mois
+        cout_par_mois = (
+            LigneTransaction.objects
+            .annotate(mois=TruncMonth('transaction__date_heure'))
+            .values('mois')
+            .annotate(cout_total=Sum(F('quantite') * F('produit__prixAchat')))
+            .order_by('mois')
+        )
+
+        # Fusionner les deux résultats
+        result = []
+        cout_dict = {c['mois']: c['cout_total'] for c in cout_par_mois}
+        for ca in ca_par_mois:
+            mois = ca['mois']
+            chiffre_affaires = ca['chiffre_affaires'] or 0
+            cout_total = cout_dict.get(mois, 0) or 0
+            benefice = chiffre_affaires - cout_total
+            result.append({
+                'mois': mois,
+                'chiffre_affaires': chiffre_affaires,
+                'cout_total': cout_total,
+                'benefice': benefice
+            })
+        return Response(result)
+    
+from django.db.models.functions import TruncWeek
+
+class BeneficeParSemaine(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        ca_par_semaine = (
+            Transaction.objects
+            .annotate(semaine=TruncWeek('date_heure'))
+            .values('semaine')
+            .annotate(chiffre_affaires=Sum('total'))
+            .order_by('semaine')
+        )
+
+        cout_par_semaine = (
+            LigneTransaction.objects
+            .annotate(semaine=TruncWeek('transaction__date_heure'))
+            .values('semaine')
+            .annotate(cout_total=Sum(F('quantite') * F('produit__prixAchat')))
+            .order_by('semaine')
+        )
+
+        result = []
+        cout_dict = {c['semaine']: c['cout_total'] for c in cout_par_semaine}
+        for ca in ca_par_semaine:
+            semaine = ca['semaine']
+            chiffre_affaires = ca['chiffre_affaires'] or 0
+            cout_total = cout_dict.get(semaine, 0) or 0
+            benefice = chiffre_affaires - cout_total
+            result.append({
+                'semaine': semaine,
+                'chiffre_affaires': chiffre_affaires,
+                'cout_total': cout_total,
+                'benefice': benefice
+            })
+        return Response(result)
+    
+                    
 class TopVente(APIView):
     permission_classes = [AllowAny]
     def get(self,request,*args, **kwargs):

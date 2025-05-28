@@ -18,6 +18,8 @@ export class ReportServiceService {
   private CH_URL='http://127.0.0.1:8000/transcript/chiffre_affaire_total/'
   private INITIALISE=' http://127.0.0.1:8000/transcript/reset-transactions/'
   private BENEFICE_URL='http://127.0.0.1:8000/transcript/benefice/';
+  private BENEFICE_MOIS='http://127.0.0.1:8000/transcript/beneficeMois/';
+  private BENEFICE_SEMAINE='http://127.0.0.1:8000/transcript/beneficeSemaine/';
   constructor(private httpClient:HttpClient) { }
 
   getProduitReport():Observable<Produit[]>{
@@ -52,6 +54,14 @@ export class ReportServiceService {
 }
 getbenefice():Observable<{benefice: number}> {
   return this.httpClient.get<{benefice:number}>(this.BENEFICE_URL); 
+}
+
+getBeneficeParMois(): Observable<any[]> {
+  return this.httpClient.get<any[]>(this.BENEFICE_MOIS);
+}
+
+getBeneficeParSemaine(): Observable<any[]> {
+  return this.httpClient.get<any[]>(this.BENEFICE_SEMAINE);
 }
 
 
