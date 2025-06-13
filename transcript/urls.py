@@ -39,6 +39,7 @@ urlpatterns = [
    path('benefice/', views.Benefice.as_view(), name='benefice'),
    path('beneficeMois/', views.BeneficeParMois.as_view(), name='beneficeMois'),
    path('beneficeSemaine/', views.BeneficeParSemaine.as_view(), name='beneficeSemaine'),
+   path('scanbynomprod/', views.ScanByNomProd.as_view(), name='scanbynomprod'),
    
    
    

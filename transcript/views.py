@@ -851,4 +851,55 @@ class CommandeByNumeroSuivi(APIView):
         commande = get_object_or_404(CommandeModel, numero_suivi=numero_suivi)
         serializer = CommandeSerializer(commande)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ScanByNomProd(APIView):
+    permission_classes = [AllowAny]
     
+    def post(self,request,format=None):
+        produit =request.data.get('nomProd')
+        if not produit:
+            return Response({'erreur': 'Un nom de produit est requis.'}, status=status.HTTP_400_BAD_REQUEST) 
+             
+                
+        with db_transaction.atomic():
+            produit=get_object_or_404(Produit,nomProd=produit)
+            if produit.qte <= 0:
+                return Response({'erreur': 'Stock insuffisant pour le produit demandé.'}, status=status.HTTP_400_BAD_REQUEST)
+            #on gere la transaction mtn qu'on a le produit
+            transaction_id = request.session.get('transaction_id', None)
+            if not transaction_id:
+                transaction = Transaction()
+                transaction.save()
+                request.session['transaction_id'] = transaction.id
+            else:
+                transaction = Transaction.objects.get(id=transaction_id)
+                
+            # Gestion de la ligne de transaction
+            ligne_transaction, created = LigneTransaction.objects.get_or_create(
+                transaction=transaction,
+                produit=produit,
+                defaults={'quantite': 1, 'prix_unitaire': produit.prixVente}
+            )
+            if not created:
+                ligne_transaction.quantite += 1
+                ligne_transaction.total = ligne_transaction.quantite * ligne_transaction.prix_unitaire
+                ligne_transaction.save()
+            
+            
+            # mise a jour total dans transaction
+            # Mise à jour du total de la transaction
+            transaction_total = transaction.lignes.all().aggregate(
+            total_sum=Sum('total')
+            )['total_sum'] or 0
+            transaction.total = transaction_total  
+            transaction.save()    
+                   
+
+
+            # Mise à jour du stock du produit
+            produit.qte -= 1
+            produit.save()
+
+            # Sérialisation de la ligne de transaction pour la réponse
+            ligne_serializer = LigneTransactionSerializer(ligne_transaction)
+            return Response(ligne_serializer.data, status=status.HTTP_201_CREATED)
