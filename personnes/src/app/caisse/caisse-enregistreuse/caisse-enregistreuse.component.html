@@ -9,6 +9,7 @@
   placeholder="Rechercher un produit par nom"
   [(ngModel)]="searchTerm"
   (input)="filterProduits()" 
+  (blur)="filteredProduits = []"
   class="search-bar"
 />
 

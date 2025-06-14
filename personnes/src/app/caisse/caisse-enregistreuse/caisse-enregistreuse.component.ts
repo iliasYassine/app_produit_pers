@@ -101,6 +101,10 @@ export class CaisseEnregistreuseComponent implements OnInit {
   }
 
     filterProduits(): void {
+       if (!this.searchTerm.trim()) {
+    this.filteredProduits = [];
+    return;
+  }
       this.filteredProduits = this.produit2.filter(prod =>
         prod.nomProd.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
