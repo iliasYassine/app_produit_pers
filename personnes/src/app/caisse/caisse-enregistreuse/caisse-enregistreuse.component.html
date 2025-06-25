@@ -3,15 +3,18 @@
     <input type="text"  [(ngModel)]="codebarre" placeholder="Scanner le code-barre ici" (keypress)="checkIfEnterKey($event)">
     <button (click)="scanProduit()">Ajouter</button>
   </div>
+
+
   <div class="scan-panel">
    <input
   type="text"
   placeholder="Rechercher un produit par nom"
   [(ngModel)]="searchTerm"
   (input)="filterProduits()" 
-  (blur)="filteredProduits = []"
-  class="search-bar"
+  (blur)="onBlurSearch()"
+  class="search-bar" 
 />
+ 
 
 <div class="search-results" *ngIf="filteredProduits.length">
   <div class="result-item" *ngFor="let i of filteredProduits" (click)="ajouterProduitParNom(i)">
@@ -41,4 +44,3 @@
     <button (click)="finalizeTransaction()">Finaliser la transaction</button>
   </div>
 </div>
-

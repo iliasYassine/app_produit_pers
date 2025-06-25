@@ -77,6 +77,12 @@ export class CaisseEnregistreuseComponent implements OnInit {
    
   }
 
+  onBlurSearch() {
+  setTimeout(() => {
+    this.filteredProduits = [];
+  }, 150); // laisse le temps au clic d'être pris en compte
+}
+
   
   checkIfEnterKey(event: KeyboardEvent): void {
     // Vérifiez si la touche pressée est "Enter"
@@ -140,6 +146,7 @@ export class CaisseEnregistreuseComponent implements OnInit {
   
 
 }
+
 
 
 }
