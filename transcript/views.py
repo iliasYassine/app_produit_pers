@@ -384,6 +384,7 @@ class BeneficeParMois(APIView):
             .annotate(chiffre_affaires=Sum('total'))
             .order_by('mois')
         )
+        print(ca_par_mois)
 
         # Coût des produits vendus par mois
         cout_par_mois = (
@@ -393,6 +394,7 @@ class BeneficeParMois(APIView):
             .annotate(cout_total=Sum(F('quantite') * F('produit__prixAchat')))
             .order_by('mois')
         )
+        print(cout_par_mois)
 
         # Fusionner les deux résultats
         result = []
@@ -408,6 +410,7 @@ class BeneficeParMois(APIView):
                 'cout_total': cout_total,
                 'benefice': benefice
             })
+            print("result",result)
         return Response(result)
     
 from django.db.models.functions import TruncWeek
@@ -457,19 +460,38 @@ class TopVente(APIView):
     
     
 class sendMail(APIView):
-    permission_classes=[AllowAny]
-    def get(self,request):
+    permission_classes = [AllowAny]
+    
+    def get(self, request):
         produits = Produit.objects.filter(qte__lte=F('qteMin'))
-        for produit in produits:      
+        
+        if not produits.exists():
+            return Response('Aucun produit en rupture', status=200)
+        
+        # Créer la liste des produits en rupture
+        liste_produits = []
+        for produit in produits:
+            liste_produits.append(f"- {produit.nomProd} (Stock: {produit.qte}, Min: {produit.qteMin})")
+        
+        # Créer le message avec tous les produits
+        message = f"""Alerte : {len(produits)} produit(s) ont atteint le stock minimum.
 
-            send_mail(
-                    'Alerte produit min atteint a recommander',
-                    f'vous avez atteint le min penser a commander ce produit: {produit.nomProd}',
-                    'iliashasbi@gmail.com',
-                    ['iliashasbi@gmail.com'],
-                    fail_silently=False,
-                )
-        return Response('okok',status=200)
+Produits à recommander :
+{chr(10).join(liste_produits)}
+
+Merci de passer commande rapidement.
+"""
+        
+        # Envoyer un seul email avec tous les produits
+        send_mail(
+            f'Alerte stock : {len(produits)} produit(s) à recommander',
+            message,
+            'iliashasbi@gmail.com',
+            ['iliashasbi@gmail.com'],
+            fail_silently=False,
+        )
+        
+        return Response(f'Email envoyé pour {len(produits)} produit(s) en rupture', status=200)
     
 class login(APIView):   
     
