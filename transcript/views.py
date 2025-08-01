@@ -1,7 +1,10 @@
 # views.py
 
 from decimal import Decimal
+from email.message import EmailMessage
 from itertools import count
+import os
+from django.core.mail import EmailMessage
 import stripe
 from myproject import settings
 from transcript.models import transaction
@@ -43,6 +46,7 @@ import requests
 from zeep import Client, Transport
 from django.db.models.functions import TruncMonth
 import urllib3  
+import pandas as pd
 urllib3.disable_warnings()
 
 
@@ -471,7 +475,7 @@ class sendMail(APIView):
         # Créer la liste des produits en rupture
         liste_produits = []
         for produit in produits:
-            liste_produits.append(f"- {produit.nomProd} (Stock: {produit.qte}, Min: {produit.qteMin})")
+            liste_produits.append(f"- {produit.nomProd} ")
         
         # Créer le message avec tous les produits
         message = f"""Alerte : {len(produits)} produit(s) ont atteint le stock minimum.
@@ -483,13 +487,44 @@ Merci de passer commande rapidement.
 """
         
         # Envoyer un seul email avec tous les produits
-        send_mail(
-            f'Alerte stock : {len(produits)} produit(s) à recommander',
-            message,
-            'iliashasbi@gmail.com',
-            ['iliashasbi@gmail.com'],
-            fail_silently=False,
-        )
+        email = EmailMessage(
+        subject=f'Alerte stock : {len(produits)} produit(s) à recommander',
+        body=message,
+        from_email='iliashasbi@gmail.com',
+        to=['iliashasbi@gmail.com','m.braikia@orange.fr'],
+    )
+        print(liste_produits)
+        
+        
+        data=[]
+        for produit in produits:
+            prix_achat=produit.prixAchat or 0
+            total=prix_achat * 5
+            data.append(
+                {
+                    'Nom Produit': produit.nomProd,
+                    'Quantité': 5,    
+                    'Prix Achat': prix_achat,
+                    'total': total
+                }
+            )
+        df = pd.DataFrame(data)
+        somme_total=df['total'].sum()
+        # Ajouter une ligne de total à la fin
+        ligne_total = {
+            'Nom Produit': 'TOTAL',
+            'Quantité': '',
+            'Prix Achat': '',
+            'total': somme_total
+        }
+        # Utiliser concat au lieu de append
+        df = pd.concat([df, pd.DataFrame([ligne_total])], ignore_index=True)
+        
+        chemin_fichier = os.path.join(os.getcwd(), 'media', 'produits_en_rupture.xlsx')
+        df.to_excel(chemin_fichier, index=False)
+        
+        email.attach_file(chemin_fichier)
+        email.send(fail_silently=False)
         
         return Response(f'Email envoyé pour {len(produits)} produit(s) en rupture', status=200)
     
