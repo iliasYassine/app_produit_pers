@@ -960,3 +960,51 @@ class ScanByNomProd(APIView):
             # Sérialisation de la ligne de transaction pour la réponse
             ligne_serializer = LigneTransactionSerializer(ligne_transaction)
             return Response(ligne_serializer.data, status=status.HTTP_201_CREATED)
+        
+# Dans tes views.py
+class ExportDatabase(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request):
+        import subprocess
+        import datetime
+        import os
+        backup_dir = os.path.join(settings.MEDIA_ROOT, 'bdd')
+        
+        # Créer le dossier s'il n'existe pas
+        os.makedirs(backup_dir, exist_ok=True)
+        
+        # Nom du fichier avec la date
+        date_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        fichier_export = os.path.join(backup_dir, f"export_test_{date_str}.sql")
+        
+        try:
+            # Commande mysqldump
+            cmd = [
+                r"C:\xampp\mysql\bin\mysqldump.exe",
+                "--host=localhost",
+                "--user=root",
+                "--password=",
+                "--single-transaction",
+                "--routines",
+                "--triggers",
+                "test"
+            ]
+            
+            with open(fichier_export, 'w', encoding='utf-8') as f:
+                result = subprocess.run(cmd, stdout=f, stderr=subprocess.PIPE, text=True)
+            
+            if result.returncode == 0:
+                # Retourner le fichier en téléchargement
+                from django.http import FileResponse
+                response = FileResponse(
+                    open(fichier_export, 'rb'),
+                    as_attachment=True,
+                    filename=os.path.basename(fichier_export)
+                )
+                return response
+            else:
+                return Response({'error': result.stderr}, status=500)
+                
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)        
