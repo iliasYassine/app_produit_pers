@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from './personne.model';
+import { environment } from '../../environment/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class PersonneService {
 
-  private API_URL = 'http://127.0.0.1:8000/transcript/';
+  private API_URL = `${environment.apiUrl}/transcript/`;
   private USERS_URL = `${this.API_URL}users/`;
   private CREATE_ENDPOINT = `${this.API_URL}create/`;
   constructor(private httpClient: HttpClient) {}

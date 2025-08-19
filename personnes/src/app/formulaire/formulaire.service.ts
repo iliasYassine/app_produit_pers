@@ -4,13 +4,13 @@ import { Observable } from 'rxjs';
 
 import { Client } from './client.model';
 import { Commande } from '../commande/commande.model';
-
+import { environment } from '../../environment/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class FormulaireService {
-
-  private url = 'http://localhost:8000/transcript/';
+  private baseUrl = environment.apiUrl;
+  private url = `${this.baseUrl}/transcript/`;
   private endpoint_commande="commande/";
   private endpoint_client="client/";
   constructor(private httpclient:HttpClient) { }

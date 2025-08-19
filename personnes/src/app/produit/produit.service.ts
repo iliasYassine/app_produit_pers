@@ -2,11 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Produit } from './produit.model';
+import { environment } from '../../environment/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class ProduitService {
-  private API_URL ='http://127.0.0.1:8000/transcript/';
+  private API_URL = `${environment.apiUrl}/transcript/`;
   private PRODUIT_URL = `${this.API_URL}produits/`;
   private CREATE_ENDPOINT = `${this.API_URL}create_produits/`;
   private endpoint_email = `${this.API_URL}send-mail/`;

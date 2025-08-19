@@ -2,17 +2,20 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Produit } from '../produit/produit.model';
+// Update the import path if your environment file is located elsewhere, for example:
+import { environment } from '../../environment/environment';
+// Or create the file at '../../environments/environment.ts' if it does not exist.
 
 @Injectable({
   providedIn: 'root'
 })
 export class CaisseService {
+  private baseUrl = environment.apiUrl;
+   private scanProduitUrl = `${this.baseUrl}/transcript/scan-produit/`;
+  private finalizeTransactionUrl = `${this.baseUrl}/transcript/finalize-transaction/`;
+  private url = `${this.baseUrl}/transcript/nom_prod/`;
+  private scanbynomprod = `${this.baseUrl}/transcript/scanbynomprod/`;
   
-  private scanProduitUrl = 'http://127.0.0.1:8000/transcript/scan-produit/';
-  private finalizeTransactionUrl = 'http://127.0.0.1:8000/transcript/finalize-transaction/';
-  private url='http://127.0.0.1:8000/transcript/nom_prod/';
-  private scanbynomprod='http://127.0.0.1:8000/transcript/scanbynomprod/';
-
   constructor(private http: HttpClient) {}
 
   scanProduit(codeBarre: string): Observable<any> {

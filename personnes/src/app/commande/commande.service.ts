@@ -2,14 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Commande } from './commande.model';
-
+import { environment } from '../../environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommandeService {
-
-  private URL="http://localhost:8000/transcript/commande/";
+  private baseUrl = environment.apiUrl;
+  private URL=`${this.baseUrl}/http://localhost:8000/transcript/commande/`;
   constructor(private http :HttpClient) { }
 
   getCommandes():Observable<Commande[]>{
