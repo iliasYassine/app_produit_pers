@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Produit } from '../produit/produit.model';
 // Update the import path if your environment file is located elsewhere, for example:
-import { environment } from '../../environment/environment';
+import { environment } from '../../environments/environment';
 // Or create the file at '../../environments/environment.ts' if it does not exist.
 
 @Injectable({

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { Client } from './client.model';
 import { Commande } from '../commande/commande.model';
-import { environment } from '../../environment/environment';
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
