@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class CommandeService {
   private baseUrl = environment.apiUrl;
-  private URL=`${this.baseUrl}/http://localhost:8000/transcript/commande/`;
+  private URL=`${this.baseUrl}/transcript/commande/`;
   constructor(private http :HttpClient) { }
 
   getCommandes():Observable<Commande[]>{

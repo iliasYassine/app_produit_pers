@@ -25,7 +25,7 @@ export class FormulaireService {
 
 createStripeSession(montant: number) {
   return this.httpclient.post<{url: string}>(
-    'http://localhost:8000/transcript/create-stripe-session/',
+    `${this.baseUrl}/transcript/create-stripe-session/`,
     { montant }
   );
 }
