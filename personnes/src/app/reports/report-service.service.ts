@@ -6,20 +6,20 @@ import { Produit } from '../produit/produit.model';
 import{ResponseData} from './report.model';
 import { LignesTransaction } from '../caisse/ligne.model';
 import { ChiffreAffairesResponse } from './chiffreAffairesResponse.model';
-
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class ReportServiceService {
-
-  private API_URL ='http://127.0.0.1:8000/transcript/produits/';
-  private TOP_URL='http://127.0.0.1:8000/transcript/top-vente/';
-  private LIGNE_TRANSAC='http://127.0.0.1:8000/transcript/ligneTransaction/'
-  private CH_URL='http://127.0.0.1:8000/transcript/chiffre_affaire_total/'
-  private INITIALISE=' http://127.0.0.1:8000/transcript/reset-transactions/'
-  private BENEFICE_URL='http://127.0.0.1:8000/transcript/benefice/';
-  private BENEFICE_MOIS='http://127.0.0.1:8000/transcript/beneficeMois/';
-  private BENEFICE_SEMAINE='http://127.0.0.1:8000/transcript/beneficeSemaine/';
+    private baseUrl = environment.apiUrl;
+  private API_URL =`${this.baseUrl}/transcript/produits/`;
+  private TOP_URL=`${this.baseUrl}/transcript/top-vente/`;
+  private LIGNE_TRANSAC=`${this.baseUrl}/transcript/ligneTransaction/`
+  private CH_URL=`${this.baseUrl}/transcript/chiffre_affaire_total/`
+  private INITIALISE=`${this.baseUrl}/transcript/reset-transactions/`
+  private BENEFICE_URL=`${this.baseUrl}/transcript/benefice/`;
+  private BENEFICE_MOIS=`${this.baseUrl}/transcript/beneficeMois/`;
+  private BENEFICE_SEMAINE=`${this.baseUrl}/transcript/beneficeSemaine/`;
   constructor(private httpClient:HttpClient) { }
 
   getProduitReport():Observable<Produit[]>{
