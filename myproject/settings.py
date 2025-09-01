@@ -68,7 +68,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",  # Si votre frontend Angular est sur le port 4200
     "http://127.0.0.1:4200",
-    # ...autres domaines/ports...
+    "https://caisse-ih.com"
+    
 ]
 CORS_ALLOW_METHODS = [
     "DELETE",
