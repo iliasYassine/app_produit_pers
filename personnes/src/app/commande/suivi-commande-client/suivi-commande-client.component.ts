@@ -3,7 +3,7 @@ import { CommandeService } from '../commande.service';
 import { Commande } from '../commande.model';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-suivi-commande-client',
   standalone: true,
@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './suivi-commande-client.component.css'
 })
 export class SuiviCommandeClientComponent implements OnInit {
+  baseUrl = environment.apiUrl;
    searchNumeroSuivi: string = '';
   isFiltered: boolean = false;
 allCommandes: Commande[] = [];

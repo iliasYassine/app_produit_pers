@@ -3,13 +3,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LignesTransaction } from '../ligne.model';
 import { Produit } from '../../produit/produit.model';
-
+import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class DeleteLignesService {
-
-private URL="http://127.0.0.1:8000/transcript/";
+private baseUrl = environment.apiUrl;
+private URL=`${this.baseUrl}/transcript/`;
 private ENDPOINT_LIGNES="ligneTransaction/"
 constructor(private http:HttpClient) { }
 

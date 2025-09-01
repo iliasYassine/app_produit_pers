@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Transaction } from '../transaction.model';
 import { Observable } from 'rxjs';
-
+import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class DeleteTotalService {
-  private URL='http://127.0.0.1:8000/transcript/';
+  private baseUrl = environment.apiUrl;
+  private URL=`${this.baseUrl}/transcript/`;
   private ENDPOINT_TOTAL='transaction/';
 
   constructor(private httpclient:HttpClient) { }

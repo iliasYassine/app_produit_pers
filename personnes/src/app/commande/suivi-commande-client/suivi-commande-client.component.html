@@ -36,7 +36,7 @@
         <td>
           <!-- <a *ngIf="c.facture" [href]="c.facture" target="_blank">Voir</a> -->
           <!-- <span *ngIf="!c.facture">-</span> -->
-           <a *ngIf="c.facture" [href]="'http://127.0.0.1:8000' + c.facture" target="_blank">Voir</a>
+           <a *ngIf="c.facture" [href]="baseUrl + c.facture" target="_blank">Voir</a>
             <span *ngIf="!c.facture">-</span>
         </td>
       </tr>
