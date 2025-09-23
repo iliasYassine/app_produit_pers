@@ -11,7 +11,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class ReportServiceService {
-    private baseUrl = environment.apiUrl;
+  private baseUrl = environment.apiUrl;
   private API_URL =`${this.baseUrl}/transcript/produits/`;
   private TOP_URL=`${this.baseUrl}/transcript/top-vente/`;
   private LIGNE_TRANSAC=`${this.baseUrl}/transcript/ligneTransaction/`
