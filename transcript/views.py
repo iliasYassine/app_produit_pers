@@ -248,14 +248,13 @@ class  scanProduit(APIView):
             if produit.qte <= 0:
                 return Response({'erreur': 'Stock insuffisant pour le produit demandé.'}, status=status.HTTP_400_BAD_REQUEST)
             #on gere la transaction mtn qu'on a le produit
-            transaction_id = request.session.get('transaction_id', None)
+            transaction_id = request.data.get('transaction_id')
             if not transaction_id:
                 transaction = Transaction()
                 transaction.save()
-                request.session['transaction_id'] = transaction.id
             else:
-                transaction = Transaction.objects.get(id=transaction_id)
-                
+                transaction = get_object_or_404(Transaction, id=transaction_id)
+
             # Gestion de la ligne de transaction
             ligne_transaction, created = LigneTransaction.objects.get_or_create(
                 transaction=transaction,
@@ -266,16 +265,16 @@ class  scanProduit(APIView):
                 ligne_transaction.quantite += 1
                 ligne_transaction.total = ligne_transaction.quantite * ligne_transaction.prix_unitaire
                 ligne_transaction.save()
-            
-            
+
+
             # mise a jour total dans transaction
             # Mise à jour du total de la transaction
             transaction_total = transaction.lignes.all().aggregate(
             total_sum=Sum('total')
             )['total_sum'] or 0
-            transaction.total = transaction_total  
-            transaction.save()    
-                   
+            transaction.total = transaction_total
+            transaction.save()
+
 
 
             # Mise à jour du stock du produit
@@ -284,30 +283,23 @@ class  scanProduit(APIView):
 
             # Sérialisation de la ligne de transaction pour la réponse
             ligne_serializer = LigneTransactionSerializer(ligne_transaction)
-            return Response(ligne_serializer.data, status=status.HTTP_201_CREATED)                  
-        
+            return Response(ligne_serializer.data, status=status.HTTP_201_CREATED)
+
 class FinalizeTransaction(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        transaction_id = request.session.get('transaction_id', None)
-        ic(transaction_id)
+        transaction_id = request.data.get('transaction_id') or request.session.get('transaction_id', None)
+        request.session.pop('transaction_id', None)
         if not transaction_id:
             return Response({'erreur': 'Aucune transaction en cours.'}, status=status.HTTP_400_BAD_REQUEST)
 
         with db_transaction.atomic():
             transaction = get_object_or_404(Transaction, id=transaction_id)
-            # Vous implémenterez ici votre logique de finalisation de transaction
-            # Par exemple, appliquer des remises, calculer les taxes, confirmer le paiement, etc.
-             # Calculez le total en additionnant les totaux de toutes les ligne_transactions liées
             transaction_total = LigneTransaction.objects.filter(transaction=transaction).aggregate(Sum('total'))['total__sum'] or 0
             transaction.total = transaction_total
-            
-            
-            transaction.save()  # Enregistrer les modifications finales de la transaction
-            request.session.pop('transaction_id', None)  # Nettoyer la session après finalisation
+            transaction.save()
 
-            # Sérialiser la transaction pour l'envoyer en réponse
             transaction_serializer = TransactionSerializer(transaction)
             return Response(transaction_serializer.data, status=status.HTTP_200_OK)        
         
@@ -900,14 +892,13 @@ class ScanByNomProd(APIView):
             if produit.qte <= 0:
                 return Response({'erreur': 'Stock insuffisant pour le produit demandé.'}, status=status.HTTP_400_BAD_REQUEST)
             #on gere la transaction mtn qu'on a le produit
-            transaction_id = request.session.get('transaction_id', None)
+            transaction_id = request.data.get('transaction_id')
             if not transaction_id:
                 transaction = Transaction()
                 transaction.save()
-                request.session['transaction_id'] = transaction.id
             else:
-                transaction = Transaction.objects.get(id=transaction_id)
-                
+                transaction = get_object_or_404(Transaction, id=transaction_id)
+
             # Gestion de la ligne de transaction
             ligne_transaction, created = LigneTransaction.objects.get_or_create(
                 transaction=transaction,
@@ -918,16 +909,16 @@ class ScanByNomProd(APIView):
                 ligne_transaction.quantite += 1
                 ligne_transaction.total = ligne_transaction.quantite * ligne_transaction.prix_unitaire
                 ligne_transaction.save()
-            
-            
+
+
             # mise a jour total dans transaction
             # Mise à jour du total de la transaction
             transaction_total = transaction.lignes.all().aggregate(
             total_sum=Sum('total')
             )['total_sum'] or 0
-            transaction.total = transaction_total  
-            transaction.save()    
-                   
+            transaction.total = transaction_total
+            transaction.save()
+
 
 
             # Mise à jour du stock du produit
@@ -937,7 +928,7 @@ class ScanByNomProd(APIView):
             # Sérialisation de la ligne de transaction pour la réponse
             ligne_serializer = LigneTransactionSerializer(ligne_transaction)
             return Response(ligne_serializer.data, status=status.HTTP_201_CREATED)
-        
+
 # Dans tes views.py
 class ExportDatabase(APIView):
     permission_classes = [AllowAny]

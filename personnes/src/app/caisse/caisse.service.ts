@@ -18,8 +18,10 @@ export class CaisseService {
   
   constructor(private http: HttpClient) {}
 
-  scanProduit(codeBarre: string): Observable<any> {
-    return this.http.post(this.scanProduitUrl, { codeBarre: codeBarre });
+  scanProduit(codeBarre: string, transactionId: number | null = null): Observable<any> {
+    const body: any = { codeBarre };
+    if (transactionId !== null) body.transaction_id = transactionId;
+    return this.http.post(this.scanProduitUrl, body);
   }
 
   finalizeTransaction(transactionId: number): Observable<any> {
@@ -32,8 +34,10 @@ export class CaisseService {
   }
 
 
-  scanProduitbynomprod(nomprod: string): Observable<any> {
-    return this.http.post(this.scanbynomprod, { nomProd: nomprod });
+  scanProduitbynomprod(nomprod: string, transactionId: number | null = null): Observable<any> {
+    const body: any = { nomProd: nomprod };
+    if (transactionId !== null) body.transaction_id = transactionId;
+    return this.http.post(this.scanbynomprod, body);
   }
  
 

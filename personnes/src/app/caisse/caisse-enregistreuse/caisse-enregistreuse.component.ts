@@ -52,15 +52,20 @@ export class CaisseEnregistreuseComponent implements OnInit {
   
     console.log("dans la fonction scan produit");
   
-    this.caisseService.scanProduit(this.codebarre).subscribe(
+    this.caisseService.scanProduit(this.codebarre, this.currentTransactionId).subscribe(
       response => {
         this.currentTransactionId = response.transaction;
-        this.totalTransaction += parseFloat(response.total);
-        const ligne: LignesTransaction = { ...response, produit: null };
-        // Cherche dans la liste déjà chargée pour avoir la photo et tous les détails
+        const ligne: LignesTransaction = { ...response };
         const produitLocal = this.produit2.find(p => p.codeBarre === this.codebarre);
-        ligne.produitDetails = produitLocal ?? response;
-        this.ligneTransaction.push(ligne);
+        if (produitLocal) ligne.produitDetails = produitLocal;
+
+        const existingIndex = this.ligneTransaction.findIndex(l => l.produit === response.produit);
+        if (existingIndex !== -1) {
+          this.ligneTransaction[existingIndex] = ligne;
+        } else {
+          this.ligneTransaction.push(ligne);
+        }
+        this.totalTransaction = this.ligneTransaction.reduce((sum, l) => sum + parseFloat(String(l.total)), 0);
         this.errorMessage = '';
       },
       error => console.error('Erreur lors du scan du produit:', error)
@@ -124,36 +129,23 @@ export class CaisseEnregistreuseComponent implements OnInit {
     this.scanProduit();
   }
 
-    ajouterProduitParNom(produit:Produit){
-      const ligne: LignesTransaction = {
-    id: 0,
-    quantite: 1,
-    prix_unitaire: produit.prixVente ??0,
-    total: produit.prixVente??0,
-    produit: produit.id ?? 0, // Utilise 0 si produit.id est null ou undefined
-    transaction: 0, // ou l'id réel si tu l'as
-    produitDetails: produit
-  };
-  console.log("ligne de transaction:", ligne);
-    // Ferme la liste des résultats
-  this.searchTerm = '';
-  this.filteredProduits = [];
+  ajouterProduitParNom(produit: Produit) {
+    this.searchTerm = '';
+    this.filteredProduits = [];
 
-  this.caisseService.scanProduitbynomprod(produit.nomProd).subscribe(data=>{
-     this.totalTransaction += parseFloat(data.total);
-      console.log("totalTransaction:", this.totalTransaction);
-        // Ajouter une ligne de transaction avec un produit associé
-      const ligne: LignesTransaction = { ...data, produit: null }; // Ajouter une propriété produit
-      this.ligneTransaction.push(ligne);
+    this.caisseService.scanProduitbynomprod(produit.nomProd, this.currentTransactionId).subscribe(data => {
+      this.currentTransactionId = data.transaction;
+      const ligne: LignesTransaction = { ...data, produitDetails: produit };
 
-  })
-
- // Ferme la liste des résultats
-  this.searchTerm = '';
-  this.filteredProduits = [];
-  
-
-}
+      const existingIndex = this.ligneTransaction.findIndex(l => l.produit === data.produit);
+      if (existingIndex !== -1) {
+        this.ligneTransaction[existingIndex] = ligne;
+      } else {
+        this.ligneTransaction.push(ligne);
+      }
+      this.totalTransaction = this.ligneTransaction.reduce((sum, l) => sum + parseFloat(String(l.total)), 0);
+    });
+  }
 
 
 
