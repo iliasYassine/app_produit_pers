@@ -7,10 +7,11 @@ import { FormsModule } from '@angular/forms';
 import { ProduitDetailsComponent } from '../../produit/produit-details/produit-details.component';
 import { ProduitService } from '../../produit/produit.service';
 import { environment } from '../../../environments/environment';
+import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 @Component({
   selector: 'app-caisse-enregistreuse',
   standalone: true,
-  imports: [NgFor,FormsModule,NgIf,CommonModule,DecimalPipe],
+  imports: [NgFor,FormsModule,NgIf,CommonModule,DecimalPipe,BarcodeScannerComponent],
   templateUrl: './caisse-enregistreuse.component.html',
   styleUrl: './caisse-enregistreuse.component.css'
 })
@@ -26,6 +27,7 @@ export class CaisseEnregistreuseComponent implements OnInit {
   filteredProduits: Produit[] = [];
   searchTerm: string = '';
   apiUrl: string = environment.apiUrl;
+  showScanner = false;
   
   
 
@@ -110,6 +112,12 @@ export class CaisseEnregistreuseComponent implements OnInit {
         prod.nomProd.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     }
+
+    onBarcodeScanned(code: string) {
+    this.showScanner = false;
+    this.codebarre = code;
+    this.scanProduit();
+  }
 
     ajouterProduitParNom(produit:Produit){
       const ligne: LignesTransaction = {

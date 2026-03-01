@@ -6,11 +6,12 @@ import { Produit } from '../produit.model';
 import { environment } from '../../../environments/environment';
 import { ServiceFournisseurService } from '../../fournisseurs/service-fournisseur.service';
 import { Fournisseur } from '../../fournisseurs/fournisseur.model';
+import { BarcodeScannerComponent } from '../../barcode-scanner/barcode-scanner.component';
 
 @Component({
   selector: 'app-produit-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BarcodeScannerComponent],
   templateUrl: './produit-list.component.html',
   styleUrl: './produit-list.component.css'
 })
@@ -32,6 +33,9 @@ export class ProduitListComponent implements OnInit {
 
   deleteId: number | null = null;
   emailSent = false;
+
+  showScanner = false;
+  scannerTarget: 'new' | 'edit' = 'new';
 
   constructor(private svc: ProduitService, private fournisseurSvc: ServiceFournisseurService) {}
 
@@ -127,5 +131,19 @@ export class ProduitListComponent implements OnInit {
     this.svc.sendMail().subscribe({
       next: () => { this.emailSent = true; setTimeout(() => this.emailSent = false, 3000); }
     });
+  }
+
+  openScanner(target: 'new' | 'edit') {
+    this.scannerTarget = target;
+    this.showScanner = true;
+  }
+
+  onBarcodeScanned(code: string) {
+    this.showScanner = false;
+    if (this.scannerTarget === 'new') {
+      this.newProduit.codeBarre = code;
+    } else {
+      this.editData.codeBarre = code;
+    }
   }
 }
