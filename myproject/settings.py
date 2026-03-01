@@ -19,16 +19,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Static files pour production
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-25gkw)q-jrv7mr@7#yyskmo0!(zacxqxuxf4qa_sv%1v*zvz!&'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-25gkw)q-jrv7mr@7#yyskmo0!(zacxqxuxf4qa_sv%1v*zvz!&')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
+# Pour VPS: DJANGO_ALLOWED_HOSTS=caisse-ih.com,www.caisse-ih.com,IP_VPS
 
 
 # Application definition
@@ -66,10 +72,8 @@ MIDDLEWARE = [
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",  # Si votre frontend Angular est sur le port 4200
+    "http://localhost:4200",
     "http://127.0.0.1:4200",
-    "https://caisse-ih.com"
-    
 ]
 CORS_ALLOW_METHODS = [
     "DELETE",
@@ -169,8 +173,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = 'static/'
+# STATIC_URL est defini plus haut avec STATIC_ROOT pour VPS
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

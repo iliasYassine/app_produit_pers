@@ -72,6 +72,20 @@ class CommandeSerializer(serializers.ModelSerializer):
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientModel
-        fields = '__all__'        
+        fields = '__all__'
+
+############CAPITAL#####################
+from .models.capital import Associe, MouvementCapital
+
+class MouvementCapitalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MouvementCapital
+        fields = '__all__'
+
+class AssocieSerializer(serializers.ModelSerializer):
+    mouvements = MouvementCapitalSerializer(many=True, read_only=True)
+    class Meta:
+        model = Associe
+        fields = ['id', 'nom', 'solde', 'mouvements']
 
         

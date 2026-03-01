@@ -1,35 +1,142 @@
+<div class="min-h-screen bg-zinc-950 p-3 sm:p-6">
 
+  <!-- Header -->
+  <div class="mb-6 sm:mb-8 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-white text-xl font-bold tracking-tight">Tableau de Bord</h1>
+      <p class="text-zinc-600 text-sm mt-0.5">Analyse des performances</p>
+    </div>
+    <div class="flex items-center gap-2 text-zinc-600 text-xs bg-zinc-900 border border-white/5 px-3 py-2 rounded-lg">
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      Données en temps réel
+    </div>
+  </div>
 
-<div class="dashboard-container">
-  <div class="card-1">
-    <div class="card-title">Valeur du stock</div>
-    <div class="card-value">{{ coutTotal }}€</div>
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+
+    <!-- Stock -->
+    <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-5 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-violet-600/5 to-transparent"></div>
+      <div class="relative">
+        <div class="w-9 h-9 bg-violet-500/15 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-4.5 h-4.5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        </div>
+        <p class="text-zinc-500 text-xs font-medium mb-1">Valeur du stock</p>
+        <p class="text-white text-2xl font-bold tracking-tight">{{ coutTotal }}€</p>
+        <p class="text-zinc-700 text-xs mt-2">Inventaire total</p>
+      </div>
+    </div>
+
+    <!-- Top vente -->
+    <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-5 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent"></div>
+      <div class="relative">
+        <div class="w-9 h-9 bg-amber-500/15 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-4.5 h-4.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+        </div>
+        <p class="text-zinc-500 text-xs font-medium mb-1">Meilleure vente</p>
+        <p class="text-white text-lg font-bold truncate">{{ nom_prod || '—' }}</p>
+        <p class="text-zinc-700 text-xs mt-2">Produit #1</p>
+      </div>
+    </div>
+
+    <!-- CA -->
+    <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-5 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent"></div>
+      <div class="relative">
+        <div class="w-9 h-9 bg-emerald-500/15 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-4.5 h-4.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <p class="text-zinc-500 text-xs font-medium mb-1">Chiffre d'affaires</p>
+        <p class="text-white text-2xl font-bold tracking-tight">{{ chiffreAffaireTotal }}€</p>
+        <p class="text-zinc-700 text-xs mt-2">Total cumulé</p>
+      </div>
+    </div>
+
+    <!-- Bénéfice -->
+    <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-5 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-sky-500/5 to-transparent"></div>
+      <div class="relative">
+        <div class="w-9 h-9 bg-sky-500/15 rounded-xl flex items-center justify-center mb-4">
+          <svg class="w-4.5 h-4.5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        </div>
+        <p class="text-zinc-500 text-xs font-medium mb-1">Bénéfice net</p>
+        <p class="text-white text-2xl font-bold tracking-tight">{{ benefice }}€</p>
+        <p class="text-zinc-700 text-xs mt-2">Marge totale</p>
+      </div>
+    </div>
+
+    <!-- Bénéfice société -->
+    <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-5 relative overflow-hidden col-span-2 xl:col-span-4">
+      <div class="absolute inset-0 bg-gradient-to-br from-violet-600/5 to-transparent"></div>
+      <div class="relative flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <p class="text-zinc-500 text-xs font-medium mb-1">Bénéfice société</p>
+          <p [class]="beneficeSociete >= 0 ? 'text-emerald-400 text-2xl font-bold tracking-tight' : 'text-rose-400 text-2xl font-bold tracking-tight'">
+            {{ beneficeSociete | number:'1.2-2' }} €
+          </p>
+          <p class="text-zinc-600 text-xs mt-1">Compte bancaire − Capital investi</p>
+        </div>
+        <div class="flex items-center gap-6 text-sm">
+          <div>
+            <p class="text-zinc-600 text-xs mb-0.5">Compte bancaire</p>
+            <p class="text-white font-semibold">{{ soldeBancaire | number:'1.2-2' }} €</p>
+          </div>
+          <div class="text-zinc-700 text-lg font-bold">−</div>
+          <div>
+            <p class="text-zinc-600 text-xs mb-0.5">Capital investi</p>
+            <p class="text-white font-semibold">{{ totalCapital | number:'1.2-2' }} €</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <div class="card-2">
-    <div class="card-title">Top vente</div>
-    <div class="card-subtitle">Nom: {{ nom_prod }}</div>
+
+  <!-- Indicateurs secondaires -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="bg-zinc-900/50 border border-white/[0.05] rounded-xl px-5 py-4 flex items-center justify-between">
+      <div>
+        <p class="text-zinc-600 text-xs mb-1">Taux de marge</p>
+        <p class="text-white text-xl font-bold">{{ chiffreAffaireTotal > 0 ? ((benefice / chiffreAffaireTotal) * 100 | number:'1.1-1') : '0' }}%</p>
+      </div>
+      <div class="text-2xl opacity-30">%</div>
+    </div>
+    <div class="bg-zinc-900/50 border border-white/[0.05] rounded-xl px-5 py-4 flex items-center justify-between">
+      <div>
+        <p class="text-zinc-600 text-xs mb-1">ROI stock</p>
+        <p class="text-white text-xl font-bold">{{ coutTotal > 0 ? ((benefice / coutTotal) * 100 | number:'1.1-1') : '0' }}%</p>
+      </div>
+      <div class="text-2xl opacity-30">↗</div>
+    </div>
+    <div class="bg-zinc-900/50 border border-white/[0.05] rounded-xl px-5 py-4 flex items-center justify-between">
+      <div>
+        <p class="text-zinc-600 text-xs mb-1">Coût des ventes</p>
+        <p class="text-white text-xl font-bold">{{ (chiffreAffaireTotal - benefice) | number:'1.2-2' }}€</p>
+      </div>
+      <div class="text-2xl opacity-30">€</div>
+    </div>
   </div>
-  <div class="card-3">
-    <div class="card-title">Chiffre d'affaires</div>
-    <div class="card-value">{{ chiffreAffaireTotal }}€</div>
+
+  <!-- Charts -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+    <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-6">
+      <div class="flex items-center gap-2 mb-6">
+        <div class="w-1.5 h-5 bg-violet-500 rounded-full"></div>
+        <p class="text-white text-sm font-semibold">Bénéfice mensuel</p>
+        <span class="ml-auto text-zinc-600 text-xs">12 derniers mois</span>
+      </div>
+      <canvas id="beneficeMoisChart"></canvas>
+    </div>
+    <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-6">
+      <div class="flex items-center gap-2 mb-6">
+        <div class="w-1.5 h-5 bg-emerald-500 rounded-full"></div>
+        <p class="text-white text-sm font-semibold">Bénéfice hebdomadaire</p>
+        <span class="ml-auto text-zinc-600 text-xs">Dernières semaines</span>
+      </div>
+      <canvas id="beneficeSemaineChart"></canvas>
+    </div>
   </div>
-  <div class="card-4">
-    <div class="card-title">Bénéfice</div>
-    <div class="card-value">{{ benefice }}€</div>
-  </div>
+
 </div>
-
-<div style="display: flex; gap: 20px; justify-content: center; margin-top: 30px;">
-  <div style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.08); padding: 20px; width: 420px;">
-    <h3 style="margin-top:0;">Bénéfice par mois</h3>
-    <canvas id="beneficeMoisChart" width="380" height="220"></canvas>
-  </div>
-  <div style="background: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.08); padding: 20px; width: 420px;">
-    <h3 style="margin-top:0;">Bénéfice par semaine</h3>
-    <canvas id="beneficeSemaineChart" width="380" height="220"></canvas>
-  </div>
-</div>
-
-<!-- <div class="btn-ini" style="display: flex; justify-content: center; margin-top: 30px;">
-  <button (click)="reinitilise()">réinitilisé le chiffre d'affaire</button>
-</div> -->

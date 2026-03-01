@@ -97,12 +97,20 @@ class ProduitList(APIView):
     
 class ProduitCreate(APIView):
     permission_classes = [AllowAny]
-    def post(self,request,format=None):
-        serializers=ProduitSerializer(data=request.data)
-        if serializers.is_valid():
-            serializers.save()
-            return Response(serializers.data ,status=status.HTTP_201_CREATED)
-        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, format=None):
+        try:
+            # Résoudre le fournisseur explicitement pour éviter le default=1 en cache
+            fournisseur_id = request.data.get('fournisseur') or None
+            fournisseur = Fournisseur.objects.filter(id=fournisseur_id).first() if fournisseur_id else None
+
+            serializer = ProduitSerializer(data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save(fournisseur=fournisseur)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            import traceback
+            return Response({'error': str(e), 'trace': traceback.format_exc()}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
   
 class ProduitDetails(APIView):
@@ -120,10 +128,18 @@ class ProduitDetails(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    def patch(self, request, pk, format=None):
+        produit = get_object_or_404(Produit, pk=pk)
+        serializer = ProduitSerializer(produit, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def delete(self, request, pk, format=None):
         produit = get_object_or_404(Produit, pk=pk)
         produit.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)  
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
@@ -303,48 +319,6 @@ class ChiffreAffaires(APIView):
 
     def get(self, request, format=None):
         chiffre_affaire_total = Transaction.objects.aggregate(chiffre_affaire_total=Sum('total'))['chiffre_affaire_total'] or 0
-        return Response({'chiffre_affaires': chiffre_affaire_total})
-    
-class ListTotal(APIView):
-    
-    def get(self,request,*args, **kwargs):
-        affiche=Transaction.objects.values_list('total',flat=True)
-        
-        # faire une liste
-        total_list=list(affiche)
-        
-        return Response({'top_vente': total_list}, status=200)    
-    
-    
-class TopVente(APIView):
-    permission_classes = [AllowAny]
-    def get(self,request,*args, **kwargs):
-        topVente=LigneTransaction.objects.values('produit_id').annotate(count_id=Count('produit_id')).order_by('-count_id').first()
-        nom_produit=Produit.objects.get(id=topVente['produit_id']).nomProd
-        return Response({'top_vente': topVente,'nomProd':nom_produit}, status=200)     
-    
-    
-class sendMail(APIView):
-    permission_classes=[AllowAny]
-    def get(self,request):
-        produits = Produit.objects.filter(qte__lte=F('qteMin'))
-        for produit in produits:      
-
-            send_mail(
-                    'Alerte produit min atteint a recommander',
-                    f'vous avez atteint le min penser a commander ce produit: {produit.nomProd}',
-                    'iliashasbi@gmail.com',
-                    ['iliashasbi@gmail.com'],
-                    fail_silently=False,
-                )
-        return Response('okok',status=200)
-    
-    
-class ChiffreAffaires(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, format=None):
-        chiffre_affaire_total = Transaction.objects.aggregate(chiffre_affaire_total=Sum('total'))['chiffre_affaire_total'] or 0
         print("chifre affaire")
         return Response({'chiffre_affaires': chiffre_affaire_total})
     
@@ -457,15 +431,17 @@ class BeneficeParSemaine(APIView):
                     
 class TopVente(APIView):
     permission_classes = [AllowAny]
-    def get(self,request,*args, **kwargs):
-        topVente=LigneTransaction.objects.values('produit_id').annotate(count_id=Count('produit_id')).order_by('-count_id').first()
-        nom_produit=Produit.objects.get(id=topVente['produit_id']).nomProd
-        return Response({'top_vente': topVente,'nomProd':nom_produit}, status=200)     
-    
-    
+    def get(self, request, *args, **kwargs):
+        topVente = LigneTransaction.objects.values('produit_id').annotate(count_id=Count('produit_id')).order_by('-count_id').first()
+        if not topVente:
+            return Response({'top_vente': None, 'nomProd': None}, status=200)
+        nom_produit = Produit.objects.filter(id=topVente['produit_id']).values_list('nomProd', flat=True).first()
+        return Response({'top_vente': topVente, 'nomProd': nom_produit}, status=200)
+
+
 class sendMail(APIView):
     permission_classes = [AllowAny]
-    
+
     def get(self, request):
         produits = Produit.objects.filter(qte__lte=F('qteMin'))
         
@@ -553,10 +529,11 @@ class Logout(APIView):
         return Response({"tu es bien deconnecter"}, status=status.HTTP_200_OK)
     
 class Test(APIView):
+    permission_classes = [AllowAny]
     def get(self, request, code_barre, format=None):
         produit = get_object_or_404(Produit, codeBarre=code_barre)
-        print(produit)
-        return Response( {"nomProd": produit.nomProd}, status=status.HTTP_200_OK)        
+        serializer = ProduitSerializer(produit)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ResetTransactions(APIView):
@@ -1007,4 +984,69 @@ class ExportDatabase(APIView):
                 return Response({'error': result.stderr}, status=500)
                 
         except Exception as e:
-            return Response({'error': str(e)}, status=500)        
+            return Response({'error': str(e)}, status=500)
+
+
+############## CAPITAL / DETTES ASSOCIÉS ##############
+from .models.capital import Associe, MouvementCapital
+from .serializers import AssocieSerializer, MouvementCapitalSerializer
+
+class AssocieView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, pk=None):
+        if pk:
+            associe = get_object_or_404(Associe, pk=pk)
+            return Response(AssocieSerializer(associe).data)
+        associes = Associe.objects.all()
+        return Response(AssocieSerializer(associes, many=True).data)
+
+    def post(self, request):
+        serializer = AssocieSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, pk):
+        associe = get_object_or_404(Associe, pk=pk)
+        serializer = AssocieSerializer(associe, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        associe = get_object_or_404(Associe, pk=pk)
+        associe.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class MouvementCapitalView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = MouvementCapitalSerializer(data=request.data)
+        if serializer.is_valid():
+            mvt = serializer.save()
+            # Met à jour le solde de l'associé
+            associe = mvt.associe
+            if mvt.type_mvt == 'injection':
+                associe.solde += mvt.montant
+            else:
+                associe.solde -= mvt.montant
+            associe.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        mvt = get_object_or_404(MouvementCapital, pk=pk)
+        # Annule l'effet sur le solde avant suppression
+        associe = mvt.associe
+        if mvt.type_mvt == 'injection':
+            associe.solde -= mvt.montant
+        else:
+            associe.solde += mvt.montant
+        associe.save()
+        mvt.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

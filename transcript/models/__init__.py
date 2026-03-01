@@ -5,3 +5,4 @@ from .transaction import Transaction
 from .ligneTransaction import LigneTransaction
 from .commande import CommandeModel
 from .client import ClientModel
+from .capital import Associe, MouvementCapital

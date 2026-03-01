@@ -1,0 +1,31 @@
+# ============================================================
+# Service systemd pour Gunicorn (Django)
+# INSTALLATION :
+#   sudo cp gunicorn.service /etc/systemd/system/caisse-ih.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable caisse-ih
+#   sudo systemctl start caisse-ih
+# ============================================================
+
+[Unit]
+Description=Gunicorn daemon pour CaisseIH (Django)
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/caisse-ih-backend
+Environment="DJANGO_SECRET_KEY=REMPLACER_PAR_VOTRE_CLE_SECRETE"
+Environment="DJANGO_DEBUG=False"
+Environment="DJANGO_ALLOWED_HOSTS=caisse-ih.com,www.caisse-ih.com"
+ExecStart=/var/www/caisse-ih-backend/venv/bin/gunicorn \
+          --workers 3 \
+          --bind 127.0.0.1:8000 \
+          --timeout 120 \
+          --access-logfile /var/log/gunicorn/caisse-ih-access.log \
+          --error-logfile /var/log/gunicorn/caisse-ih-error.log \
+          myproject.wsgi:application
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

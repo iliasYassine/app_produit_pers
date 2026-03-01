@@ -1,33 +1,165 @@
-<div class="table-container">
-  <h1>Liste des transactions en caisse</h1>
+<div class="min-h-screen bg-zinc-950 p-3 sm:p-6">
 
-  <table class="styled-table" *ngIf="ligneTransaction?.length">
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>Quantité</th>
-        <th>Prix</th>
-        <th>Total</th>
-      
-         <th>nom prod</th>
-        <th>Actions</th>
-       
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let i of ligneTransaction">
-    <td>{{i.id}}</td>
-    <td>{{i.quantite}}</td>
-    <td>{{i.prix_unitaire}}</td>
-    <td>{{i.total}}</td>
-  
-    <td>{{i.produitDetails?.nomProd}}</td>
-    
-    <td><button class="btn-delete" (click)="deleteLigne(i.id)">Supprimer</button>
-</td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-white text-xl font-bold">Gestion des ventes</h1>
+    <p class="text-zinc-600 text-xs mt-0.5">{{ transactions.length }} transaction(s) · {{ lignes.length }} ligne(s)</p>
+  </div>
 
-  <p *ngIf="!ligneTransaction?.length" class="no-data">Aucune lignes trouvé.</p>
+  <!-- Tabs -->
+  <div class="flex gap-1 bg-zinc-900 border border-white/[0.07] rounded-xl p-1 mb-6 w-fit">
+    <button
+      (click)="activeTab = 'transactions'"
+      class="px-5 py-2 rounded-lg text-sm font-medium transition-all"
+      [class.bg-zinc-800]="activeTab === 'transactions'"
+      [class.text-white]="activeTab === 'transactions'"
+      [class.text-zinc-500]="activeTab !== 'transactions'"
+      [class.hover:text-zinc-300]="activeTab !== 'transactions'"
+    >
+      Transactions
+      <span class="ml-2 px-1.5 py-0.5 bg-zinc-700/60 text-zinc-400 rounded text-xs">{{ transactions.length }}</span>
+    </button>
+    <button
+      (click)="activeTab = 'lignes'"
+      class="px-5 py-2 rounded-lg text-sm font-medium transition-all"
+      [class.bg-zinc-800]="activeTab === 'lignes'"
+      [class.text-white]="activeTab === 'lignes'"
+      [class.text-zinc-500]="activeTab !== 'lignes'"
+      [class.hover:text-zinc-300]="activeTab !== 'lignes'"
+    >
+      Lignes de vente
+      <span class="ml-2 px-1.5 py-0.5 bg-zinc-700/60 text-zinc-400 rounded text-xs">{{ lignes.length }}</span>
+    </button>
+  </div>
+
+  <!-- === TRANSACTIONS TAB === -->
+  <div *ngIf="activeTab === 'transactions'">
+    <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl overflow-hidden">
+
+      <!-- Empty -->
+      <div *ngIf="transactions.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
+        <div class="w-14 h-14 bg-zinc-800 rounded-2xl flex items-center justify-center mb-4 border border-white/5">
+          <svg class="w-6 h-6 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        </div>
+        <p class="text-zinc-500 font-medium">Aucune transaction</p>
+      </div>
+
+      <!-- Scrollable wrapper -->
+      <div *ngIf="transactions.length > 0" class="overflow-x-auto">
+      <div class="min-w-[500px]">
+      <!-- Header -->
+      <div class="grid grid-cols-[auto_1fr_1fr_1fr_auto] gap-0 border-b border-white/[0.06] px-5 py-3">
+        <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider w-14">#ID</span>
+        <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider">Date & heure</span>
+        <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider">Total TTC</span>
+        <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider">Employé</span>
+        <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider w-32 text-right">Action</span>
+      </div>
+
+      <!-- Rows -->
+      <div *ngFor="let t of transactions; let last = last"
+        class="border-b border-white/[0.04]"
+        [class.border-b-0]="last"
+        [style.background]="deleteTransactionId === t.id ? 'rgba(239,68,68,0.05)' : ''"
+      >
+        <!-- Normal row -->
+        <div *ngIf="deleteTransactionId !== t.id" class="grid grid-cols-[auto_1fr_1fr_1fr_auto] gap-0 px-5 py-3.5 items-center">
+          <span class="text-zinc-600 text-xs font-mono w-14">#{{ t.id }}</span>
+          <span class="text-zinc-300 text-sm">{{ t.date_heure | date:'dd/MM/yy HH:mm' }}</span>
+          <span class="text-emerald-400 font-bold text-sm">{{ t.total }}€</span>
+          <span class="text-zinc-400 text-sm">Emp. {{ t.employe_id }}</span>
+          <div class="w-32 flex justify-end">
+            <button (click)="askDeleteTransaction(t.id)"
+              class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-medium transition-all">
+              Supprimer
+            </button>
+          </div>
+        </div>
+
+        <!-- Delete confirm -->
+        <div *ngIf="deleteTransactionId === t.id" class="px-5 py-3.5 flex items-center gap-3">
+          <span class="text-rose-400 text-sm flex-1">
+            Supprimer la transaction <span class="font-semibold">#{{ t.id }}</span> ({{ t.total }}€) et toutes ses lignes ?
+          </span>
+          <button (click)="doDeleteTransaction(t.id)"
+            class="px-4 py-1.5 bg-rose-500 hover:bg-rose-400 text-white rounded-lg text-xs font-bold transition-all">
+            Confirmer
+          </button>
+          <button (click)="cancelDeleteTransaction()"
+            class="px-4 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 rounded-lg text-xs transition-all">
+            Annuler
+          </button>
+        </div>
+      </div>
+      </div><!-- /min-w -->
+      </div><!-- /overflow-x-auto -->
+    </div>
+  </div>
+
+  <!-- === LIGNES TAB === -->
+  <div *ngIf="activeTab === 'lignes'">
+    <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl overflow-hidden">
+
+      <!-- Empty -->
+      <div *ngIf="lignes.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
+        <div class="w-14 h-14 bg-zinc-800 rounded-2xl flex items-center justify-center mb-4 border border-white/5">
+          <svg class="w-6 h-6 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        </div>
+        <p class="text-zinc-500 font-medium">Aucune ligne de vente</p>
+      </div>
+
+      <!-- Scrollable wrapper -->
+      <div *ngIf="lignes.length > 0" class="overflow-x-auto">
+      <div class="min-w-[560px]">
+      <!-- Header -->
+      <div class="grid grid-cols-[auto_1.5fr_1fr_1fr_1fr_auto] gap-0 border-b border-white/[0.06] px-5 py-3">
+        <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider w-14">#ID</span>
+        <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider">Produit</span>
+        <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider">Qté</span>
+        <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider">Prix u.</span>
+        <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider">Total</span>
+        <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider w-32 text-right">Action</span>
+      </div>
+
+      <!-- Rows -->
+      <div *ngFor="let l of lignes; let last = last"
+        class="border-b border-white/[0.04]"
+        [class.border-b-0]="last"
+        [style.background]="deleteLigneId === l.id ? 'rgba(239,68,68,0.05)' : ''"
+      >
+        <!-- Normal row -->
+        <div *ngIf="deleteLigneId !== l.id" class="grid grid-cols-[auto_1.5fr_1fr_1fr_1fr_auto] gap-0 px-5 py-3.5 items-center">
+          <span class="text-zinc-600 text-xs font-mono w-14">#{{ l.id }}</span>
+          <span class="text-white text-sm font-medium">{{ l.produitDetails?.nomProd || 'Produit #' + l.produit }}</span>
+          <span class="text-zinc-300 text-sm">{{ l.quantite }}</span>
+          <span class="text-zinc-400 text-sm">{{ l.prix_unitaire }}€</span>
+          <span class="text-emerald-400 font-bold text-sm">{{ l.total }}€</span>
+          <div class="w-32 flex justify-end">
+            <button (click)="askDeleteLigne(l.id)"
+              class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-medium transition-all">
+              Supprimer
+            </button>
+          </div>
+        </div>
+
+        <!-- Delete confirm -->
+        <div *ngIf="deleteLigneId === l.id" class="px-5 py-3.5 flex items-center gap-3">
+          <span class="text-rose-400 text-sm flex-1">
+            Supprimer la ligne <span class="font-semibold">{{ l.produitDetails?.nomProd || '#' + l.id }}</span> ({{ l.total }}€) ?
+          </span>
+          <button (click)="doDeleteLigne(l.id)"
+            class="px-4 py-1.5 bg-rose-500 hover:bg-rose-400 text-white rounded-lg text-xs font-bold transition-all">
+            Confirmer
+          </button>
+          <button (click)="cancelDeleteLigne()"
+            class="px-4 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 rounded-lg text-xs transition-all">
+            Annuler
+          </button>
+        </div>
+      </div>
+      </div><!-- /min-w -->
+      </div><!-- /overflow-x-auto -->
+    </div>
+  </div>
+
 </div>

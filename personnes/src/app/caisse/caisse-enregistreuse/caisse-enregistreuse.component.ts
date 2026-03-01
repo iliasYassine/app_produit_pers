@@ -1,29 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { CaisseService } from '../caisse.service';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgFor, NgIf, DecimalPipe } from '@angular/common';
 import {LignesTransaction} from '../ligne.model'
 import { Produit } from '../../produit/produit.model';
 import { FormsModule } from '@angular/forms';
 import { ProduitDetailsComponent } from '../../produit/produit-details/produit-details.component';
 import { ProduitService } from '../../produit/produit.service';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-caisse-enregistreuse',
   standalone: true,
-  imports: [NgFor,FormsModule,NgIf,CommonModule,NgIf],
+  imports: [NgFor,FormsModule,NgIf,CommonModule,DecimalPipe],
   templateUrl: './caisse-enregistreuse.component.html',
   styleUrl: './caisse-enregistreuse.component.css'
 })
 export class CaisseEnregistreuseComponent implements OnInit {
-  
+
   ligneTransaction : LignesTransaction[]=[];
-  
+
   totalTransaction = 0;
   codebarre: string = "";
   produits!: Partial<Produit>;
   produit2:Produit[] = [];
   errorMessage: string = '';
   filteredProduits: Produit[] = [];
-  searchTerm: string = ''; 
+  searchTerm: string = '';
+  apiUrl: string = environment.apiUrl;
   
   
 
@@ -49,20 +51,13 @@ export class CaisseEnregistreuseComponent implements OnInit {
   
     this.caisseService.scanProduit(this.codebarre).subscribe(
       response => {
-        console.log("reponse du scanproduit:", response);
         this.totalTransaction += parseFloat(response.total);
-        console.log("totalTransaction:", this.totalTransaction);
-        // Ajouter une ligne de transaction avec un produit associé
-        const ligne: LignesTransaction = { ...response, produit: null }; // Ajouter une propriété produit
+        const ligne: LignesTransaction = { ...response, produit: null };
+        // Cherche dans la liste déjà chargée pour avoir la photo et tous les détails
+        const produitLocal = this.produit2.find(p => p.codeBarre === this.codebarre);
+        ligne.produitDetails = produitLocal ?? response;
         this.ligneTransaction.push(ligne);
-  
-        // Récupérer les détails du produit et les associer à la ligne
-        this.caisseService.getnomprod(this.codebarre).subscribe((data: Partial<Produit>) => {
-          ligne.produitDetails = data; // Associer le produit à la ligne
-          console.log("Produit associé à la ligne :", ligne);
-        });
-  
-        this.errorMessage = ''; // Réinitialiser le message d'erreur
+        this.errorMessage = '';
       },
       error => console.error('Erreur lors du scan du produit:', error)
     );

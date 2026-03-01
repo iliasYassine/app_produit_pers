@@ -1,24 +1,152 @@
-<div class="table-container">
-  <h1>Liste des Fournisseurs</h1>
+<div class="min-h-screen bg-zinc-950 p-3 sm:p-6">
 
-  <table class="styled-table" *ngIf="fournisseur?.length">
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Téléphone</th>
-        <th>Adresse</th>
-        <th>Email</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let fourni of fournisseur">
-        <td>{{ fourni.nom }}</td>
-        <td>{{ fourni.tel }}</td>
-        <td>{{ fourni.adresse }}</td>
-        <td>{{ fourni.email }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Header -->
+  <div class="mb-6 flex flex-wrap items-center gap-3">
+    <div>
+      <h1 class="text-white text-xl font-bold">Fournisseurs</h1>
+      <p class="text-zinc-600 text-xs mt-0.5">{{ fournisseurs.length }} fournisseur(s) référencé(s)</p>
+    </div>
+    <div class="ml-auto">
+      <button
+        (click)="toggleAddForm()"
+        class="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-semibold transition-all active:scale-95 shadow-lg shadow-violet-600/20"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+        {{ showAddForm ? 'Fermer' : 'Ajouter' }}
+      </button>
+    </div>
+  </div>
 
-  <p *ngIf="!fournisseur?.length" class="no-data">Aucun fournisseur trouvé.</p>
+  <!-- Add Form -->
+  <div *ngIf="showAddForm" class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-4 sm:p-6 mb-6">
+    <div class="flex items-center gap-2 mb-5">
+      <div class="w-1.5 h-5 bg-violet-500 rounded-full"></div>
+      <h2 class="text-white font-semibold text-sm">Nouveau fournisseur</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="text-zinc-500 text-xs mb-1.5 block">Nom *</label>
+        <input type="text" [(ngModel)]="newFournisseur.nom" placeholder="Société Dupont"
+          class="w-full bg-zinc-800 border border-white/10 text-white placeholder-zinc-600 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+      </div>
+      <div>
+        <label class="text-zinc-500 text-xs mb-1.5 block">Téléphone</label>
+        <input type="number" [(ngModel)]="newFournisseur.tel" placeholder="0612345678"
+          class="w-full bg-zinc-800 border border-white/10 text-white placeholder-zinc-600 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+      </div>
+      <div>
+        <label class="text-zinc-500 text-xs mb-1.5 block">Adresse</label>
+        <input type="text" [(ngModel)]="newFournisseur.adresse" placeholder="12 rue de Paris, 75001"
+          class="w-full bg-zinc-800 border border-white/10 text-white placeholder-zinc-600 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+      </div>
+      <div>
+        <label class="text-zinc-500 text-xs mb-1.5 block">Email</label>
+        <input type="email" [(ngModel)]="newFournisseur.email" placeholder="contact@exemple.fr"
+          class="w-full bg-zinc-800 border border-white/10 text-white placeholder-zinc-600 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-5 pt-5 border-t border-white/[0.06]">
+      <button (click)="create()" class="px-6 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-semibold transition-all active:scale-95">
+        Créer le fournisseur
+      </button>
+      <button (click)="showAddForm = false" class="px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white rounded-xl text-sm transition-all">
+        Annuler
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex items-center justify-center py-20">
+    <div class="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!loading" class="bg-zinc-900 border border-white/[0.07] rounded-2xl overflow-hidden">
+    <!-- Empty state -->
+    <div *ngIf="fournisseurs.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
+      <div class="w-14 h-14 bg-zinc-800 rounded-2xl flex items-center justify-center mb-4 border border-white/5">
+        <svg class="w-6 h-6 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
+      </div>
+      <p class="text-zinc-500 font-medium">Aucun fournisseur trouvé</p>
+      <p class="text-zinc-700 text-sm mt-1">Ajoutez votre premier fournisseur</p>
+    </div>
+
+    <!-- Scrollable table wrapper -->
+    <div *ngIf="fournisseurs.length > 0" class="overflow-x-auto">
+      <div class="min-w-[600px]">
+        <!-- Table header -->
+        <div class="grid grid-cols-[1fr_1fr_1.5fr_1.5fr_auto] border-b border-white/[0.06] px-5 py-3">
+          <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider">Nom</span>
+          <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider">Téléphone</span>
+          <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider">Adresse</span>
+          <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider">Email</span>
+          <span class="text-zinc-600 text-xs font-medium uppercase tracking-wider w-36 text-right">Actions</span>
+        </div>
+
+        <!-- Rows -->
+        <div *ngFor="let f of fournisseurs; let last = last"
+          class="border-b border-white/[0.04]"
+          [class.border-b-0]="last"
+          [style.background]="deleteId === f.id ? 'rgba(239,68,68,0.05)' : editId === f.id ? 'rgba(245,158,11,0.05)' : ''"
+        >
+          <!-- Normal / Edit row -->
+          <div *ngIf="deleteId !== f.id" class="grid grid-cols-[1fr_1fr_1.5fr_1.5fr_auto] px-5 py-3.5 items-center">
+            <ng-container *ngIf="editId !== f.id">
+              <span class="text-white text-sm font-medium">{{ f.nom }}</span>
+              <span class="text-zinc-300 text-sm">{{ f.tel || '—' }}</span>
+              <span class="text-zinc-400 text-sm truncate pr-3">{{ f.adresse || '—' }}</span>
+              <span class="text-zinc-400 text-sm truncate pr-3">{{ f.email || '—' }}</span>
+              <div class="flex gap-2 justify-end w-36">
+                <button (click)="startEdit(f)"
+                  class="px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded-lg text-xs font-medium transition-all">
+                  Modifier
+                </button>
+                <button (click)="askDelete(f.id!)"
+                  class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-medium transition-all">
+                  Suppr.
+                </button>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="editId === f.id">
+              <input type="text" [(ngModel)]="editData.nom" placeholder="Nom"
+                class="bg-zinc-800 border border-amber-500/40 text-white px-2 py-1.5 rounded-lg text-sm focus:outline-none mr-2"/>
+              <input type="number" [(ngModel)]="editData.tel" placeholder="Tel"
+                class="bg-zinc-800 border border-amber-500/40 text-white px-2 py-1.5 rounded-lg text-sm focus:outline-none mr-2"/>
+              <input type="text" [(ngModel)]="editData.adresse" placeholder="Adresse"
+                class="bg-zinc-800 border border-amber-500/40 text-white px-2 py-1.5 rounded-lg text-sm focus:outline-none mr-2"/>
+              <input type="email" [(ngModel)]="editData.email" placeholder="Email"
+                class="bg-zinc-800 border border-amber-500/40 text-white px-2 py-1.5 rounded-lg text-sm focus:outline-none mr-2"/>
+              <div class="flex gap-2 justify-end w-36">
+                <button (click)="saveEdit()"
+                  class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 rounded-lg text-xs font-bold transition-all">
+                  Sauv.
+                </button>
+                <button (click)="cancelEdit()"
+                  class="px-3 py-1.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 rounded-lg text-xs transition-all">
+                  ✕
+                </button>
+              </div>
+            </ng-container>
+          </div>
+
+          <!-- Delete confirmation -->
+          <div *ngIf="deleteId === f.id" class="px-5 py-3.5 flex flex-wrap items-center gap-3">
+            <span class="text-rose-400 text-sm flex-1 min-w-0">Supprimer <span class="font-semibold">{{ f.nom }}</span> ?</span>
+            <div class="flex gap-2">
+              <button (click)="doDelete(f.id!)"
+                class="px-4 py-1.5 bg-rose-500 hover:bg-rose-400 text-white rounded-lg text-xs font-bold transition-all">
+                Confirmer
+              </button>
+              <button (click)="cancelDelete()"
+                class="px-4 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 rounded-lg text-xs transition-all">
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

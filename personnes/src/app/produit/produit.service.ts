@@ -40,4 +40,12 @@ export class ProduitService {
   deleteProduit(produitId: number): Observable<any> {
     return this.httpClient.delete(`${this.PRODUIT_URL}${produitId}/`);
   }
+
+  createProduitWithFile(fd: FormData): Observable<Produit> {
+    return this.httpClient.post<Produit>(this.CREATE_ENDPOINT, fd);
+  }
+
+  patchProduitWithFile(id: number, fd: FormData): Observable<Produit> {
+    return this.httpClient.put<Produit>(`${this.PRODUIT_URL}${id}/`, fd);
+  }
 }

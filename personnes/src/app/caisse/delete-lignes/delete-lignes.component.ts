@@ -1,43 +1,67 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { LignesTransaction } from '../ligne.model';
+import { Transaction } from '../transaction.model';
 import { DeleteLignesService } from './delete-lignes.service';
-import { get } from 'http';
-import { NgFor, NgIf } from '@angular/common';
+import { DeleteTotalService } from '../delete-total/delete-total.service';
 
 @Component({
   selector: 'app-delete-lignes',
   standalone: true,
-  imports: [NgIf,NgFor],
+  imports: [CommonModule],
   templateUrl: './delete-lignes.component.html',
   styleUrl: './delete-lignes.component.css'
 })
 export class DeleteLignesComponent implements OnInit {
-  ligneTransaction: LignesTransaction[] = [];
-  constructor(private service_deleteLignes:DeleteLignesService) { }
+  lignes: LignesTransaction[] = [];
+  transactions: Transaction[] = [];
 
+  deleteLigneId: number | null = null;
+  deleteTransactionId: number | null = null;
+
+  activeTab: 'transactions' | 'lignes' = 'transactions';
+
+  constructor(
+    private lignesService: DeleteLignesService,
+    private totalService: DeleteTotalService
+  ) {}
 
   ngOnInit(): void {
-    this.getLignes();
+    this.loadAll();
   }
 
-  // Ajoutez ici la logique pour supprimer les lignes de transaction
-  deleteLigne(id: number) {
-    // Implémentez la logique pour supprimer une ligne de transaction
-    this.service_deleteLignes.deleteLignes(id).subscribe(data=>
-      {
-        console.log("Ligne supprimée avec succès",data);
-        this.getLignes(); // Récupérer à nouveau les lignes après la suppression  
-        // Vous pouvez également mettre à jour l'interface utilisateur ici si nécessaire
-      })
+  loadAll() {
+    this.loadLignes();
+    this.loadTransactions();
   }
 
-  getLignes() {
-    this.service_deleteLignes.getLignes().subscribe(data => {
-      this.ligneTransaction = data;
-      console.log("Lignes récupérées avec succès", this.ligneTransaction);
-    }, error => {
-      console.error("Erreur lors de la récupération des lignes", error);
+  loadLignes() {
+    this.lignesService.getLignes().subscribe({
+      next: (data) => { this.lignes = data; }
     });
-  } 
+  }
 
+  loadTransactions() {
+    this.totalService.getTotal().subscribe({
+      next: (data) => { this.transactions = data; }
+    });
+  }
+
+  askDeleteLigne(id: number) { this.deleteLigneId = id; }
+  cancelDeleteLigne() { this.deleteLigneId = null; }
+
+  doDeleteLigne(id: number) {
+    this.lignesService.deleteLignes(id).subscribe({
+      next: () => { this.deleteLigneId = null; this.loadLignes(); }
+    });
+  }
+
+  askDeleteTransaction(id: number) { this.deleteTransactionId = id; }
+  cancelDeleteTransaction() { this.deleteTransactionId = null; }
+
+  doDeleteTransaction(id: number) {
+    this.totalService.deleteTotal(id).subscribe({
+      next: () => { this.deleteTransactionId = null; this.loadAll(); }
+    });
+  }
 }

@@ -41,8 +41,8 @@ urlpatterns = [
    path('beneficeSemaine/', views.BeneficeParSemaine.as_view(), name='beneficeSemaine'),
    path('scanbynomprod/', views.ScanByNomProd.as_view(), name='scanbynomprod'),
    path('export_bdd/', views.ExportDatabase.as_view(), name='export_bdd'),
-   
-   
-   
-   
+   path('associes/', views.AssocieView.as_view(), name='associe-list'),
+   path('associes/<int:pk>/', views.AssocieView.as_view(), name='associe-detail'),
+   path('mouvements-capital/', views.MouvementCapitalView.as_view(), name='mouvement-capital'),
+   path('mouvements-capital/<int:pk>/', views.MouvementCapitalView.as_view(), name='mouvement-capital-detail'),
 ]

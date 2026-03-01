@@ -12,7 +12,8 @@ class Produit(models.Model):
     qte = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True) 
     qteMin = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True) 
     codeBarre = models.CharField(max_length=100, blank=True, null=True)
-    fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE, default=1, blank=True, null=True)
+    photo = models.ImageField(upload_to="produits/", blank=True, null=True)
+    fournisseur = models.ForeignKey(Fournisseur, on_delete=models.SET_NULL, default=None, blank=True, null=True, db_constraint=False)
     
     class Meta:  
         db_table = "produits" 
