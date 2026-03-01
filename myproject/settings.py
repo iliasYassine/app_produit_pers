@@ -17,6 +17,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / '.env')
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -186,7 +188,6 @@ EMAIL_HOST_USER = 'iliashasbi@gmail.com'
 EMAIL_HOST_PASSWORD = 'llsh gqfd njsr zuvj'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-load_dotenv(BASE_DIR / '.env')
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
 
 #mondial relay
