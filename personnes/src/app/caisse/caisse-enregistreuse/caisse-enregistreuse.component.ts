@@ -28,6 +28,7 @@ export class CaisseEnregistreuseComponent implements OnInit {
   searchTerm: string = '';
   apiUrl: string = environment.apiUrl;
   showScanner = false;
+  private currentTransactionId: number | null = null;
   
   
 
@@ -53,6 +54,7 @@ export class CaisseEnregistreuseComponent implements OnInit {
   
     this.caisseService.scanProduit(this.codebarre).subscribe(
       response => {
+        this.currentTransactionId = response.transaction;
         this.totalTransaction += parseFloat(response.total);
         const ligne: LignesTransaction = { ...response, produit: null };
         // Cherche dans la liste déjà chargée pour avoir la photo et tous les détails
@@ -67,11 +69,14 @@ export class CaisseEnregistreuseComponent implements OnInit {
 
   
   finalizeTransaction() {
-    this.ligneTransaction = []; // Réinitialiser le tableau des lignes de transaction
-    this.totalTransaction = 0;   // Réinitialiser le montant total
-    this.codebarre = "";         // Réinitialiser le champ du code-barre
-    this.errorMessage = '';  
-   
+    if (this.currentTransactionId !== null) {
+      this.caisseService.finalizeTransaction(this.currentTransactionId).subscribe();
+      this.currentTransactionId = null;
+    }
+    this.ligneTransaction = [];
+    this.totalTransaction = 0;
+    this.codebarre = "";
+    this.errorMessage = '';
   }
 
   onBlurSearch() {
