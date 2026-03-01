@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Produit } from '../produit/produit.model';
 import { ReportServiceService } from './report-service.service';
@@ -16,7 +16,7 @@ import { CapitalService } from '../capital/capital.service';
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.css'
 })
-export class ReportsComponent implements OnInit{
+export class ReportsComponent implements OnInit, OnDestroy {
   produit_report: Produit[] = [];
   top_vente:Transaction[]=[];
   
@@ -32,6 +32,8 @@ export class ReportsComponent implements OnInit{
   totalCapital: number = 0;
   get beneficeSociete(): number { return this.soldeBancaire - this.totalCapital; }
 
+  private moisChart: Chart | null = null;
+  private semaineChart: Chart | null = null;
 
 constructor(private report_service: ReportServiceService, private capitalService: CapitalService) {
     Chart.register(...registerables,ChartDataLabels)
@@ -81,12 +83,15 @@ constructor(private report_service: ReportServiceService, private capitalService
       });
   }
 
+  ngOnDestroy() {
+    this.moisChart?.destroy();
+    this.semaineChart?.destroy();
+  }
+
   reinitilise(){
-    this.report_service.reinitilsie().subscribe(data=>{
+    this.report_service.reinitilsie().subscribe(()=>{
       this.getChiffreAffairesTotal();
     })
-    
-    
   }
 
   loadBeneficeParMois() {
@@ -118,7 +123,8 @@ displayBeneficeMoisChart() {
   gradient.addColorStop(0, 'rgba(139, 92, 246, 0.35)');
   gradient.addColorStop(1, 'rgba(139, 92, 246, 0.0)');
 
-  new Chart('beneficeMoisChart', {
+  this.moisChart?.destroy();
+  this.moisChart = new Chart('beneficeMoisChart', {
     type: 'line',
     data: {
       labels,
@@ -183,7 +189,8 @@ displayBeneficeSemaineChart() {
 
   const maxVal = Math.max(...data);
 
-  new Chart('beneficeSemaineChart', {
+  this.semaineChart?.destroy();
+  this.semaineChart = new Chart('beneficeSemaineChart', {
     type: 'bar',
     data: {
       labels,
