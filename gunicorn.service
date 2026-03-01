@@ -1,29 +1,29 @@
 # ============================================================
-# Service systemd pour Gunicorn (Django)
+# Service systemd pour Gunicorn — app_produit_pers (port 8001)
 # INSTALLATION :
-#   sudo cp gunicorn.service /etc/systemd/system/caisse-ih.service
+#   sudo cp gunicorn.service /etc/systemd/system/caisse-app.service
 #   sudo systemctl daemon-reload
-#   sudo systemctl enable caisse-ih
-#   sudo systemctl start caisse-ih
+#   sudo systemctl enable caisse-app
+#   sudo systemctl start caisse-app
 # ============================================================
 
 [Unit]
-Description=Gunicorn daemon pour CaisseIH (Django)
+Description=Gunicorn daemon pour CaisseApp (Django)
 After=network.target
 
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=/var/www/caisse-ih-backend
+WorkingDirectory=/var/www/caisse-app-backend
 Environment="DJANGO_SECRET_KEY=REMPLACER_PAR_VOTRE_CLE_SECRETE"
 Environment="DJANGO_DEBUG=False"
-Environment="DJANGO_ALLOWED_HOSTS=caisse-ih.com,www.caisse-ih.com"
-ExecStart=/var/www/caisse-ih-backend/venv/bin/gunicorn \
+Environment="DJANGO_ALLOWED_HOSTS=TON_DOMAINE,www.TON_DOMAINE"
+ExecStart=/var/www/caisse-app-backend/venv/bin/gunicorn \
           --workers 3 \
-          --bind 127.0.0.1:8000 \
+          --bind 127.0.0.1:8001 \
           --timeout 120 \
-          --access-logfile /var/log/gunicorn/caisse-ih-access.log \
-          --error-logfile /var/log/gunicorn/caisse-ih-error.log \
+          --access-logfile /var/log/gunicorn/caisse-app-access.log \
+          --error-logfile /var/log/gunicorn/caisse-app-error.log \
           myproject.wsgi:application
 Restart=on-failure
 
