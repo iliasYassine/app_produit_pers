@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, DecimalPipe, isPlatformBrowser } from '@angular/common';
 import { Produit } from '../produit/produit.model';
 import { ReportServiceService } from './report-service.service';
 import { Chart,registerables } from 'chart.js';
@@ -35,8 +35,14 @@ export class ReportsComponent implements OnInit, OnDestroy {
   private moisChart: Chart | null = null;
   private semaineChart: Chart | null = null;
 
-constructor(private report_service: ReportServiceService, private capitalService: CapitalService) {
-    Chart.register(...registerables,ChartDataLabels)
+constructor(
+    private report_service: ReportServiceService,
+    private capitalService: CapitalService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    if (isPlatformBrowser(this.platformId)) {
+      Chart.register(...registerables, ChartDataLabels);
+    }
   }
   ngOnInit(): void {
     this.getcout();
@@ -111,6 +117,7 @@ loadBeneficeParSemaine() {
    }
 
 displayBeneficeMoisChart() {
+  if (!isPlatformBrowser(this.platformId)) return;
   const labels = this.beneficeParMois.map(item => {
     const date = new Date(item.mois);
     return date.toLocaleString('fr-FR', { month: 'short', year: 'numeric' });
@@ -179,6 +186,7 @@ displayBeneficeMoisChart() {
 }
 
 displayBeneficeSemaineChart() {
+  if (!isPlatformBrowser(this.platformId)) return;
   const labels = this.beneficeParSemaine.map(item => {
     const start = new Date(item.semaine);
     const end = new Date(start);

@@ -46,6 +46,6 @@ export class ProduitService {
   }
 
   patchProduitWithFile(id: number, fd: FormData): Observable<Produit> {
-    return this.httpClient.put<Produit>(`${this.PRODUIT_URL}${id}/`, fd);
+    return this.httpClient.patch<Produit>(`${this.PRODUIT_URL}${id}/`, fd);
   }
 }
