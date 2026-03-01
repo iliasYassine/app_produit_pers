@@ -277,10 +277,6 @@ class  scanProduit(APIView):
 
 
 
-            # Mise à jour du stock du produit
-            produit.qte -= 1
-            produit.save()
-
             # Sérialisation de la ligne de transaction pour la réponse
             ligne_serializer = LigneTransactionSerializer(ligne_transaction)
             return Response(ligne_serializer.data, status=status.HTTP_201_CREATED)
@@ -300,8 +296,14 @@ class FinalizeTransaction(APIView):
             transaction.total = transaction_total
             transaction.save()
 
+            # Décrémentation du stock au moment de la finalisation
+            for ligne in transaction.lignes.select_for_update().all():
+                if ligne.produit and ligne.quantite:
+                    ligne.produit.qte = (ligne.produit.qte or 0) - ligne.quantite
+                    ligne.produit.save()
+
             transaction_serializer = TransactionSerializer(transaction)
-            return Response(transaction_serializer.data, status=status.HTTP_200_OK)        
+            return Response(transaction_serializer.data, status=status.HTTP_200_OK)
         
         
          
@@ -920,10 +922,6 @@ class ScanByNomProd(APIView):
             transaction.save()
 
 
-
-            # Mise à jour du stock du produit
-            produit.qte -= 1
-            produit.save()
 
             # Sérialisation de la ligne de transaction pour la réponse
             ligne_serializer = LigneTransactionSerializer(ligne_transaction)
