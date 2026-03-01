@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CapitalService } from './capital.service';
-import { Associe, Mouvement } from './capital.model';
+import { Associe } from './capital.model';
 
 @Component({
   selector: 'app-capital',
@@ -39,7 +39,9 @@ export class CapitalComponent implements OnInit {
   constructor(private svc: CapitalService) {}
 
   ngOnInit() {
-    this.soldeBancaire = parseFloat(localStorage.getItem('soldeBancaire') || '0');
+    this.svc.getSoldeBancaire().subscribe(data => {
+      this.soldeBancaire = Number(data.solde_bancaire);
+    });
     this.load();
   }
 
@@ -49,9 +51,10 @@ export class CapitalComponent implements OnInit {
   }
 
   saveSoldeBancaire() {
-    this.soldeBancaire = this.soldeBancaireEdit;
-    localStorage.setItem('soldeBancaire', String(this.soldeBancaire));
-    this.editSoldeBancaire = false;
+    this.svc.updateSoldeBancaire(this.soldeBancaireEdit).subscribe(data => {
+      this.soldeBancaire = Number(data.solde_bancaire);
+      this.editSoldeBancaire = false;
+    });
   }
 
   load() {

@@ -1,6 +1,18 @@
 from django.db import models
 
 
+class ParametresSociete(models.Model):
+    solde_bancaire = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    class Meta:
+        db_table = "parametres_societe"
+
+    @classmethod
+    def get_instance(cls):
+        obj, _ = cls.objects.get_or_create(id=1)
+        return obj
+
+
 class Associe(models.Model):
     nom = models.CharField(max_length=100)
     solde = models.DecimalField(max_digits=10, decimal_places=2, default=0)

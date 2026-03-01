@@ -75,7 +75,7 @@ class ClientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 ############CAPITAL#####################
-from .models.capital import Associe, MouvementCapital
+from .models.capital import Associe, MouvementCapital, ParametresSociete
 
 class MouvementCapitalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -87,5 +87,10 @@ class AssocieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Associe
         fields = ['id', 'nom', 'solde', 'mouvements']
+
+class ParametresSocieteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ParametresSociete
+        fields = ['solde_bancaire']
 
         

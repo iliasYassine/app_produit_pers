@@ -33,4 +33,12 @@ export class CapitalService {
   deleteMouvement(id: number): Observable<any> {
     return this.http.delete(`${this.base}/mouvements-capital/${id}/`);
   }
+
+  getSoldeBancaire(): Observable<{ solde_bancaire: number }> {
+    return this.http.get<{ solde_bancaire: number }>(`${this.base}/parametres/`);
+  }
+
+  updateSoldeBancaire(val: number): Observable<{ solde_bancaire: number }> {
+    return this.http.patch<{ solde_bancaire: number }>(`${this.base}/parametres/`, { solde_bancaire: val });
+  }
 }

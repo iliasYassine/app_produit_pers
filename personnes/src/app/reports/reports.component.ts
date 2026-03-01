@@ -4,7 +4,7 @@ import { Produit } from '../produit/produit.model';
 import { ReportServiceService } from './report-service.service';
 import { Chart,registerables } from 'chart.js';
 import { Transaction } from '../caisse/transaction.model';
-import { LignesTransaction } from '../caisse/ligne.model';
+
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { CapitalService } from '../capital/capital.service';
 
@@ -44,7 +44,9 @@ constructor(private report_service: ReportServiceService, private capitalService
     this.getjsondatatopvente();
     this.loadBeneficeParMois();
     this.loadBeneficeParSemaine();
-    this.soldeBancaire = parseFloat(localStorage.getItem('soldeBancaire') || '0');
+    this.capitalService.getSoldeBancaire().subscribe(data => {
+      this.soldeBancaire = Number(data.solde_bancaire);
+    });
     this.capitalService.getAssocies().subscribe(associes => {
       this.totalCapital = associes.reduce((sum, a) => sum + Number(a.solde), 0);
     });

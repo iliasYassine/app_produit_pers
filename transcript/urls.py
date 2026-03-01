@@ -45,4 +45,5 @@ urlpatterns = [
    path('associes/<int:pk>/', views.AssocieView.as_view(), name='associe-detail'),
    path('mouvements-capital/', views.MouvementCapitalView.as_view(), name='mouvement-capital'),
    path('mouvements-capital/<int:pk>/', views.MouvementCapitalView.as_view(), name='mouvement-capital-detail'),
+   path('parametres/', views.ParametresSocieteView.as_view(), name='parametres-societe'),
 ]

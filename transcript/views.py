@@ -988,8 +988,8 @@ class ExportDatabase(APIView):
 
 
 ############## CAPITAL / DETTES ASSOCIÉS ##############
-from .models.capital import Associe, MouvementCapital
-from .serializers import AssocieSerializer, MouvementCapitalSerializer
+from .models.capital import Associe, MouvementCapital, ParametresSociete
+from .serializers import AssocieSerializer, MouvementCapitalSerializer, ParametresSocieteSerializer
 
 class AssocieView(APIView):
     permission_classes = [AllowAny]
@@ -1050,3 +1050,19 @@ class MouvementCapitalView(APIView):
         associe.save()
         mvt.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ParametresSocieteView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        params = ParametresSociete.get_instance()
+        return Response(ParametresSocieteSerializer(params).data)
+
+    def patch(self, request):
+        params = ParametresSociete.get_instance()
+        serializer = ParametresSocieteSerializer(params, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
