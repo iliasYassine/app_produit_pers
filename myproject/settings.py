@@ -126,17 +126,15 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-DATABASES = {  
-    'default': {  
-        'ENGINE': 'django.db.backends.mysql',  
-        'NAME': 'test',  
-        'USER':'root',  
-        'PASSWORD':'',  
-        'HOST':'localhost',  
-        'PORT':'3306'  
-        
-    } 
-     
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_NAME', 'test'),
+        'USER': os.environ.get('DB_USER', 'root'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '3306'),
+    }
 }
 
 
@@ -188,7 +186,7 @@ EMAIL_HOST_USER = 'iliashasbi@gmail.com'
 EMAIL_HOST_PASSWORD = 'llsh gqfd njsr zuvj'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-load_dotenv()
+load_dotenv(BASE_DIR / '.env')
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
 
 #mondial relay
