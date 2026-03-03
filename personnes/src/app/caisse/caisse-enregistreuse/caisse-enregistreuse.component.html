@@ -100,8 +100,25 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" *ngIf="ligneTransaction.length">
           <div
             *ngFor="let ligne of ligneTransaction"
-            class="bg-zinc-800 hover:bg-zinc-750 border border-white/[0.07] hover:border-violet-500/30 rounded-xl overflow-hidden transition-all group cursor-default"
+            class="bg-zinc-800 border border-white/[0.07] hover:border-violet-500/30 rounded-xl overflow-hidden transition-all group cursor-default relative"
           >
+            <!-- Bouton supprimer (hover) -->
+            <button
+              *ngIf="deleteConfirmLigneId !== ligne.id"
+              (click)="deleteConfirmLigneId = ligne.id ?? null"
+              class="absolute top-1.5 left-1.5 z-10 w-6 h-6 bg-zinc-900/80 hover:bg-rose-600 border border-white/10 text-zinc-400 hover:text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
+              title="Supprimer cette ligne"
+            >
+              <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <!-- Confirmation suppression -->
+            <div *ngIf="deleteConfirmLigneId === ligne.id" class="absolute inset-0 z-10 bg-zinc-900/95 flex flex-col items-center justify-center gap-2 p-2">
+              <p class="text-white text-[10px] text-center font-medium">Supprimer ?</p>
+              <div class="flex gap-1.5">
+                <button (click)="supprimerLigne(ligne)" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] rounded-lg font-bold transition-all">Oui</button>
+                <button (click)="deleteConfirmLigneId = null" class="px-2.5 py-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 text-[10px] rounded-lg transition-all">Non</button>
+              </div>
+            </div>
             <!-- Image -->
             <div class="relative aspect-square">
               <img

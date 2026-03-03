@@ -9,6 +9,7 @@ import { FormulaireComponent } from './formulaire/formulaire/formulaire.componen
 import { CommandeComponent } from './commande/commande/commande.component';
 import { SuiviCommandeClientComponent } from './commande/suivi-commande-client/suivi-commande-client.component';
 import { CapitalComponent } from './capital/capital.component';
+import { VehiculeListComponent } from './vehicules/vehicule-list.component';
 
 export const routes: Routes = [
     { path: 'personnes', component: PersonneListComponent },
@@ -21,4 +22,5 @@ export const routes: Routes = [
     { path: 'commande', component: CommandeComponent },
     { path: 'suivie_client', component: SuiviCommandeClientComponent },
     { path: 'capital', component: CapitalComponent },
+    { path: 'vehicules', component: VehiculeListComponent },
 ];

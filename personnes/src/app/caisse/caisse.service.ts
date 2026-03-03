@@ -39,6 +39,10 @@ export class CaisseService {
     if (transactionId !== null) body.transaction_id = transactionId;
     return this.http.post(this.scanbynomprod, body);
   }
+
+  deleteLigne(ligneId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/transcript/ligneTransaction/${ligneId}/`);
+  }
  
 
 

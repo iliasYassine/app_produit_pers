@@ -46,4 +46,8 @@ urlpatterns = [
    path('mouvements-capital/', views.MouvementCapitalView.as_view(), name='mouvement-capital'),
    path('mouvements-capital/<int:pk>/', views.MouvementCapitalView.as_view(), name='mouvement-capital-detail'),
    path('parametres/', views.ParametresSocieteView.as_view(), name='parametres-societe'),
+   path('vehicules/', views.VehiculeList.as_view(), name='vehicule-list'),
+   path('vehicules/<int:pk>/', views.VehiculeDetail.as_view(), name='vehicule-detail'),
+   path('frais-vehicule/', views.FraisVehiculeList.as_view(), name='frais-vehicule-list'),
+   path('frais-vehicule/<int:pk>/', views.FraisVehiculeDetail.as_view(), name='frais-vehicule-detail'),
 ]

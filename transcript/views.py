@@ -494,8 +494,11 @@ Merci de passer commande rapidement.
         df.to_excel(chemin_fichier, index=False)
         
         email.attach_file(chemin_fichier)
-        email.send(fail_silently=False)
-        
+        try:
+            email.send(fail_silently=False)
+        except Exception as e:
+            return Response({'erreur': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         return Response(f'Email envoyé pour {len(produits)} produit(s) en rupture', status=200)
     
 class login(APIView):   
@@ -1055,3 +1058,59 @@ class ParametresSocieteView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+################## VEHICULES ################
+from .models.vehicule import Vehicule, FraisVehicule
+from .serializers import VehiculeSerializer, FraisVehiculeSerializer
+
+class VehiculeList(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        vehicules = Vehicule.objects.prefetch_related('frais').all().order_by('-date_creation')
+        return Response(VehiculeSerializer(vehicules, many=True).data)
+
+    def post(self, request):
+        serializer = VehiculeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class VehiculeDetail(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, pk):
+        v = get_object_or_404(Vehicule, pk=pk)
+        return Response(VehiculeSerializer(v).data)
+
+    def patch(self, request, pk):
+        v = get_object_or_404(Vehicule, pk=pk)
+        serializer = VehiculeSerializer(v, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        v = get_object_or_404(Vehicule, pk=pk)
+        v.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class FraisVehiculeList(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = FraisVehiculeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class FraisVehiculeDetail(APIView):
+    permission_classes = [AllowAny]
+
+    def delete(self, request, pk):
+        f = get_object_or_404(FraisVehicule, pk=pk)
+        f.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

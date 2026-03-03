@@ -94,3 +94,21 @@ class ParametresSocieteSerializer(serializers.ModelSerializer):
         fields = ['solde_bancaire']
 
         
+################## VEHICULES ################
+from transcript.models.vehicule import Vehicule, FraisVehicule
+
+class FraisVehiculeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FraisVehicule
+        fields = '__all__'
+
+class VehiculeSerializer(serializers.ModelSerializer):
+    frais = FraisVehiculeSerializer(many=True, read_only=True)
+    total_frais = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Vehicule
+        fields = ['id', 'nom', 'prix_achat', 'date_creation', 'frais', 'total_frais']
+
+    def get_total_frais(self, obj):
+        return sum(f.prix for f in obj.frais.all())

@@ -29,6 +29,7 @@ export class CaisseEnregistreuseComponent implements OnInit {
   apiUrl: string = environment.apiUrl;
   showScanner = false;
   private currentTransactionId: number | null = null;
+  deleteConfirmLigneId: number | null = null;
   
   
 
@@ -127,6 +128,15 @@ export class CaisseEnregistreuseComponent implements OnInit {
     this.showScanner = false;
     this.codebarre = code;
     this.scanProduit();
+  }
+
+  supprimerLigne(ligne: LignesTransaction) {
+    if (!ligne.id) return;
+    this.caisseService.deleteLigne(ligne.id).subscribe(() => {
+      this.ligneTransaction = this.ligneTransaction.filter(l => l.id !== ligne.id);
+      this.totalTransaction = this.ligneTransaction.reduce((sum, l) => sum + parseFloat(String(l.total)), 0);
+      this.deleteConfirmLigneId = null;
+    });
   }
 
   ajouterProduitParNom(produit: Produit) {
