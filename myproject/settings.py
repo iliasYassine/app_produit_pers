@@ -95,7 +95,8 @@ CORS_ALLOW_HEADERS = [
     "user-agent",
     "x-csrftoken",
     "x-requested-with",
-    # ... autres en-têtes autorisés
+    "cache-control",
+    "pragma",
 ]
 
 ROOT_URLCONF = 'myproject.urls'
