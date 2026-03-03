@@ -302,6 +302,12 @@ class FinalizeTransaction(APIView):
                     ligne.produit.qte = (ligne.produit.qte or 0) - ligne.quantite
                     ligne.produit.save()
 
+            # Mise à jour automatique du solde bancaire
+            from .models.capital import ParametresSociete as PS
+            params, _ = PS.objects.get_or_create(pk=1)
+            params.solde_bancaire = (params.solde_bancaire or 0) + transaction_total
+            params.save()
+
             transaction_serializer = TransactionSerializer(transaction)
             return Response(transaction_serializer.data, status=status.HTTP_200_OK)
         
@@ -1103,14 +1109,41 @@ class FraisVehiculeList(APIView):
     def post(self, request):
         serializer = FraisVehiculeSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            frais = serializer.save()
+            # Déduire le frais du solde bancaire
+            from .models.capital import ParametresSociete as PS
+            params, _ = PS.objects.get_or_create(pk=1)
+            params.solde_bancaire = (params.solde_bancaire or 0) - frais.prix
+            params.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class FraisVehiculeDetail(APIView):
     permission_classes = [AllowAny]
 
+    def patch(self, request, pk):
+        f = get_object_or_404(FraisVehicule, pk=pk)
+        ancien_prix = f.prix
+        serializer = FraisVehiculeSerializer(f, data=request.data, partial=True)
+        if serializer.is_valid():
+            frais = serializer.save()
+            # Ajuster le solde bancaire si le prix a changé
+            nouveau_prix = frais.prix
+            diff = nouveau_prix - ancien_prix
+            if diff != 0:
+                from .models.capital import ParametresSociete as PS
+                params, _ = PS.objects.get_or_create(pk=1)
+                params.solde_bancaire = (params.solde_bancaire or 0) - diff
+                params.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def delete(self, request, pk):
         f = get_object_or_404(FraisVehicule, pk=pk)
+        # Rembourser le frais dans le solde bancaire
+        from .models.capital import ParametresSociete as PS
+        params, _ = PS.objects.get_or_create(pk=1)
+        params.solde_bancaire = (params.solde_bancaire or 0) + f.prix
+        params.save()
         f.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

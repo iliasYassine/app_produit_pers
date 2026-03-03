@@ -38,8 +38,16 @@ export class VehiculeService {
     return this.http.delete(`${this.base}/vehicules/${id}/`);
   }
 
+  update(id: number, data: Partial<Vehicule>): Observable<Vehicule> {
+    return this.http.patch<Vehicule>(`${this.base}/vehicules/${id}/`, data);
+  }
+
   addFrais(frais: FraisVehicule): Observable<FraisVehicule> {
     return this.http.post<FraisVehicule>(`${this.base}/frais-vehicule/`, frais);
+  }
+
+  updateFrais(id: number, data: Partial<FraisVehicule>): Observable<FraisVehicule> {
+    return this.http.patch<FraisVehicule>(`${this.base}/frais-vehicule/${id}/`, data);
   }
 
   deleteFrais(id: number): Observable<any> {

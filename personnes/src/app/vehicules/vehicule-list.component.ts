@@ -23,6 +23,14 @@ export class VehiculeListComponent implements OnInit {
   deleteConfirmId: number | null = null;
   deleteFraisConfirmId: number | null = null;
 
+  editVehiculeId: number | null = null;
+  editNom = '';
+  editPrixAchat = 0;
+
+  editFraisId: number | null = null;
+  editFraisDesc = '';
+  editFraisPrix: number | null = null;
+
   constructor(private svc: VehiculeService) {}
 
   ngOnInit() { this.load(); }
@@ -44,6 +52,23 @@ export class VehiculeListComponent implements OnInit {
     });
   }
 
+  startEditVehicule(v: Vehicule) {
+    this.editVehiculeId = v.id!;
+    this.editNom = v.nom;
+    this.editPrixAchat = Number(v.prix_achat);
+    this.deleteConfirmId = null;
+  }
+
+  saveEditVehicule() {
+    if (!this.editVehiculeId || !this.editNom.trim()) return;
+    this.svc.update(this.editVehiculeId, { nom: this.editNom.trim(), prix_achat: this.editPrixAchat }).subscribe(() => {
+      this.editVehiculeId = null;
+      this.load();
+    });
+  }
+
+  cancelEditVehicule() { this.editVehiculeId = null; }
+
   select(v: Vehicule) { this.selected = v; }
   back() { this.selected = null; }
 
@@ -55,7 +80,24 @@ export class VehiculeListComponent implements OnInit {
     });
   }
 
-  confirmDeleteVehicule(id: number) { this.deleteConfirmId = id; }
+  startEditFrais(f: FraisVehicule) {
+    this.editFraisId = f.id!;
+    this.editFraisDesc = f.description;
+    this.editFraisPrix = Number(f.prix);
+    this.deleteFraisConfirmId = null;
+  }
+
+  saveEditFrais() {
+    if (!this.editFraisId || !this.editFraisDesc.trim() || !this.editFraisPrix) return;
+    this.svc.updateFrais(this.editFraisId, { description: this.editFraisDesc.trim(), prix: this.editFraisPrix }).subscribe(() => {
+      this.editFraisId = null;
+      this.load();
+    });
+  }
+
+  cancelEditFrais() { this.editFraisId = null; }
+
+  confirmDeleteVehicule(id: number) { this.deleteConfirmId = id; this.editVehiculeId = null; }
   cancelDelete() { this.deleteConfirmId = null; }
   deleteVehicule(id: number) {
     this.svc.delete(id).subscribe(() => {
@@ -65,7 +107,7 @@ export class VehiculeListComponent implements OnInit {
     });
   }
 
-  confirmDeleteFrais(id: number) { this.deleteFraisConfirmId = id; }
+  confirmDeleteFrais(id: number) { this.deleteFraisConfirmId = id; this.editFraisId = null; }
   cancelDeleteFrais() { this.deleteFraisConfirmId = null; }
   deleteFrais(id: number) {
     this.svc.deleteFrais(id).subscribe(() => {
