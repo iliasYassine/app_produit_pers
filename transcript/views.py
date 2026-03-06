@@ -251,7 +251,7 @@ class  scanProduit(APIView):
                 
         with db_transaction.atomic():
             produit=get_object_or_404(Produit,codeBarre=code_barre)
-            if produit.qte <= 0:
+            if produit.qte is None or produit.qte <= 0:
                 return Response({'erreur': 'Stock insuffisant pour le produit demandé.'}, status=status.HTTP_400_BAD_REQUEST)
             #on gere la transaction mtn qu'on a le produit
             transaction_id = request.data.get('transaction_id')
@@ -297,6 +297,12 @@ class LigneLibreCreate(APIView):
 
         if not prix:
             return Response({'error': 'prix_unitaire requis'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            from decimal import Decimal
+            prix = Decimal(str(prix))
+        except Exception:
+            return Response({'error': 'prix_unitaire invalide'}, status=status.HTTP_400_BAD_REQUEST)
 
         if transaction_id:
             transaction = get_object_or_404(Transaction, id=transaction_id)
