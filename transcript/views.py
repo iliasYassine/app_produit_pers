@@ -939,7 +939,7 @@ class ScanByNomProd(APIView):
                 
         with db_transaction.atomic():
             produit=get_object_or_404(Produit,nomProd=produit)
-            if produit.qte <= 0:
+            if produit.qte is None or produit.qte <= 0:
                 return Response({'erreur': 'Stock insuffisant pour le produit demandé.'}, status=status.HTTP_400_BAD_REQUEST)
             #on gere la transaction mtn qu'on a le produit
             transaction_id = request.data.get('transaction_id')
