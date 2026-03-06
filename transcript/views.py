@@ -231,9 +231,15 @@ class TransactionView(APIView):
     
     def delete(self, request, pk, format=None):
         transac = get_object_or_404(Transaction, pk=pk)
+        # Annule l'effet sur le solde bancaire si la transaction était finalisée
+        if transac.total:
+            from .models.capital import ParametresSociete as PS
+            params, _ = PS.objects.get_or_create(pk=1)
+            params.solde_bancaire = (params.solde_bancaire or 0) - transac.total
+            params.save()
         transac.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)     
-    
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class  scanProduit(APIView):
     permission_classes = [AllowAny]
     
