@@ -281,6 +281,33 @@ class  scanProduit(APIView):
             ligne_serializer = LigneTransactionSerializer(ligne_transaction)
             return Response(ligne_serializer.data, status=status.HTTP_201_CREATED)
 
+class LigneLibreCreate(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        description = request.data.get('description_libre', '').strip()
+        prix = request.data.get('prix_unitaire')
+        transaction_id = request.data.get('transaction_id')
+
+        if not prix:
+            return Response({'error': 'prix_unitaire requis'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if transaction_id:
+            transaction = get_object_or_404(Transaction, id=transaction_id)
+        else:
+            transaction = Transaction.objects.create()
+
+        ligne = LigneTransaction.objects.create(
+            transaction=transaction,
+            produit=None,
+            description_libre=description,
+            quantite=1,
+            prix_unitaire=prix,
+        )
+        serializer = LigneTransactionSerializer(ligne)
+        return Response({**serializer.data, 'transaction': transaction.id}, status=status.HTTP_201_CREATED)
+
+
 class FinalizeTransaction(APIView):
     permission_classes = [AllowAny]
 

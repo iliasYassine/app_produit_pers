@@ -37,7 +37,7 @@ class LigneTransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LigneTransaction
-        fields = ['id', 'quantite', 'prix_unitaire', 'total', 'produit', 'transaction', 'produitDetails']  # Inclure produitDetails
+        fields = ['id', 'quantite', 'prix_unitaire', 'total', 'produit', 'transaction', 'produitDetails', 'description_libre']
         
         
 #########TRANSACTION####################

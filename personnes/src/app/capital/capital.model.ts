@@ -4,6 +4,7 @@ export interface Mouvement {
   montant: number;
   type_mvt: 'injection' | 'retrait';
   description?: string;
+  document?: string;
   date_mvt?: string;
 }
 

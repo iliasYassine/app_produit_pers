@@ -50,4 +50,5 @@ urlpatterns = [
    path('vehicules/<int:pk>/', views.VehiculeDetail.as_view(), name='vehicule-detail'),
    path('frais-vehicule/', views.FraisVehiculeList.as_view(), name='frais-vehicule-list'),
    path('frais-vehicule/<int:pk>/', views.FraisVehiculeDetail.as_view(), name='frais-vehicule-detail'),
+   path('ligne-libre/', views.LigneLibreCreate.as_view(), name='ligne-libre'),
 ]

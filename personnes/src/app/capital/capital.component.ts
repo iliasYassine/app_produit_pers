@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CapitalService } from './capital.service';
 import { Associe } from './capital.model';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-capital',
@@ -13,6 +14,7 @@ import { Associe } from './capital.model';
 export class CapitalComponent implements OnInit {
   associes: Associe[] = [];
   loading = false;
+  apiUrl = environment.apiUrl;
 
   // Solde bancaire réel
   soldeBancaire: number = 0;
@@ -32,6 +34,7 @@ export class CapitalComponent implements OnInit {
   newMvt: { montant: number | null; type_mvt: 'injection' | 'retrait'; description: string } = {
     montant: null, type_mvt: 'injection', description: ''
   };
+  selectedFile: File | null = null;
 
   // Supprimer associé
   deleteId: number | null = null;
@@ -91,6 +94,12 @@ export class CapitalComponent implements OnInit {
   openMvt(id: number) {
     this.showMvtId = id;
     this.newMvt = { montant: null, type_mvt: 'injection', description: '' };
+    this.selectedFile = null;
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.selectedFile = input.files?.[0] ?? null;
   }
 
   addMouvement() {
@@ -100,8 +109,8 @@ export class CapitalComponent implements OnInit {
       montant: this.newMvt.montant,
       type_mvt: this.newMvt.type_mvt,
       description: this.newMvt.description
-    }).subscribe({
-      next: () => { this.showMvtId = null; this.load(); }
+    }, this.selectedFile ?? undefined).subscribe({
+      next: () => { this.showMvtId = null; this.selectedFile = null; this.load(); }
     });
   }
 

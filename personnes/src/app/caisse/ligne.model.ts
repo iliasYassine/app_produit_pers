@@ -8,6 +8,5 @@ export interface LignesTransaction {
     produit:number;
     transaction:number;
     produitDetails?: Partial<Produit>;
-
-    
+    description_libre?: string;
   }

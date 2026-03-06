@@ -43,8 +43,10 @@ export class CaisseService {
   deleteLigne(ligneId: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/transcript/ligneTransaction/${ligneId}/`);
   }
- 
 
-
-  
+  ajouterLigneLibre(description: string, prix: number, transactionId: number | null): Observable<any> {
+    const body: any = { description_libre: description, prix_unitaire: prix };
+    if (transactionId !== null) body.transaction_id = transactionId;
+    return this.http.post(`${this.baseUrl}/transcript/ligne-libre/`, body);
+  }
 }

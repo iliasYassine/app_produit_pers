@@ -9,6 +9,7 @@ class LigneTransaction(models.Model):
     quantite = models.PositiveIntegerField(blank=True, null=True)
     prix_unitaire = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, editable=False, blank=True, null=True)
+    description_libre = models.CharField(max_length=255, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         self.total = self.quantite * self.prix_unitaire

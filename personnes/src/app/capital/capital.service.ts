@@ -26,7 +26,16 @@ export class CapitalService {
     return this.http.delete(`${this.base}/associes/${id}/`);
   }
 
-  addMouvement(mvt: Omit<Mouvement, 'id' | 'date_mvt'>): Observable<Mouvement> {
+  addMouvement(mvt: Omit<Mouvement, 'id' | 'date_mvt'>, file?: File): Observable<Mouvement> {
+    if (file) {
+      const fd = new FormData();
+      fd.append('associe', String(mvt.associe));
+      fd.append('montant', String(mvt.montant));
+      fd.append('type_mvt', mvt.type_mvt);
+      if (mvt.description) fd.append('description', mvt.description);
+      fd.append('document', file);
+      return this.http.post<Mouvement>(`${this.base}/mouvements-capital/`, fd);
+    }
     return this.http.post<Mouvement>(`${this.base}/mouvements-capital/`, mvt);
   }
 

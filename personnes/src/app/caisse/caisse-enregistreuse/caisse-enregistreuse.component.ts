@@ -30,8 +30,11 @@ export class CaisseEnregistreuseComponent implements OnInit {
   showScanner = false;
   private currentTransactionId: number | null = null;
   deleteConfirmLigneId: number | null = null;
-  
-  
+
+  // Article libre
+  showLibre = false;
+  libreDesc = '';
+  librePrix: number | null = null;
 
   ngOnInit() {
     console.log("codebarre1:",this.codebarre);
@@ -136,6 +139,19 @@ export class CaisseEnregistreuseComponent implements OnInit {
       this.ligneTransaction = this.ligneTransaction.filter(l => l.id !== ligne.id);
       this.totalTransaction = this.ligneTransaction.reduce((sum, l) => sum + parseFloat(String(l.total)), 0);
       this.deleteConfirmLigneId = null;
+    });
+  }
+
+  ajouterLigneLibre() {
+    if (!this.librePrix) return;
+    this.caisseService.ajouterLigneLibre(this.libreDesc.trim(), this.librePrix, this.currentTransactionId).subscribe(data => {
+      this.currentTransactionId = data.transaction;
+      const ligne: LignesTransaction = { ...data };
+      this.ligneTransaction.push(ligne);
+      this.totalTransaction = this.ligneTransaction.reduce((sum, l) => sum + parseFloat(String(l.total)), 0);
+      this.libreDesc = '';
+      this.librePrix = null;
+      this.showLibre = false;
     });
   }
 
