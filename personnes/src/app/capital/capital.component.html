@@ -119,11 +119,7 @@
         <div *ngIf="showMvtId === a.id" class="p-4 bg-zinc-800/50 border-b border-white/[0.06]">
           <p class="text-zinc-400 text-xs font-medium uppercase tracking-wider mb-3">Nouveau mouvement</p>
           <div class="flex flex-wrap gap-3">
-            <select [(ngModel)]="newMvt.type_mvt"
-              class="bg-zinc-800 border border-white/10 text-white px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-violet-500/60">
-              <option value="injection">💰 Injection</option>
-              <option value="retrait">📤 Retrait</option>
-            </select>
+            <span class="bg-zinc-800 border border-white/10 text-emerald-400 px-3 py-2 rounded-xl text-sm font-medium">💰 Injection</span>
             <input [(ngModel)]="newMvt.montant" type="number" placeholder="Montant (€)"
               class="w-40 bg-zinc-800 border border-white/10 text-white px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-violet-500/60"/>
             <input [(ngModel)]="newMvt.description" placeholder="Description (optionnel)"
