@@ -1073,6 +1073,11 @@ class MouvementCapitalView(APIView):
             else:
                 associe.solde -= mvt.montant
             associe.save()
+            # Met à jour le solde bancaire
+            from .models.capital import ParametresSociete as PS
+            params, _ = PS.objects.get_or_create(pk=1)
+            params.solde_bancaire = (params.solde_bancaire or 0) + mvt.montant
+            params.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -1085,6 +1090,11 @@ class MouvementCapitalView(APIView):
         else:
             associe.solde += mvt.montant
         associe.save()
+        # Annule l'effet sur le solde bancaire
+        from .models.capital import ParametresSociete as PS
+        params, _ = PS.objects.get_or_create(pk=1)
+        params.solde_bancaire = (params.solde_bancaire or 0) - mvt.montant
+        params.save()
         mvt.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

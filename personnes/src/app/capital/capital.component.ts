@@ -31,7 +31,7 @@ export class CapitalComponent implements OnInit {
 
   // Ajout mouvement
   showMvtId: number | null = null;
-  newMvt: { montant: number | null; type_mvt: 'injection' | 'retrait'; description: string } = {
+  newMvt: { montant: number | null; type_mvt: 'injection'; description: string } = {
     montant: null, type_mvt: 'injection', description: ''
   };
   selectedFile: File | null = null;
@@ -91,6 +91,12 @@ export class CapitalComponent implements OnInit {
     });
   }
 
+  loadSoldeBancaire() {
+    this.svc.getSoldeBancaire().subscribe(data => {
+      this.soldeBancaire = Number(data.solde_bancaire);
+    });
+  }
+
   openMvt(id: number) {
     this.showMvtId = id;
     this.newMvt = { montant: null, type_mvt: 'injection', description: '' };
@@ -110,12 +116,12 @@ export class CapitalComponent implements OnInit {
       type_mvt: this.newMvt.type_mvt,
       description: this.newMvt.description
     }, this.selectedFile ?? undefined).subscribe({
-      next: () => { this.showMvtId = null; this.selectedFile = null; this.load(); }
+      next: () => { this.showMvtId = null; this.selectedFile = null; this.load(); this.loadSoldeBancaire(); }
     });
   }
 
   deleteMouvement(mvtId: number) {
-    this.svc.deleteMouvement(mvtId).subscribe({ next: () => this.load() });
+    this.svc.deleteMouvement(mvtId).subscribe({ next: () => { this.load(); this.loadSoldeBancaire(); } });
   }
 
   askDelete(id: number) { this.deleteId = id; }
