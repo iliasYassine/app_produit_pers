@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/mini-nav-bar/mini-nav-bar.component.css"],
+  "sourcesContent": ["nav ul {\r\n  list-style: none;\r\n  padding: 0;\r\n  margin: 0;\r\n  display: flex;\r\n  gap: 20px;\r\n}\r\n\r\n\r\n\r\nnav a {\r\n  text-decoration: none;\r\n  color: #222;\r\n  font-weight: bold;\r\n  font-size: 1.1em;\r\n}\r\n\r\nnav a:hover {\r\n  color: #1976d2;\r\n}"],
+  "mappings": ";AAAA,IAAI;AACF,cAAY;AACZ,WAAS;AACT,UAAQ;AACR,WAAS;AACT,OAAK;AACP;AAIA,IAAI;AACF,mBAAiB;AACjB,SAAO;AACP,eAAa;AACb,aAAW;AACb;AAEA,IAAI,CAAC;AACH,SAAO;AACT;",
+  "names": []
+}

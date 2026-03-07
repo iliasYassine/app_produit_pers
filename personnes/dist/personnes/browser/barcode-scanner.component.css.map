@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["angular:styles/component:css;115c7dcd187cb6da93cf2256382a13ceecc47830c9c479e7882a7035608388f7;C:/dev/app_produit_pers/personnes/src/app/barcode-scanner/barcode-scanner.component.ts"],
+  "sourcesContent": ["\n    @keyframes scanMove {\n      0%   { top: 8px; }\n      50%  { top: calc(100% - 10px); }\n      100% { top: 8px; }\n    }\n    .scan-line {\n      animation: scanMove 2s ease-in-out infinite;\n    }\n  "],
+  "mappings": ";AACI,WAAW;AACT;AAAO,SAAK;AAAK;AACjB;AAAO,SAAK,KAAK,KAAK,EAAE;AAAO;AAC/B;AAAO,SAAK;AAAK;AACnB;AACA,CAAC;AACC,aAAW,SAAS,GAAG,YAAY;AACrC;",
+  "names": []
+}

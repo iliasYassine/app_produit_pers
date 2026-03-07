@@ -10,6 +10,7 @@ import { CommandeComponent } from './commande/commande/commande.component';
 import { SuiviCommandeClientComponent } from './commande/suivi-commande-client/suivi-commande-client.component';
 import { CapitalComponent } from './capital/capital.component';
 import { VehiculeListComponent } from './vehicules/vehicule-list.component';
+import { FraisComponent } from './frais/frais.component';
 
 export const routes: Routes = [
     { path: 'personnes', component: PersonneListComponent },
@@ -23,4 +24,5 @@ export const routes: Routes = [
     { path: 'suivie_client', component: SuiviCommandeClientComponent },
     { path: 'capital', component: CapitalComponent },
     { path: 'vehicules', component: VehiculeListComponent },
+    { path: 'frais', component: FraisComponent },
 ];

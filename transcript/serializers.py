@@ -94,6 +94,15 @@ class ParametresSocieteSerializer(serializers.ModelSerializer):
         fields = ['solde_bancaire']
 
         
+################## FRAIS GENERAUX ################
+from transcript.models.frais import FraisGeneraux
+
+class FraisGenerauxSerializer(serializers.ModelSerializer):
+    ticket = serializers.FileField(use_url=True, required=False, allow_null=True)
+    class Meta:
+        model = FraisGeneraux
+        fields = '__all__'
+
 ################## VEHICULES ################
 from transcript.models.vehicule import Vehicule, FraisVehicule
 

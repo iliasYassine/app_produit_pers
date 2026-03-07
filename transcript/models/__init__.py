@@ -7,3 +7,4 @@ from .commande import CommandeModel
 from .client import ClientModel
 from .capital import Associe, MouvementCapital, ParametresSociete
 from .vehicule import Vehicule, FraisVehicule
+from .frais import FraisGeneraux

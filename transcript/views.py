@@ -1186,3 +1186,37 @@ class FraisVehiculeDetail(APIView):
         params.save()
         f.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+################## FRAIS GENERAUX ################
+from .models.frais import FraisGeneraux
+from .serializers import FraisGenerauxSerializer
+
+class FraisGenerauxView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        frais = FraisGeneraux.objects.all()
+        return Response(FraisGenerauxSerializer(frais, many=True, context={'request': request}).data)
+
+    def post(self, request):
+        serializer = FraisGenerauxSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            frais = serializer.save()
+            # Déduire du solde bancaire
+            from .models.capital import ParametresSociete as PS
+            params, _ = PS.objects.get_or_create(pk=1)
+            params.solde_bancaire = (params.solde_bancaire or 0) - frais.prix
+            params.save()
+            return Response(FraisGenerauxSerializer(frais, context={'request': request}).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        frais = get_object_or_404(FraisGeneraux, pk=pk)
+        # Rembourser dans le solde bancaire
+        from .models.capital import ParametresSociete as PS
+        params, _ = PS.objects.get_or_create(pk=1)
+        params.solde_bancaire = (params.solde_bancaire or 0) + frais.prix
+        params.save()
+        frais.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
