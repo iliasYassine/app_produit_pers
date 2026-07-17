@@ -31,6 +31,7 @@ from .serializers import LigneTransactionSerializer
 from django.db.models import Sum
 from django.db.models import Count
 from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.db.models import F
 from rest_framework.test import APIClient
 from django.contrib.auth import authenticate, login
@@ -487,44 +488,41 @@ class sendMail(APIView):
         if not produits.exists():
             return Response('Aucun produit en rupture', status=200)
         
-        # Créer la liste des produits en rupture
-        liste_produits = []
-        for produit in produits:
-            liste_produits.append(f"- {produit.nomProd} ")
-        
-        # Créer le message avec tous les produits
-        message = f"""Alerte : {len(produits)} produit(s) ont atteint le stock minimum.
+        # Message texte brut (fallback pour les clients mail sans HTML)
+        liste_produits = [f"- {produit.nomProd}" for produit in produits]
+        message_texte = f"""Alerte : {len(produits)} produit(s) ont atteint le stock minimum.
 
 Produits à recommander :
 {chr(10).join(liste_produits)}
 
 Merci de passer commande rapidement.
 """
-        
-        # Envoyer un seul email avec tous les produits
-        email = EmailMessage(
-        subject=f'Alerte stock : {len(produits)} produit(s) à recommander',
-        body=message,
-        from_email='iliashasbi@gmail.com',
-        to=['iliashasbi@gmail.com','m.braikia@orange.fr'],
-    )
-        print(liste_produits)
-        
-        
-        data=[]
+
+        # Lignes du tableau HTML + données pour le fichier Excel joint
+        data = []
+        lignes_html = []
         for produit in produits:
-            prix_achat=produit.prixAchat or 0
-            total=prix_achat * 5
-            data.append(
-                {
-                    'Nom Produit': produit.nomProd,
-                    'Quantité': 5,    
-                    'Prix Achat': prix_achat,
-                    'total': total
-                }
-            )
+            prix_achat = produit.prixAchat or 0
+            qte = produit.qte or 0
+            qte_min = produit.qteMin or 0
+            total = prix_achat * 5
+            data.append({
+                'Nom Produit': produit.nomProd,
+                'Quantité': 5,
+                'Prix Achat': prix_achat,
+                'total': total
+            })
+            lignes_html.append(f"""
+                <tr>
+                    <td style="padding:10px 14px;border-bottom:1px solid #2a2a2a;color:#e4e4e7;">{produit.nomProd}</td>
+                    <td style="padding:10px 14px;border-bottom:1px solid #2a2a2a;color:#f87171;text-align:center;font-weight:600;">{qte}</td>
+                    <td style="padding:10px 14px;border-bottom:1px solid #2a2a2a;color:#a1a1aa;text-align:center;">{qte_min}</td>
+                    <td style="padding:10px 14px;border-bottom:1px solid #2a2a2a;color:#e4e4e7;text-align:right;">{prix_achat:.2f}€</td>
+                </tr>
+            """)
+
         df = pd.DataFrame(data)
-        somme_total=df['total'].sum()
+        somme_total = df['total'].sum()
         # Ajouter une ligne de total à la fin
         ligne_total = {
             'Nom Produit': 'TOTAL',
@@ -534,6 +532,46 @@ Merci de passer commande rapidement.
         }
         # Utiliser concat au lieu de append
         df = pd.concat([df, pd.DataFrame([ligne_total])], ignore_index=True)
+
+        message_html = f"""
+        <html>
+        <body style="margin:0;padding:0;background-color:#f4f4f5;font-family:'Segoe UI',Arial,sans-serif;">
+            <div style="max-width:600px;margin:0 auto;padding:24px;">
+                <div style="background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:16px 16px 0 0;padding:24px 28px;">
+                    <p style="margin:0;color:#e0e7ff;font-size:12px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;">⚠ Alerte stock</p>
+                    <h1 style="margin:6px 0 0;color:#ffffff;font-size:22px;">{len(produits)} produit(s) à recommander</h1>
+                </div>
+                <div style="background:#18181b;padding:20px 0 0;border-radius:0 0 16px 16px;overflow:hidden;">
+                    <table style="width:100%;border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:#27272a;">
+                                <th style="padding:10px 14px;text-align:left;color:#a1a1aa;font-size:12px;text-transform:uppercase;">Produit</th>
+                                <th style="padding:10px 14px;text-align:center;color:#a1a1aa;font-size:12px;text-transform:uppercase;">Stock</th>
+                                <th style="padding:10px 14px;text-align:center;color:#a1a1aa;font-size:12px;text-transform:uppercase;">Seuil min</th>
+                                <th style="padding:10px 14px;text-align:right;color:#a1a1aa;font-size:12px;text-transform:uppercase;">Prix achat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {''.join(lignes_html)}
+                        </tbody>
+                    </table>
+                    <div style="padding:18px 20px;">
+                        <p style="margin:0;color:#71717a;font-size:13px;">Le détail de commande suggéré est joint en pièce jointe (Excel). Merci de passer commande rapidement.</p>
+                    </div>
+                </div>
+                <p style="text-align:center;color:#a1a1aa;font-size:11px;margin-top:16px;">Généré automatiquement par Caisse IH</p>
+            </div>
+        </body>
+        </html>
+        """
+
+        email = EmailMultiAlternatives(
+            subject=f'⚠ Alerte stock : {len(produits)} produit(s) à recommander',
+            body=message_texte,
+            from_email='iliashasbi@gmail.com',
+            to=['iliashasbi@gmail.com', 'm.braikia@orange.fr'],
+        )
+        email.attach_alternative(message_html, "text/html")
 
         try:
             chemin_fichier = os.path.join(os.getcwd(), 'media', 'produits_en_rupture.xlsx')
