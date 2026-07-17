@@ -534,12 +534,11 @@ Merci de passer commande rapidement.
         }
         # Utiliser concat au lieu de append
         df = pd.concat([df, pd.DataFrame([ligne_total])], ignore_index=True)
-        
-        chemin_fichier = os.path.join(os.getcwd(), 'media', 'produits_en_rupture.xlsx')
-        df.to_excel(chemin_fichier, index=False)
-        
-        email.attach_file(chemin_fichier)
+
         try:
+            chemin_fichier = os.path.join(os.getcwd(), 'media', 'produits_en_rupture.xlsx')
+            df.to_excel(chemin_fichier, index=False)
+            email.attach_file(chemin_fichier)
             email.send(fail_silently=False)
         except Exception as e:
             return Response({'erreur': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
