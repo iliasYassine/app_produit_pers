@@ -21,6 +21,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   top_vente:Transaction[]=[];
   
   coutTotal: number = 0;
+  profitFutur: number = 0;
   topVente:number=0;
   nom_prod:string='';
   chiffreAffaireTotal: number = 0;
@@ -88,6 +89,7 @@ constructor(
     this.report_service.getProduitReport().subscribe( (produits) => {
         this.produit_report = produits;
         this.coutTotal = parseFloat(this.report_service.calculCout(this.produit_report).toFixed(2));
+        this.profitFutur = parseFloat(this.report_service.calculProfitFutur(this.produit_report).toFixed(2));
       });
   }
 

@@ -545,7 +545,67 @@ Merci de passer commande rapidement.
             return Response({'erreur': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(f'Email envoyé pour {len(produits)} produit(s) en rupture', status=200)
-    
+
+
+class BookRdv(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        nom      = request.data.get('client_nom', '').strip()
+        prenom   = request.data.get('client_prenom', '').strip()
+        phone    = request.data.get('client_phone', '').strip()
+        email    = request.data.get('client_email', '').strip()
+        rdv_date = request.data.get('rdv_date', '')
+        rdv_time = request.data.get('rdv_time', '')
+        message  = request.data.get('client_message', '').strip()
+
+        if not all([nom, prenom, phone, rdv_date, rdv_time, message]):
+            return Response({'erreur': 'Champs requis manquants.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Email au propriétaire
+        msg_owner = EmailMessage(
+            subject=f'Nouveau RDV – {prenom} {nom} – {rdv_date} à {rdv_time}',
+            body=(
+                f"Nouveau rendez-vous reçu :\n\n"
+                f"  Nom       : {prenom} {nom}\n"
+                f"  Téléphone : {phone}\n"
+                f"  Email     : {email or '—'}\n"
+                f"  Date      : {rdv_date}\n"
+                f"  Heure     : {rdv_time}\n"
+                f"  Besoin    : {message}\n"
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            to=[settings.DEFAULT_FROM_EMAIL],
+        )
+        try:
+            msg_owner.send(fail_silently=False)
+        except Exception as e:
+            return Response({'erreur': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Email de confirmation au client (si email fourni)
+        if email:
+            msg_client = EmailMessage(
+                subject='Confirmation de votre RDV – IHP Concept',
+                body=(
+                    f"Bonjour {prenom},\n\n"
+                    f"Votre rendez-vous avec IHP Concept est bien confirmé !\n\n"
+                    f"  📅 {rdv_date} à {rdv_time}\n\n"
+                    f"Si vous avez des questions, contactez-moi directement :\n"
+                    f"  📞 06 50 37 80 32\n"
+                    f"  ✉  iliashasbi@gmail.com\n\n"
+                    f"À bientôt,\nIlias – IHP Concept, Cluses 74300"
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[email],
+            )
+            try:
+                msg_client.send(fail_silently=True)
+            except Exception:
+                pass
+
+        return Response({'status': 'ok'}, status=status.HTTP_200_OK)
+
+
 class login(APIView):   
     
     def post(self,request):

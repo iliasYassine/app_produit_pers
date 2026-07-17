@@ -38,6 +38,15 @@ export class ReportServiceService {
     }, 0);
   }
 
+  calculProfitFutur(produits: Produit[]): number {
+    return produits.reduce((acc, produit) => {
+      const prixAchat = produit.prixAchat || 0;
+      const prixVente = produit.prixVente || 0;
+      const qte = produit.qte || 0;
+      return acc + (prixVente - prixAchat) * qte;
+    }, 0);
+  }
+
  
 
   get_top1():Observable<ResponseData>{

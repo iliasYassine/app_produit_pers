@@ -186,7 +186,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'iliashasbi@gmail.com'
-EMAIL_HOST_PASSWORD = 'llsh gqfd njsr zuvj'
+EMAIL_HOST_PASSWORD = 'hsxrpttywlmwlgpm'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")

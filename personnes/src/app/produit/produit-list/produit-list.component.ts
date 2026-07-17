@@ -33,6 +33,7 @@ export class ProduitListComponent implements OnInit {
 
   deleteId: number | null = null;
   emailSent = false;
+  emailError = '';
 
   showScanner = false;
   scannerTarget: 'new' | 'edit' = 'new';
@@ -128,8 +129,24 @@ export class ProduitListComponent implements OnInit {
   }
 
   sendEmail() {
+    this.emailError = '';
+    this.emailSent = false;
     this.svc.sendMail().subscribe({
-      next: () => { this.emailSent = true; setTimeout(() => this.emailSent = false, 3000); }
+      next: (res: any) => {
+        const msg: string = typeof res === 'string' ? res : JSON.stringify(res);
+        if (msg.includes('Aucun produit')) {
+          this.emailError = 'Aucun produit en rupture de stock.';
+          setTimeout(() => this.emailError = '', 4000);
+        } else {
+          this.emailSent = true;
+          setTimeout(() => this.emailSent = false, 4000);
+        }
+      },
+      error: (err: any) => {
+        const detail = err?.error?.erreur || err?.message || 'Erreur inconnue';
+        this.emailError = `Échec envoi email : ${detail}`;
+        setTimeout(() => this.emailError = '', 6000);
+      }
     });
   }
 
