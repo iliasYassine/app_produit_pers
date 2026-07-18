@@ -266,7 +266,11 @@ class  scanProduit(APIView):
             ligne_transaction, created = LigneTransaction.objects.get_or_create(
                 transaction=transaction,
                 produit=produit,
-                defaults={'quantite': 1, 'prix_unitaire': produit.prixVente}
+                defaults={
+                    'quantite': 1,
+                    'prix_unitaire': produit.prixVente,
+                    'prix_achat_unitaire': produit.prixAchat,
+                }
             )
             if not created:
                 ligne_transaction.quantite += 1
@@ -383,7 +387,7 @@ class Benefice(APIView):
 
         # Coût des produits vendus
         cout_total = LigneTransaction.objects.aggregate(
-            cout_total=Sum(F('quantite') * F('produit__prixAchat'))
+            cout_total=Sum(F('quantite') * F('prix_achat_unitaire'))
         )['cout_total'] or 0
 
         benefice = chiffre_affaire_total - cout_total
@@ -409,7 +413,7 @@ class BeneficeParMois(APIView):
             LigneTransaction.objects
             .annotate(mois=TruncMonth('transaction__date_heure'))
             .values('mois')
-            .annotate(cout_total=Sum(F('quantite') * F('produit__prixAchat')))
+            .annotate(cout_total=Sum(F('quantite') * F('prix_achat_unitaire')))
             .order_by('mois')
         )
         print(cout_par_mois)
@@ -449,7 +453,7 @@ class BeneficeParSemaine(APIView):
             LigneTransaction.objects
             .annotate(semaine=TruncWeek('transaction__date_heure'))
             .values('semaine')
-            .annotate(cout_total=Sum(F('quantite') * F('produit__prixAchat')))
+            .annotate(cout_total=Sum(F('quantite') * F('prix_achat_unitaire')))
             .order_by('semaine')
         )
 
@@ -1050,7 +1054,11 @@ class ScanByNomProd(APIView):
             ligne_transaction, created = LigneTransaction.objects.get_or_create(
                 transaction=transaction,
                 produit=produit,
-                defaults={'quantite': 1, 'prix_unitaire': produit.prixVente}
+                defaults={
+                    'quantite': 1,
+                    'prix_unitaire': produit.prixVente,
+                    'prix_achat_unitaire': produit.prixAchat,
+                }
             )
             if not created:
                 ligne_transaction.quantite += 1

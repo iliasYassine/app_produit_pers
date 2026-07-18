@@ -5,9 +5,10 @@ from .produit import Produit
 
 class LigneTransaction(models.Model):
     transaction = models.ForeignKey(Transaction, related_name='lignes', on_delete=models.CASCADE, blank=True, null=True)
-    produit = models.ForeignKey(Produit, on_delete=models.CASCADE, blank=True, null=True)
+    produit = models.ForeignKey(Produit, on_delete=models.SET_NULL, blank=True, null=True)
     quantite = models.PositiveIntegerField(blank=True, null=True)
     prix_unitaire = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    prix_achat_unitaire = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, editable=False, blank=True, null=True)
     description_libre = models.CharField(max_length=255, blank=True, null=True)
 
