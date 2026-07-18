@@ -45,7 +45,7 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 import requests
 from zeep import Client, Transport
-from django.db.models.functions import TruncMonth
+from django.db.models.functions import TruncMonth, TruncDate
 import urllib3  
 import pandas as pd
 urllib3.disable_warnings()
@@ -471,7 +471,73 @@ class BeneficeParSemaine(APIView):
                 'benefice': benefice
             })
         return Response(result)
-    
+
+
+class Top3Ventes(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        top = (
+            LigneTransaction.objects
+            .exclude(produit_id__isnull=True)
+            .values('produit_id')
+            .annotate(qte_totale=Sum('quantite'))
+            .order_by('-qte_totale')[:3]
+        )
+        result = []
+        for item in top:
+            nom_produit = Produit.objects.filter(id=item['produit_id']).values_list('nomProd', flat=True).first()
+            result.append({
+                'produit_id': item['produit_id'],
+                'nomProd': nom_produit,
+                'qte_totale': item['qte_totale'],
+            })
+        return Response(result)
+
+
+class ChiffreAffaireParJour(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        date_debut = request.query_params.get('date_debut')
+        date_fin = request.query_params.get('date_fin')
+
+        ca_par_jour = (
+            Transaction.objects
+            .annotate(jour=TruncDate('date_heure'))
+            .values('jour')
+            .annotate(chiffre_affaires=Sum('total'))
+            .order_by('jour')
+        )
+        cout_par_jour = (
+            LigneTransaction.objects
+            .annotate(jour=TruncDate('transaction__date_heure'))
+            .values('jour')
+            .annotate(cout_total=Sum(F('quantite') * F('prix_achat_unitaire')))
+            .order_by('jour')
+        )
+
+        if date_debut:
+            ca_par_jour = ca_par_jour.filter(jour__gte=date_debut)
+            cout_par_jour = cout_par_jour.filter(jour__gte=date_debut)
+        if date_fin:
+            ca_par_jour = ca_par_jour.filter(jour__lte=date_fin)
+            cout_par_jour = cout_par_jour.filter(jour__lte=date_fin)
+
+        cout_dict = {c['jour']: c['cout_total'] for c in cout_par_jour}
+        result = []
+        for ca in ca_par_jour:
+            jour = ca['jour']
+            chiffre_affaires = ca['chiffre_affaires'] or 0
+            cout_total = cout_dict.get(jour, 0) or 0
+            result.append({
+                'jour': jour,
+                'chiffre_affaires': chiffre_affaires,
+                'cout_total': cout_total,
+                'benefice': chiffre_affaires - cout_total,
+            })
+        return Response(result)
+
                     
 class TopVente(APIView):
     permission_classes = [AllowAny]

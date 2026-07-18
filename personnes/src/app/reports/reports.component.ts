@@ -25,10 +25,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
   caFutur: number = 0;
   topVente:number=0;
   nom_prod:string='';
+  top3Ventes: { produit_id: number, nomProd: string, qte_totale: number }[] = [];
   chiffreAffaireTotal: number = 0;
   benefice:number=0;
   beneficeParMois: any[] = [];
   beneficeParSemaine: any[] = [];
+  caParJourLabel: string = '';
+  modeMoisActif: boolean = false;
 
   soldeBancaire: number = 0;
   totalCapital: number = 0;
@@ -36,6 +39,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   private moisChart: Chart | null = null;
   private semaineChart: Chart | null = null;
+  private jourChart: Chart | null = null;
 
 constructor(
     private report_service: ReportServiceService,
@@ -50,8 +54,10 @@ constructor(
     this.getcout();
     this.getChiffreAffairesTotal();
     this.getjsondatatopvente();
+    this.getTop3Ventes();
     this.loadBeneficeParMois();
     this.loadBeneficeParSemaine();
+    this.loadCAParJourSemaineCourante();
     this.capitalService.getSoldeBancaire().subscribe(data => {
       this.soldeBancaire = Number(data.solde_bancaire);
     });
@@ -80,9 +86,127 @@ constructor(
   getjsondatatopvente(): void {
     this.report_service.get_top1().subscribe((response) => {
       this.topVente = response.top_vente.produit_id;
-      this.nom_prod=response.nomProd; 
-      
-      
+      this.nom_prod=response.nomProd;
+
+
+    });
+  }
+
+  getTop3Ventes(): void {
+    this.report_service.getTop3Ventes().subscribe((data) => {
+      this.top3Ventes = data;
+    });
+  }
+
+  private formatDateISO(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  private getLundiDeLaSemaine(date: Date): Date {
+    const d = new Date(date);
+    const jour = d.getDay(); // 0 = dimanche, 1 = lundi...
+    const diff = jour === 0 ? -6 : 1 - jour;
+    d.setDate(d.getDate() + diff);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+
+  loadCAParJourSemaineCourante(): void {
+    this.modeMoisActif = false;
+    const lundi = this.getLundiDeLaSemaine(new Date());
+    const dimanche = new Date(lundi);
+    dimanche.setDate(lundi.getDate() + 6);
+    this.caParJourLabel = `Semaine du ${lundi.toLocaleDateString('fr-FR')} au ${dimanche.toLocaleDateString('fr-FR')}`;
+    this.chargerEtAfficherCAParJour(lundi, dimanche);
+  }
+
+  loadCAParJourMois(dateDansLeMois: Date): void {
+    this.modeMoisActif = true;
+    const premierJour = new Date(dateDansLeMois.getFullYear(), dateDansLeMois.getMonth(), 1);
+    const dernierJour = new Date(dateDansLeMois.getFullYear(), dateDansLeMois.getMonth() + 1, 0);
+    this.caParJourLabel = `Mois de ${premierJour.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}`;
+    this.chargerEtAfficherCAParJour(premierJour, dernierJour);
+  }
+
+  private chargerEtAfficherCAParJour(debut: Date, fin: Date): void {
+    this.report_service.getChiffreAffaireParJour(this.formatDateISO(debut), this.formatDateISO(fin)).subscribe((data) => {
+      const parJour = new Map<string, number>();
+      data.forEach(item => parJour.set(item.jour, parseFloat(item.chiffre_affaires)));
+
+      const jours: Date[] = [];
+      const valeurs: number[] = [];
+      const cursor = new Date(debut);
+      while (cursor <= fin) {
+        jours.push(new Date(cursor));
+        valeurs.push(parJour.get(this.formatDateISO(cursor)) || 0);
+        cursor.setDate(cursor.getDate() + 1);
+      }
+      this.displayCAParJourChart(jours, valeurs);
+    });
+  }
+
+  displayCAParJourChart(jours: Date[], valeurs: number[]) {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const labels = jours.map(d => d.toLocaleDateString('fr-FR', { weekday: 'short', day: '2-digit', month: '2-digit' }));
+
+    const canvas = document.getElementById('caParJourChart') as HTMLCanvasElement;
+    const ctx = canvas?.getContext('2d');
+    if (!ctx) return;
+
+    this.jourChart?.destroy();
+    this.jourChart = new Chart('caParJourChart', {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: "Chiffre d'affaires (€)",
+          data: valeurs,
+          backgroundColor: 'rgba(56, 189, 248, 0.5)',
+          borderColor: 'rgba(14, 165, 233, 1)',
+          borderWidth: 1,
+          borderRadius: 8,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#18181b',
+            titleColor: '#52525b',
+            bodyColor: '#ffffff',
+            borderColor: 'rgba(255,255,255,0.07)',
+            borderWidth: 1,
+            padding: 12,
+            cornerRadius: 10,
+            callbacks: { label: ctx => ` ${ctx.parsed.y.toFixed(2)} €` }
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            formatter: (v: number) => v > 0 ? v.toFixed(0) + '€' : '',
+            font: { weight: 'bold', size: 10 },
+            color: '#71717a'
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: { color: '#52525b', font: { size: 10 } }
+          },
+          y: {
+            grid: { color: 'rgba(255,255,255,0.04)', drawTicks: false },
+            border: { display: false },
+            ticks: { color: '#52525b', font: { size: 11 }, padding: 8, callback: val => val + '€' }
+          }
+        }
+      },
+      plugins: [ChartDataLabels]
     });
   }
 
@@ -98,6 +222,7 @@ constructor(
   ngOnDestroy() {
     this.moisChart?.destroy();
     this.semaineChart?.destroy();
+    this.jourChart?.destroy();
   }
 
   reinitilise(){
@@ -224,6 +349,19 @@ displayBeneficeSemaineChart() {
     },
     options: {
       responsive: true,
+      onClick: (evt, elements) => {
+        if (elements.length > 0) {
+          const index = elements[0].index;
+          const semaine = this.beneficeParSemaine[index]?.semaine;
+          if (semaine) {
+            this.loadCAParJourMois(new Date(semaine));
+          }
+        }
+      },
+      onHover: (evt, elements) => {
+        const target = evt.native?.target as HTMLElement;
+        if (target) target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+      },
       plugins: {
         legend: { display: false },
         tooltip: {

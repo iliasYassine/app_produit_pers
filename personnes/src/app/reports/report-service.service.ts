@@ -20,6 +20,8 @@ export class ReportServiceService {
   private BENEFICE_URL=`${this.baseUrl}/transcript/benefice/`;
   private BENEFICE_MOIS=`${this.baseUrl}/transcript/beneficeMois/`;
   private BENEFICE_SEMAINE=`${this.baseUrl}/transcript/beneficeSemaine/`;
+  private TOP3_VENTES=`${this.baseUrl}/transcript/top3-ventes/`;
+  private CA_PAR_JOUR=`${this.baseUrl}/transcript/chiffre-affaire-jour/`;
   constructor(private httpClient:HttpClient) { }
 
   getProduitReport():Observable<Produit[]>{
@@ -79,6 +81,14 @@ getBeneficeParMois(): Observable<any[]> {
 
 getBeneficeParSemaine(): Observable<any[]> {
   return this.httpClient.get<any[]>(this.BENEFICE_SEMAINE);
+}
+
+getTop3Ventes(): Observable<any[]> {
+  return this.httpClient.get<any[]>(this.TOP3_VENTES);
+}
+
+getChiffreAffaireParJour(dateDebut: string, dateFin: string): Observable<any[]> {
+  return this.httpClient.get<any[]>(this.CA_PAR_JOUR, { params: { date_debut: dateDebut, date_fin: dateFin } });
 }
 
 
