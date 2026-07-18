@@ -40,6 +40,7 @@ urlpatterns = [
    path('beneficeMois/', views.BeneficeParMois.as_view(), name='beneficeMois'),
    path('beneficeSemaine/', views.BeneficeParSemaine.as_view(), name='beneficeSemaine'),
    path('top3-ventes/', views.Top3Ventes.as_view(), name='top3-ventes'),
+   path('top10-benefices/', views.Top10Benefices.as_view(), name='top10-benefices'),
    path('chiffre-affaire-jour/', views.ChiffreAffaireParJour.as_view(), name='chiffre-affaire-jour'),
    path('scanbynomprod/', views.ScanByNomProd.as_view(), name='scanbynomprod'),
    path('export_bdd/', views.ExportDatabase.as_view(), name='export_bdd'),

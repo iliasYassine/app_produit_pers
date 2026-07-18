@@ -45,7 +45,8 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 import requests
 from zeep import Client, Transport
-from django.db.models.functions import TruncMonth, TruncDate
+from django.db.models.functions import TruncMonth, TruncDate, Coalesce
+from django.db.models import Value
 import urllib3  
 import pandas as pd
 urllib3.disable_warnings()
@@ -492,6 +493,31 @@ class Top3Ventes(APIView):
                 'nomProd': nom_produit,
                 'qte_totale': item['qte_totale'],
             })
+        return Response(result)
+
+
+class Top10Benefices(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        top = (
+            LigneTransaction.objects
+            .annotate(nom=Coalesce('produit__nomProd', 'description_libre', Value('Autre')))
+            .values('nom')
+            .annotate(
+                marge_totale=Sum(F('total') - F('quantite') * F('prix_achat_unitaire')),
+                qte_totale=Sum('quantite'),
+            )
+            .order_by('-marge_totale')[:10]
+        )
+        result = [
+            {
+                'nomProd': item['nom'],
+                'marge_totale': item['marge_totale'] or 0,
+                'qte_totale': item['qte_totale'],
+            }
+            for item in top
+        ]
         return Response(result)
 
 

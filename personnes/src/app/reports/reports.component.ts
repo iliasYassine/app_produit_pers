@@ -26,6 +26,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   topVente:number=0;
   nom_prod:string='';
   top3Ventes: { produit_id: number, nomProd: string, qte_totale: number }[] = [];
+  top10Benefices: { nomProd: string, marge_totale: number, qte_totale: number }[] = [];
   chiffreAffaireTotal: number = 0;
   benefice:number=0;
   beneficeParMois: any[] = [];
@@ -55,6 +56,7 @@ constructor(
     this.getChiffreAffairesTotal();
     this.getjsondatatopvente();
     this.getTop3Ventes();
+    this.getTop10Benefices();
     this.loadBeneficeParMois();
     this.loadBeneficeParSemaine();
     this.loadCAParJourSemaineCourante();
@@ -95,6 +97,12 @@ constructor(
   getTop3Ventes(): void {
     this.report_service.getTop3Ventes().subscribe((data) => {
       this.top3Ventes = data;
+    });
+  }
+
+  getTop10Benefices(): void {
+    this.report_service.getTop10Benefices().subscribe((data) => {
+      this.top10Benefices = data;
     });
   }
 
