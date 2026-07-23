@@ -5,8 +5,9 @@ import { routes } from './app.routes';
 import { provideClientHydration, withNoHttpTransferCache } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { noCacheInterceptor } from './no-cache.interceptor';
+import { authInterceptor } from './auth/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
 
-  providers: [provideRouter(routes), provideClientHydration(withNoHttpTransferCache()), provideHttpClient(withInterceptors([noCacheInterceptor]))]
+  providers: [provideRouter(routes), provideClientHydration(withNoHttpTransferCache()), provideHttpClient(withInterceptors([noCacheInterceptor, authInterceptor]))]
 };

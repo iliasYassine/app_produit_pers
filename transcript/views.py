@@ -47,8 +47,12 @@ import requests
 from zeep import Client, Transport
 from django.db.models.functions import TruncMonth, TruncDate, Coalesce
 from django.db.models import Value
-import urllib3  
+import urllib3
 import pandas as pd
+import jwt as pyjwt
+import datetime
+from google.oauth2 import id_token as google_id_token
+from google.auth.transport import requests as google_requests
 urllib3.disable_warnings()
 
 
@@ -739,8 +743,43 @@ class BookRdv(APIView):
         return Response({'status': 'ok'}, status=status.HTTP_200_OK)
 
 
-class login(APIView):   
-    
+class GoogleLoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, format=None):
+        credential = request.data.get('credential')
+        if not credential:
+            return Response({'detail': 'Jeton Google manquant.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            payload = google_id_token.verify_oauth2_token(
+                credential, google_requests.Request(), settings.GOOGLE_CLIENT_ID
+            )
+        except ValueError:
+            return Response({'detail': 'Jeton Google invalide.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        email = payload.get('email', '').lower()
+        if not payload.get('email_verified') or email not in settings.GOOGLE_ALLOWED_EMAILS:
+            return Response({'detail': 'Ce compte Google n\'est pas autorisé.'}, status=status.HTTP_403_FORBIDDEN)
+
+        token = pyjwt.encode(
+            {
+                'email': email,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
+            },
+            settings.SECRET_KEY,
+            algorithm='HS256',
+        )
+        return Response({
+            'token': token,
+            'email': email,
+            'name': payload.get('name'),
+            'picture': payload.get('picture'),
+        }, status=status.HTTP_200_OK)
+
+
+class login(APIView):
+
     def post(self,request):
         print("koko")
         username = request.POST['username']

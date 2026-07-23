@@ -11,18 +11,24 @@ import { SuiviCommandeClientComponent } from './commande/suivi-commande-client/s
 import { CapitalComponent } from './capital/capital.component';
 import { VehiculeListComponent } from './vehicules/vehicule-list.component';
 import { FraisComponent } from './frais/frais.component';
+import { LoginComponent } from './auth/login/login.component';
+import { authGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
-    { path: 'personnes', component: PersonneListComponent },
-    { path: 'produits', component: ProduitListComponent },
-    { path: 'cout', component: ReportsComponent },
-    { path: 'fournisseur', component: FournisseurListsComponent },
-    { path: 'caisse', component: CaisseEnregistreuseComponent },
-    { path: 'gestion_caisse', component: DeleteLignesComponent },
+    // Public (accès sans connexion)
+    { path: 'login', component: LoginComponent },
     { path: 'formulaire', component: FormulaireComponent },
-    { path: 'commande', component: CommandeComponent },
     { path: 'suivie_client', component: SuiviCommandeClientComponent },
-    { path: 'capital', component: CapitalComponent },
-    { path: 'vehicules', component: VehiculeListComponent },
-    { path: 'frais', component: FraisComponent },
+
+    // Protégé par connexion Google
+    { path: 'personnes', component: PersonneListComponent, canActivate: [authGuard] },
+    { path: 'produits', component: ProduitListComponent, canActivate: [authGuard] },
+    { path: 'cout', component: ReportsComponent, canActivate: [authGuard] },
+    { path: 'fournisseur', component: FournisseurListsComponent, canActivate: [authGuard] },
+    { path: 'caisse', component: CaisseEnregistreuseComponent, canActivate: [authGuard] },
+    { path: 'gestion_caisse', component: DeleteLignesComponent, canActivate: [authGuard] },
+    { path: 'commande', component: CommandeComponent, canActivate: [authGuard] },
+    { path: 'capital', component: CapitalComponent, canActivate: [authGuard] },
+    { path: 'vehicules', component: VehiculeListComponent, canActivate: [authGuard] },
+    { path: 'frais', component: FraisComponent, canActivate: [authGuard] },
 ];

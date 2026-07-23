@@ -38,6 +38,12 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
 # Pour VPS: DJANGO_ALLOWED_HOSTS=caisse-ih.com,www.caisse-ih.com,IP_VPS
 
+# Connexion Google (Sign in with Google)
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+GOOGLE_ALLOWED_EMAILS = [
+    e.strip().lower() for e in os.environ.get('GOOGLE_ALLOWED_EMAILS', '').split(',') if e.strip()
+]
+
 
 # Application definition
 
@@ -71,6 +77,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'myproject.middleware.NoCacheMiddleware',
+    'myproject.auth_middleware.GoogleAuthMiddleware',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [

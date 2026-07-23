@@ -24,6 +24,7 @@ urlpatterns = [
    path('top-vente/',views.TopVente.as_view(),name='top-vente'),
    path('send-mail/', views.sendMail.as_view(), name='send_mail'),
    path('api-token-auth/', auth_views.obtain_auth_token),
+   path('auth/google/', views.GoogleLoginView.as_view(), name='google-login'),
    path('login/',views.login.as_view(),name='login'),
    path('logout/',views.Logout.as_view(),name='logout'),
    path('transaction/',views.TransactionView.as_view(),name='Transaction'),

@@ -33,8 +33,12 @@ export class AppComponent  {
   }
   isSpecialRoute() {
   return ['/formulaire', '/suivie_client'].includes(this.router.url);
-  
+
 }
+
+  isLoginRoute() {
+    return this.router.url === '/login';
+  }
 
 
 
