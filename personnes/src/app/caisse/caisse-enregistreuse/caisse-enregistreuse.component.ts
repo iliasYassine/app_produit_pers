@@ -157,7 +157,29 @@ export class CaisseEnregistreuseComponent implements OnInit {
 
   incrementerLigne(ligne: LignesTransaction) {
     if (!ligne.produitDetails?.nomProd) return;
+    const stock = ligne.produitDetails?.qte;
+    if (stock !== null && stock !== undefined && ligne.quantite >= stock) {
+      this.errorMessage = `Stock maximum atteint pour "${ligne.produitDetails.nomProd}" (${stock} en stock).`;
+      return;
+    }
+    this.errorMessage = '';
     this.ajouterProduitParNom(ligne.produitDetails as Produit);
+  }
+
+  decrementerLigne(ligne: LignesTransaction) {
+    if (!ligne.id || ligne.quantite <= 1) return;
+    this.caisseService.decrementerLigne(ligne.id).subscribe(data => {
+      const index = this.ligneTransaction.findIndex(l => l.id === ligne.id);
+      if (index !== -1) {
+        this.ligneTransaction[index] = { ...this.ligneTransaction[index], ...data };
+      }
+      this.totalTransaction = this.ligneTransaction.reduce((sum, l) => sum + parseFloat(String(l.total)), 0);
+    });
+  }
+
+  atteintStockMax(ligne: LignesTransaction): boolean {
+    const stock = ligne.produitDetails?.qte;
+    return stock !== null && stock !== undefined && ligne.quantite >= stock;
   }
 
   ajouterProduitParNom(produit: Produit) {

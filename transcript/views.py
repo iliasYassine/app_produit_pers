@@ -1211,6 +1211,34 @@ class ScanByNomProd(APIView):
             ligne_serializer = LigneTransactionSerializer(ligne_transaction)
             return Response(ligne_serializer.data, status=status.HTTP_201_CREATED)
 
+class DecrementLigne(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, format=None):
+        ligne_id = request.data.get('ligne_id')
+        if not ligne_id:
+            return Response({'erreur': 'ligne_id manquant.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        with db_transaction.atomic():
+            ligne = get_object_or_404(LigneTransaction, pk=ligne_id)
+            if ligne.quantite <= 1:
+                return Response({'erreur': 'Quantité minimale atteinte.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            ligne.quantite -= 1
+            ligne.total = ligne.quantite * ligne.prix_unitaire
+            ligne.save()
+
+            transaction = ligne.transaction
+            transaction_total = transaction.lignes.all().aggregate(
+                total_sum=Sum('total')
+            )['total_sum'] or 0
+            transaction.total = transaction_total
+            transaction.save()
+
+            serializer = LigneTransactionSerializer(ligne)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 # Dans tes views.py
 class ExportDatabase(APIView):
     permission_classes = [AllowAny]

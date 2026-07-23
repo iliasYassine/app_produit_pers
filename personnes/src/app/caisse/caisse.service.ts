@@ -49,4 +49,8 @@ export class CaisseService {
     if (transactionId !== null) body.transaction_id = transactionId;
     return this.http.post(`${this.baseUrl}/transcript/ligne-libre/`, body);
   }
+
+  decrementerLigne(ligneId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/transcript/decrement-ligne/`, { ligne_id: ligneId });
+  }
 }
