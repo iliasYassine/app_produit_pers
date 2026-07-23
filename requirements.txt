@@ -11,7 +11,7 @@ tzdata==2025.2
 
 # ===== Paiement & Livraison =====
 stripe==8.11.0
-zeep==4.2.1
+zeep==4.3.2
 lxml==5.4.0
 isodate==0.7.2
 requests==2.31.0
