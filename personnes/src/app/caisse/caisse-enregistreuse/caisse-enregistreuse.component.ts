@@ -155,6 +155,11 @@ export class CaisseEnregistreuseComponent implements OnInit {
     });
   }
 
+  incrementerLigne(ligne: LignesTransaction) {
+    if (!ligne.produitDetails?.nomProd) return;
+    this.ajouterProduitParNom(ligne.produitDetails as Produit);
+  }
+
   ajouterProduitParNom(produit: Produit) {
     this.searchTerm = '';
     this.filteredProduits = [];

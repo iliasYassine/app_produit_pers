@@ -157,6 +157,13 @@
               <div class="absolute top-1.5 right-1.5 w-5 h-5 bg-violet-600 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow">
                 {{ ligne.quantite }}
               </div>
+              <!-- Bouton +1 (hover, uniquement pour les vrais produits) -->
+              <button
+                *ngIf="ligne.produitDetails?.nomProd && deleteConfirmLigneId !== ligne.id"
+                (click)="incrementerLigne(ligne)"
+                title="Ajouter 1 de plus"
+                class="absolute bottom-1.5 right-1.5 z-10 w-6 h-6 bg-violet-600 hover:bg-violet-500 text-white rounded-full flex items-center justify-center text-sm font-bold shadow opacity-0 group-hover:opacity-100 transition-all active:scale-90"
+              >+</button>
             </div>
             <!-- Infos -->
             <div class="p-2.5">
