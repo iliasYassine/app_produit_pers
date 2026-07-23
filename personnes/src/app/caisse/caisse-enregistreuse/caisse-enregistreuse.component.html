@@ -1,14 +1,14 @@
-<div class="min-h-screen bg-zinc-950 flex flex-col">
+<div class="min-h-screen bg-slate-50 flex flex-col">
 
   <!-- Top bar -->
-  <div class="border-b border-white/[0.06] px-6 py-4 flex items-center gap-4">
+  <div class="border-b border-slate-200 px-6 py-4 flex items-center gap-4 bg-white">
     <div class="flex items-center gap-2">
       <div class="w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50"></div>
-      <span class="text-white font-semibold text-base">Caisse</span>
+      <span class="text-slate-900 font-semibold text-base">Caisse</span>
     </div>
-    <span class="text-zinc-600 text-sm">Session active</span>
-    <div class="ml-auto flex items-center gap-2 text-zinc-500 text-xs">
-      <span class="bg-zinc-900 border border-white/5 px-3 py-1.5 rounded-lg">
+    <span class="text-slate-400 text-sm">Session active</span>
+    <div class="ml-auto flex items-center gap-2 text-slate-500 text-xs">
+      <span class="bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg">
         {{ ligneTransaction.length }} article(s)
       </span>
     </div>
@@ -23,21 +23,21 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
 
         <!-- Code-barre -->
-        <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-4">
-          <p class="text-zinc-500 text-xs font-medium uppercase tracking-widest mb-3">Code-barre</p>
+        <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-4">
+          <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-3">Code-barre</p>
           <div class="flex flex-col gap-2">
             <input
               type="text"
               [(ngModel)]="codebarre"
               placeholder="Scanner le code-barre..."
               (keypress)="checkIfEnterKey($event)"
-              class="w-full bg-zinc-800 border border-white/10 text-white placeholder-zinc-600 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 focus:bg-zinc-800 transition-all"
+              class="w-full bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 focus:bg-white transition-all"
             />
             <div class="flex gap-2">
               <button
                 (click)="showScanner = true"
                 title="Scanner avec la caméra"
-                class="px-3 py-3 bg-zinc-800 hover:bg-zinc-700 border border-white/10 text-violet-400 rounded-xl transition-all active:scale-95 flex-shrink-0"
+                class="px-3 py-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-violet-600 rounded-xl transition-all active:scale-95 flex-shrink-0"
               >
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               </button>
@@ -52,35 +52,35 @@
         </div>
 
         <!-- Recherche nom -->
-        <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-4 relative">
-          <p class="text-zinc-500 text-xs font-medium uppercase tracking-widest mb-3">Recherche par nom</p>
+        <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-4 relative">
+          <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-3">Recherche par nom</p>
           <input
             type="text"
             placeholder="Nom du produit..."
             [(ngModel)]="searchTerm"
             (input)="filterProduits()"
             (blur)="onBlurSearch()"
-            class="w-full bg-zinc-800 border border-white/10 text-white placeholder-zinc-600 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"
+            class="w-full bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-4 py-3 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"
           />
           <!-- Dropdown -->
           <div
             *ngIf="filteredProduits.length"
-            class="absolute left-4 right-4 top-full mt-1 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl shadow-black/60 z-50 max-h-60 overflow-y-auto"
+            class="absolute left-4 right-4 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl shadow-slate-300/50 z-50 max-h-60 overflow-y-auto"
           >
             <div
               *ngFor="let i of filteredProduits"
               (click)="ajouterProduitParNom(i)"
-              class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 cursor-pointer border-b border-white/[0.04] last:border-0 transition-colors"
+              class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0 transition-colors"
             >
               <img *ngIf="i.photo" [src]="apiUrl + i.photo" class="w-10 h-10 rounded-lg object-cover flex-shrink-0"/>
-              <div *ngIf="!i.photo" class="w-10 h-10 bg-zinc-800 rounded-lg flex-shrink-0 flex items-center justify-center">
-                <svg class="w-4 h-4 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              <div *ngIf="!i.photo" class="w-10 h-10 bg-slate-100 rounded-lg flex-shrink-0 flex items-center justify-center">
+                <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
               </div>
               <div class="flex-1 min-w-0">
-                <div class="text-white text-sm font-medium truncate">{{ i.nomProd }}</div>
-                <div class="text-zinc-500 text-xs">Qté: {{ i.qte }}</div>
+                <div class="text-slate-900 text-sm font-medium truncate">{{ i.nomProd }}</div>
+                <div class="text-slate-500 text-xs">Qté: {{ i.qte }}</div>
               </div>
-              <div class="text-violet-400 font-bold text-sm flex-shrink-0">{{ i.prixVente }}€</div>
+              <div class="text-violet-600 font-bold text-sm flex-shrink-0">{{ i.prixVente }}€</div>
             </div>
           </div>
         </div>
@@ -88,25 +88,25 @@
       </div>
 
       <!-- Erreur -->
-      <div *ngIf="errorMessage" class="flex items-center gap-2 bg-rose-500/10 border border-rose-500/20 text-rose-400 px-4 py-3 rounded-xl text-sm">
+      <div *ngIf="errorMessage" class="flex items-center gap-2 bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl text-sm">
         <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
         {{ errorMessage }}
       </div>
 
       <!-- Article libre -->
-      <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-4">
+      <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-4">
         <div class="flex items-center justify-between mb-3">
-          <p class="text-zinc-500 text-xs font-medium uppercase tracking-widest">Article libre</p>
+          <p class="text-slate-500 text-xs font-medium uppercase tracking-widest">Article libre</p>
           <button (click)="showLibre = !showLibre"
-            class="text-xs px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-white/10 text-zinc-400 rounded-lg transition-all">
+            class="text-xs px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-500 rounded-lg transition-all">
             {{ showLibre ? 'Annuler' : '+ Ajouter' }}
           </button>
         </div>
         <div *ngIf="showLibre" class="flex flex-wrap gap-2">
           <input [(ngModel)]="libreDesc" placeholder="Description (ex: bouteille d'eau)"
-            class="flex-1 min-w-40 bg-zinc-800 border border-white/10 text-white placeholder-zinc-600 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+            class="flex-1 min-w-40 bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
           <input [(ngModel)]="librePrix" type="number" placeholder="Prix (€)"
-            class="w-32 bg-zinc-800 border border-white/10 text-white placeholder-zinc-600 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+            class="w-32 bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
           <button (click)="ajouterLigneLibre()"
             class="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl font-semibold text-sm transition-all active:scale-95">
             Ajouter
@@ -115,29 +115,29 @@
       </div>
 
       <!-- Grille produits scannés -->
-      <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-5 flex-1">
-        <p class="text-zinc-500 text-xs font-medium uppercase tracking-widest mb-4">Produits ajoutés</p>
+      <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-5 flex-1">
+        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-4">Produits ajoutés</p>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" *ngIf="ligneTransaction.length">
           <div
             *ngFor="let ligne of ligneTransaction"
-            class="bg-zinc-800 border border-white/[0.07] hover:border-violet-500/30 rounded-xl overflow-hidden transition-all group cursor-default relative"
+            class="bg-slate-50 border border-slate-200 hover:border-violet-400 rounded-xl overflow-hidden transition-all group cursor-default relative"
           >
             <!-- Bouton supprimer (hover) -->
             <button
               *ngIf="deleteConfirmLigneId !== ligne.id"
               (click)="deleteConfirmLigneId = ligne.id ?? null"
-              class="absolute top-1.5 left-1.5 z-10 w-6 h-6 bg-zinc-900/80 hover:bg-rose-600 border border-white/10 text-zinc-400 hover:text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
+              class="absolute top-1.5 left-1.5 z-10 w-6 h-6 bg-white/80 hover:bg-rose-600 border border-slate-200 text-slate-500 hover:text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
               title="Supprimer cette ligne"
             >
               <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
             <!-- Confirmation suppression -->
-            <div *ngIf="deleteConfirmLigneId === ligne.id" class="absolute inset-0 z-10 bg-zinc-900/95 flex flex-col items-center justify-center gap-2 p-2">
-              <p class="text-white text-[10px] text-center font-medium">Supprimer ?</p>
+            <div *ngIf="deleteConfirmLigneId === ligne.id" class="absolute inset-0 z-10 bg-white/95 flex flex-col items-center justify-center gap-2 p-2">
+              <p class="text-slate-900 text-[10px] text-center font-medium">Supprimer ?</p>
               <div class="flex gap-1.5">
                 <button (click)="supprimerLigne(ligne)" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] rounded-lg font-bold transition-all">Oui</button>
-                <button (click)="deleteConfirmLigneId = null" class="px-2.5 py-1 bg-zinc-700 hover:bg-zinc-600 text-zinc-300 text-[10px] rounded-lg transition-all">Non</button>
+                <button (click)="deleteConfirmLigneId = null" class="px-2.5 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 text-[10px] rounded-lg transition-all">Non</button>
               </div>
             </div>
             <!-- Image -->
@@ -149,9 +149,9 @@
               />
               <div
                 *ngIf="!ligne.produitDetails?.photo"
-                class="w-full h-full bg-zinc-900 flex items-center justify-center"
+                class="w-full h-full bg-slate-100 flex items-center justify-center"
               >
-                <svg class="w-8 h-8 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
               </div>
               <!-- Badge qty -->
               <div class="absolute top-1.5 right-1.5 w-5 h-5 bg-violet-600 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow">
@@ -160,12 +160,12 @@
             </div>
             <!-- Infos -->
             <div class="p-2.5">
-              <p class="text-white text-xs font-medium truncate">
+              <p class="text-slate-900 text-xs font-medium truncate">
                 {{ ligne.description_libre || ligne.produitDetails?.nomProd }}
               </p>
               <div class="flex justify-between items-center mt-1">
-                <span class="text-zinc-600 text-[10px]">{{ ligne.prix_unitaire }}€/u</span>
-                <span class="text-emerald-400 text-xs font-bold">{{ ligne.total }}€</span>
+                <span class="text-slate-400 text-[10px]">{{ ligne.prix_unitaire }}€/u</span>
+                <span class="text-emerald-600 text-xs font-bold">{{ ligne.total }}€</span>
               </div>
             </div>
           </div>
@@ -173,42 +173,42 @@
 
         <!-- Empty state -->
         <div *ngIf="!ligneTransaction.length" class="flex flex-col items-center justify-center py-16 text-center">
-          <div class="w-14 h-14 bg-zinc-800 rounded-2xl flex items-center justify-center mb-4 border border-white/5">
-            <svg class="w-6 h-6 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <div class="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mb-4 border border-slate-200">
+            <svg class="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
           </div>
-          <p class="text-zinc-500 text-sm font-medium">Panier vide</p>
-          <p class="text-zinc-700 text-xs mt-1">Scannez un produit pour commencer</p>
+          <p class="text-slate-500 text-sm font-medium">Panier vide</p>
+          <p class="text-slate-400 text-xs mt-1">Scannez un produit pour commencer</p>
         </div>
       </div>
 
     </div>
 
     <!-- ===== BAS/DROITE — Récapitulatif ===== -->
-    <div class="lg:w-80 flex-shrink-0 border-t lg:border-t-0 lg:border-l border-white/[0.06] bg-zinc-950 flex flex-col max-h-96 lg:max-h-none">
+    <div class="lg:w-80 flex-shrink-0 border-t lg:border-t-0 lg:border-l border-slate-200 bg-slate-50 flex flex-col max-h-96 lg:max-h-none">
 
-      <div class="p-5 border-b border-white/[0.06]">
-        <p class="text-zinc-400 text-xs font-medium uppercase tracking-widest">Récapitulatif</p>
+      <div class="p-5 border-b border-slate-200">
+        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest">Récapitulatif</p>
       </div>
 
       <!-- Lignes -->
       <div class="flex-1 overflow-y-auto px-5 py-4 space-y-1">
-        <div *ngFor="let ligne of ligneTransaction" class="flex items-start justify-between gap-3 py-2.5 border-b border-white/[0.04] last:border-0">
+        <div *ngFor="let ligne of ligneTransaction" class="flex items-start justify-between gap-3 py-2.5 border-b border-slate-200 last:border-0">
           <div class="flex-1 min-w-0">
-            <p class="text-zinc-200 text-sm truncate">{{ ligne.description_libre || ligne.produitDetails?.nomProd }}</p>
-            <p class="text-zinc-600 text-xs mt-0.5">{{ ligne.quantite }} × {{ ligne.prix_unitaire }}€</p>
+            <p class="text-slate-700 text-sm truncate">{{ ligne.description_libre || ligne.produitDetails?.nomProd }}</p>
+            <p class="text-slate-400 text-xs mt-0.5">{{ ligne.quantite }} × {{ ligne.prix_unitaire }}€</p>
           </div>
-          <span class="text-white text-sm font-semibold flex-shrink-0">{{ ligne.total }}€</span>
+          <span class="text-slate-900 text-sm font-semibold flex-shrink-0">{{ ligne.total }}€</span>
         </div>
         <div *ngIf="!ligneTransaction.length" class="py-8 text-center">
-          <p class="text-zinc-700 text-sm">Aucun article</p>
+          <p class="text-slate-400 text-sm">Aucun article</p>
         </div>
       </div>
 
       <!-- Total + Bouton -->
-      <div class="p-5 border-t border-white/[0.06] space-y-4">
+      <div class="p-5 border-t border-slate-200 space-y-4">
         <div class="flex items-center justify-between">
-          <span class="text-zinc-400 text-sm">Total TTC</span>
-          <span class="text-white text-2xl font-bold tracking-tight">{{ totalTransaction | number:'1.2-2' }}€</span>
+          <span class="text-slate-500 text-sm">Total TTC</span>
+          <span class="text-slate-900 text-2xl font-bold tracking-tight">{{ totalTransaction | number:'1.2-2' }}€</span>
         </div>
         <button
           (click)="finalizeTransaction()"

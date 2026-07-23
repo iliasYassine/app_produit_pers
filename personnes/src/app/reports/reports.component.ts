@@ -208,7 +208,7 @@ constructor(
             ticks: { color: '#52525b', font: { size: 10 } }
           },
           y: {
-            grid: { color: 'rgba(255,255,255,0.04)', drawTicks: false },
+            grid: { color: 'rgba(0,0,0,0.06)', drawTicks: false },
             border: { display: false },
             ticks: { color: '#52525b', font: { size: 11 }, padding: 8, callback: val => val + '€' }
           }
@@ -312,7 +312,7 @@ displayBeneficeMoisChart() {
           ticks: { color: '#52525b', font: { size: 11 } }
         },
         y: {
-          grid: { color: 'rgba(255,255,255,0.04)', drawTicks: false },
+          grid: { color: 'rgba(0,0,0,0.06)', drawTicks: false },
           border: { display: false },
           ticks: { color: '#52525b', font: { size: 11 }, padding: 8, callback: val => val + '€' }
         }
@@ -397,7 +397,7 @@ displayBeneficeSemaineChart() {
           ticks: { color: '#52525b', font: { size: 10 } }
         },
         y: {
-          grid: { color: 'rgba(255,255,255,0.04)', drawTicks: false },
+          grid: { color: 'rgba(0,0,0,0.06)', drawTicks: false },
           border: { display: false },
           ticks: { color: '#52525b', font: { size: 11 }, padding: 8, callback: val => val + '€' }
         }

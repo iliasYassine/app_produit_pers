@@ -1,11 +1,11 @@
-<div class="min-h-screen bg-zinc-950 p-4 sm:p-8">
+<div class="min-h-screen bg-slate-50 p-4 sm:p-8">
 
   <!-- Header -->
   <div class="max-w-4xl mx-auto">
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-white text-2xl font-bold">Capital associés</h1>
-        <p class="text-zinc-500 text-sm mt-1">Suivi des injections de capital dans la société</p>
+        <h1 class="text-slate-900 text-2xl font-bold">Capital associés</h1>
+        <p class="text-slate-500 text-sm mt-1">Suivi des injections de capital dans la société</p>
       </div>
       <button (click)="showAddAssocie = !showAddAssocie"
         class="flex items-center gap-2 px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-semibold transition-all active:scale-95">
@@ -14,17 +14,17 @@
     </div>
 
     <!-- Formulaire ajout associé -->
-    <div *ngIf="showAddAssocie" class="bg-zinc-900 border border-white/10 rounded-2xl p-5 mb-6">
-      <p class="text-zinc-400 text-sm font-medium mb-3">Nouvel associé</p>
+    <div *ngIf="showAddAssocie" class="bg-white border border-slate-200 shadow-sm rounded-2xl p-5 mb-6">
+      <p class="text-slate-500 text-sm font-medium mb-3">Nouvel associé</p>
       <div class="flex gap-3">
         <input [(ngModel)]="newNom" placeholder="Nom de l'associé"
-          class="flex-1 bg-zinc-800 border border-white/10 text-white px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+          class="flex-1 bg-slate-100 border border-slate-200 text-slate-900 px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
         <button (click)="createAssocie()"
           class="px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-semibold transition-all">
           Créer
         </button>
         <button (click)="showAddAssocie = false"
-          class="px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 rounded-xl text-sm transition-all">
+          class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-xl text-sm transition-all">
           Annuler
         </button>
       </div>
@@ -34,63 +34,63 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
 
       <!-- Capital total investi -->
-      <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-5">
-        <p class="text-zinc-500 text-xs uppercase tracking-widest mb-1">Capital total investi</p>
-        <p class="text-white text-3xl font-bold">{{ totalInvesti() | number:'1.2-2' }} €</p>
+      <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-5">
+        <p class="text-slate-500 text-xs uppercase tracking-widest mb-1">Capital total investi</p>
+        <p class="text-slate-900 text-3xl font-bold">{{ totalInvesti() | number:'1.2-2' }} €</p>
       </div>
 
       <!-- Solde bancaire réel -->
-      <div class="bg-zinc-900 border border-white/[0.07] rounded-2xl p-5">
+      <div class="bg-white border border-slate-200 shadow-sm rounded-2xl p-5">
         <div class="flex items-center justify-between mb-1">
-          <p class="text-zinc-500 text-xs uppercase tracking-widest">Solde bancaire réel</p>
+          <p class="text-slate-500 text-xs uppercase tracking-widest">Solde bancaire réel</p>
           <button *ngIf="!editSoldeBancaire" (click)="startEditSoldeBancaire()"
-            class="text-zinc-600 hover:text-zinc-400 text-xs transition-colors">✏️ modifier</button>
+            class="text-slate-400 hover:text-slate-600 text-xs transition-colors">✏️ modifier</button>
         </div>
         <div *ngIf="!editSoldeBancaire">
-          <p class="text-emerald-400 text-3xl font-bold">{{ soldeBancaire | number:'1.2-2' }} €</p>
+          <p class="text-emerald-600 text-3xl font-bold">{{ soldeBancaire | number:'1.2-2' }} €</p>
         </div>
         <div *ngIf="editSoldeBancaire" class="flex items-center gap-2 mt-2">
           <input [(ngModel)]="soldeBancaireEdit" type="number"
-            class="flex-1 bg-zinc-800 border border-violet-500/60 text-white px-3 py-2 rounded-xl text-sm focus:outline-none"/>
+            class="flex-1 bg-slate-100 border border-violet-500/60 text-slate-900 px-3 py-2 rounded-xl text-sm focus:outline-none"/>
           <button (click)="saveSoldeBancaire()"
             class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold transition-all">OK</button>
           <button (click)="editSoldeBancaire = false"
-            class="px-3 py-2 bg-zinc-700 text-zinc-400 rounded-xl text-xs transition-all">✕</button>
+            class="px-3 py-2 bg-slate-200 text-slate-600 rounded-xl text-xs transition-all">✕</button>
         </div>
       </div>
 
     </div>
 
     <!-- Loading -->
-    <div *ngIf="loading" class="text-center text-zinc-600 py-12">Chargement...</div>
+    <div *ngIf="loading" class="text-center text-slate-400 py-12">Chargement...</div>
 
     <!-- Liste des associés -->
     <div class="space-y-5">
       <div *ngFor="let a of associes"
-        class="bg-zinc-900 border border-white/[0.07] rounded-2xl overflow-hidden">
+        class="bg-white border border-slate-200 shadow-sm rounded-2xl overflow-hidden">
 
         <!-- En-tête associé -->
-        <div class="flex items-center justify-between p-5 border-b border-white/[0.06]">
+        <div class="flex items-center justify-between p-5 border-b border-slate-200">
           <div class="flex items-center gap-4">
             <div class="w-10 h-10 rounded-full bg-violet-600/20 border border-violet-500/30 flex items-center justify-center">
-              <span class="text-violet-400 font-bold text-sm">{{ a.nom.charAt(0).toUpperCase() }}</span>
+              <span class="text-violet-600 font-bold text-sm">{{ a.nom.charAt(0).toUpperCase() }}</span>
             </div>
             <div>
-              <p class="text-white font-semibold">{{ a.nom }}</p>
+              <p class="text-slate-900 font-semibold">{{ a.nom }}</p>
               <!-- Affichage solde normal -->
               <div *ngIf="editSoldeId !== a.id" class="flex items-center gap-2 mt-0.5">
-                <span class="text-emerald-400 font-bold text-lg">{{ a.solde | number:'1.2-2' }} €</span>
+                <span class="text-emerald-600 font-bold text-lg">{{ a.solde | number:'1.2-2' }} €</span>
                 <button (click)="startEditSolde(a)"
-                  class="text-zinc-600 hover:text-zinc-400 text-xs transition-colors">✏️ modifier</button>
+                  class="text-slate-400 hover:text-slate-600 text-xs transition-colors">✏️ modifier</button>
               </div>
               <!-- Édition solde direct -->
               <div *ngIf="editSoldeId === a.id" class="flex items-center gap-2 mt-1">
                 <input [(ngModel)]="editSoldeVal" type="number"
-                  class="w-32 bg-zinc-800 border border-violet-500/60 text-white px-3 py-1 rounded-lg text-sm focus:outline-none"/>
+                  class="w-32 bg-slate-100 border border-violet-500/60 text-slate-900 px-3 py-1 rounded-lg text-sm focus:outline-none"/>
                 <button (click)="saveSolde()"
                   class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold transition-all">OK</button>
                 <button (click)="editSoldeId = null"
-                  class="px-3 py-1 bg-zinc-700 text-zinc-400 rounded-lg text-xs transition-all">✕</button>
+                  class="px-3 py-1 bg-slate-200 text-slate-600 rounded-lg text-xs transition-all">✕</button>
               </div>
             </div>
           </div>
@@ -98,33 +98,33 @@
           <!-- Actions -->
           <div class="flex items-center gap-2">
             <button (click)="openMvt(a.id!)"
-              class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-white/10 text-zinc-300 rounded-xl text-sm font-medium transition-all">
+              class="px-4 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 rounded-xl text-sm font-medium transition-all">
               + Mouvement
             </button>
             <button *ngIf="deleteId !== a.id" (click)="askDelete(a.id!)"
-              class="px-3 py-2 bg-zinc-800 hover:bg-rose-500/20 border border-white/10 hover:border-rose-500/30 text-zinc-500 hover:text-rose-400 rounded-xl text-sm transition-all">
+              class="px-3 py-2 bg-slate-100 hover:bg-rose-500/10 border border-slate-200 hover:border-rose-500/30 text-slate-500 hover:text-rose-600 rounded-xl text-sm transition-all">
               🗑
             </button>
             <div *ngIf="deleteId === a.id" class="flex items-center gap-2">
-              <span class="text-rose-400 text-xs">Supprimer ?</span>
+              <span class="text-rose-600 text-xs">Supprimer ?</span>
               <button (click)="confirmDelete()"
                 class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-semibold">Oui</button>
               <button (click)="cancelDelete()"
-                class="px-3 py-1.5 bg-zinc-700 text-zinc-400 rounded-lg text-xs">Non</button>
+                class="px-3 py-1.5 bg-slate-200 text-slate-600 rounded-lg text-xs">Non</button>
             </div>
           </div>
         </div>
 
         <!-- Formulaire ajout mouvement -->
-        <div *ngIf="showMvtId === a.id" class="p-4 bg-zinc-800/50 border-b border-white/[0.06]">
-          <p class="text-zinc-400 text-xs font-medium uppercase tracking-wider mb-3">Nouveau mouvement</p>
+        <div *ngIf="showMvtId === a.id" class="p-4 bg-slate-50 border-b border-slate-200">
+          <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mb-3">Nouveau mouvement</p>
           <div class="flex flex-wrap gap-3">
-            <span class="bg-zinc-800 border border-white/10 text-emerald-400 px-3 py-2 rounded-xl text-sm font-medium">💰 Injection</span>
+            <span class="bg-white border border-slate-200 text-emerald-600 px-3 py-2 rounded-xl text-sm font-medium">💰 Injection</span>
             <input [(ngModel)]="newMvt.montant" type="number" placeholder="Montant (€)"
-              class="w-40 bg-zinc-800 border border-white/10 text-white px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-violet-500/60"/>
+              class="w-40 bg-white border border-slate-200 text-slate-900 px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-violet-500/60"/>
             <input [(ngModel)]="newMvt.description" placeholder="Description (optionnel)"
-              class="flex-1 min-w-40 bg-zinc-800 border border-white/10 text-white px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-violet-500/60"/>
-            <label class="flex items-center gap-1.5 px-3 py-2 bg-zinc-800 border border-white/10 rounded-xl text-xs text-zinc-400 cursor-pointer hover:border-violet-500/40 transition-all">
+              class="flex-1 min-w-40 bg-white border border-slate-200 text-slate-900 px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-violet-500/60"/>
+            <label class="flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-500 cursor-pointer hover:border-violet-400 transition-all">
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
               <span>{{ selectedFile ? selectedFile.name : 'Joindre doc.' }}</span>
               <input type="file" accept="image/*,application/pdf" (change)="onFileSelected($event)" class="hidden"/>
@@ -134,14 +134,14 @@
               Valider
             </button>
             <button (click)="showMvtId = null"
-              class="px-4 py-2 bg-zinc-700 text-zinc-400 rounded-xl text-sm transition-all">Annuler</button>
+              class="px-4 py-2 bg-slate-200 text-slate-600 rounded-xl text-sm transition-all">Annuler</button>
           </div>
         </div>
 
         <!-- Historique des mouvements -->
         <div class="p-4">
-          <p class="text-zinc-600 text-xs uppercase tracking-wider mb-3">Historique</p>
-          <div *ngIf="!a.mouvements?.length" class="text-zinc-700 text-sm text-center py-4">
+          <p class="text-slate-400 text-xs uppercase tracking-wider mb-3">Historique</p>
+          <div *ngIf="!a.mouvements?.length" class="text-slate-400 text-sm text-center py-4">
             Aucun mouvement enregistré
           </div>
           <div class="space-y-2">
@@ -151,22 +151,22 @@
               <div class="flex items-center gap-3">
                 <span class="text-lg">{{ m.type_mvt === 'injection' ? '💰' : '📤' }}</span>
                 <div>
-                  <p class="text-white text-sm font-medium">
-                    <span [class]="m.type_mvt === 'injection' ? 'text-emerald-400' : 'text-rose-400'">
+                  <p class="text-slate-900 text-sm font-medium">
+                    <span [class]="m.type_mvt === 'injection' ? 'text-emerald-600' : 'text-rose-600'">
                       {{ m.type_mvt === 'injection' ? '+' : '-' }}{{ m.montant | number:'1.2-2' }} €
                     </span>
                   </p>
-                  <p *ngIf="m.description" class="text-zinc-500 text-xs">{{ m.description }}</p>
+                  <p *ngIf="m.description" class="text-slate-500 text-xs">{{ m.description }}</p>
                   <a *ngIf="m.document" [href]="apiUrl + m.document" target="_blank"
-                    class="inline-flex items-center gap-1 text-violet-400 text-xs hover:text-violet-300 transition-colors">
+                    class="inline-flex items-center gap-1 text-violet-600 text-xs hover:text-violet-700 transition-colors">
                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
                     Voir document
                   </a>
-                  <p class="text-zinc-700 text-xs">{{ m.date_mvt | date:'dd/MM/yyyy HH:mm' }}</p>
+                  <p class="text-slate-400 text-xs">{{ m.date_mvt | date:'dd/MM/yyyy HH:mm' }}</p>
                 </div>
               </div>
               <button (click)="deleteMouvement(m.id!)"
-                class="text-zinc-700 hover:text-rose-400 text-xs transition-colors px-2 py-1 rounded-lg hover:bg-rose-500/10">
+                class="text-slate-400 hover:text-rose-600 text-xs transition-colors px-2 py-1 rounded-lg hover:bg-rose-500/10">
                 ✕
               </button>
             </div>
@@ -178,8 +178,8 @@
 
     <!-- Empty state -->
     <div *ngIf="!loading && !associes.length" class="text-center py-20">
-      <p class="text-zinc-600 text-lg">Aucun associé</p>
-      <p class="text-zinc-700 text-sm mt-1">Ajoutez un associé pour commencer à suivre le capital</p>
+      <p class="text-slate-400 text-lg">Aucun associé</p>
+      <p class="text-slate-400 text-sm mt-1">Ajoutez un associé pour commencer à suivre le capital</p>
     </div>
 
   </div>
