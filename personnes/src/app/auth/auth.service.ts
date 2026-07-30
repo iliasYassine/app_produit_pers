@@ -31,6 +31,17 @@ export class AuthService {
     );
   }
 
+  /** Connexion de secours pour le développement local uniquement (rejetée par le serveur si DEBUG=False). */
+  loginDev(): Observable<GoogleLoginResponse> {
+    return this.http.post<GoogleLoginResponse>(`${environment.apiUrl}/transcript/auth/dev-login/`, {}).pipe(
+      tap(res => {
+        localStorage.setItem(TOKEN_KEY, res.token);
+        localStorage.setItem(EMAIL_KEY, res.email);
+        if (res.name) localStorage.setItem(NAME_KEY, res.name);
+      })
+    );
+  }
+
   logout(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(EMAIL_KEY);

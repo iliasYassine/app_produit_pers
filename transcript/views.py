@@ -148,9 +148,86 @@ class ProduitDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class AchatMarchandiseView(APIView):
+    """
+    Réception d'un achat de marchandise (panier multi-produits).
+    Chaque ligne réapprovisionne un produit existant (qte += quantite,
+    prixAchat mis à jour) ou crée un nouveau produit avec son stock initial.
+    Le coût total de l'achat est déduit du compte courant (ParametresSociete.solde_bancaire).
+    """
+    permission_classes = [AllowAny]
 
-    
-###########Fournisseur##############    
+    def post(self, request, format=None):
+        from .models.capital import ParametresSociete as PS
+
+        lignes = request.data.get('lignes')
+        if not lignes or not isinstance(lignes, list):
+            return Response({'error': "Le champ 'lignes' est requis et doit être une liste non vide."},
+                             status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            with db_transaction.atomic():
+                total = Decimal('0')
+                produits_resultat = []
+
+                for i, ligne in enumerate(lignes):
+                    try:
+                        quantite = Decimal(str(ligne.get('quantite') or ligne.get('qte') or 0))
+                    except Exception:
+                        return Response({'error': f"Quantité invalide à la ligne {i + 1}."},
+                                         status=status.HTTP_400_BAD_REQUEST)
+                    if quantite <= 0:
+                        return Response({'error': f"La quantité doit être positive à la ligne {i + 1}."},
+                                         status=status.HTTP_400_BAD_REQUEST)
+
+                    produit_id = ligne.get('produit_id')
+
+                    if produit_id:
+                        produit = get_object_or_404(Produit, pk=produit_id)
+                        prix_raw = ligne.get('prix_achat_unitaire')
+                        prix_unitaire = Decimal(str(prix_raw)) if prix_raw not in (None, '') else (produit.prixAchat or Decimal('0'))
+                        produit.qte = (produit.qte or Decimal('0')) + quantite
+                        produit.prixAchat = prix_unitaire
+                        produit.save()
+                    else:
+                        nom = (ligne.get('nomProd') or '').strip()
+                        if not nom:
+                            return Response({'error': f"Nom du produit requis à la ligne {i + 1}."},
+                                             status=status.HTTP_400_BAD_REQUEST)
+                        prix_raw = ligne.get('prixAchat')
+                        prix_unitaire = Decimal(str(prix_raw)) if prix_raw not in (None, '') else Decimal('0')
+                        fournisseur_id = ligne.get('fournisseur') or None
+                        fournisseur = Fournisseur.objects.filter(id=fournisseur_id).first() if fournisseur_id else None
+                        produit = Produit.objects.create(
+                            nomProd=nom,
+                            prixAchat=prix_unitaire,
+                            prixVente=ligne.get('prixVente') or None,
+                            qte=quantite,
+                            qteMin=ligne.get('qteMin') or None,
+                            codeBarre=ligne.get('codeBarre') or '',
+                            fournisseur=fournisseur,
+                        )
+
+                    total += quantite * prix_unitaire
+                    produits_resultat.append(produit)
+
+                params, _ = PS.objects.get_or_create(pk=1)
+                params.solde_bancaire = (params.solde_bancaire or 0) - total
+                params.save()
+
+                return Response({
+                    'produits': ProduitSerializer(produits_resultat, many=True, context={'request': request}).data,
+                    'total_deduit': total,
+                    'solde_bancaire': params.solde_bancaire,
+                }, status=status.HTTP_201_CREATED)
+        except Produit.DoesNotExist:
+            return Response({'error': 'Produit introuvable.'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            import traceback
+            return Response({'error': str(e), 'trace': traceback.format_exc()}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+###########Fournisseur##############
 class FournisseurList(APIView):
     def get(self, request, format=None):
         fournisseur = Fournisseur.objects.all()
@@ -775,6 +852,37 @@ class GoogleLoginView(APIView):
             'email': email,
             'name': payload.get('name'),
             'picture': payload.get('picture'),
+        }, status=status.HTTP_200_OK)
+
+
+class DevLoginView(APIView):
+    """
+    Connexion de secours pour le développement local UNIQUEMENT.
+    Contourne Google Sign-In (qui exige une origine JavaScript autorisée
+    dans Google Cloud Console, contraignant en local avec un port variable).
+    Désactivée dès que DEBUG=False (donc jamais active en production).
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request, format=None):
+        if not settings.DEBUG:
+            return Response({'detail': 'Non disponible.'}, status=status.HTTP_404_NOT_FOUND)
+        if not settings.GOOGLE_ALLOWED_EMAILS:
+            return Response({'detail': 'GOOGLE_ALLOWED_EMAILS est vide dans la configuration.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        email = settings.GOOGLE_ALLOWED_EMAILS[0]
+        token = pyjwt.encode(
+            {
+                'email': email,
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
+            },
+            settings.SECRET_KEY,
+            algorithm='HS256',
+        )
+        return Response({
+            'token': token,
+            'email': email,
+            'name': 'Dev Local',
         }, status=status.HTTP_200_OK)
 
 

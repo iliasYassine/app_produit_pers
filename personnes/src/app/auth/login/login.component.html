@@ -12,5 +12,11 @@
 
     <p *ngIf="loading" class="text-slate-400 text-xs mt-4">Connexion en cours...</p>
     <p *ngIf="errorMsg" class="text-rose-600 text-xs mt-4 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">{{ errorMsg }}</p>
+
+    <div *ngIf="!isProd" class="mt-5 pt-5 border-t border-slate-200">
+      <button (click)="devLogin()" class="text-xs text-slate-400 hover:text-violet-600 underline transition-all">
+        Connexion dev (local uniquement, sans Google)
+      </button>
+    </div>
   </div>
 </div>

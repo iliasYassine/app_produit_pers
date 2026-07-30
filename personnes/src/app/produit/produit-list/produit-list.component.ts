@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProduitService } from '../produit.service';
-import { Produit } from '../produit.model';
+import { Produit, AchatLigne } from '../produit.model';
 import { environment } from '../../../environments/environment';
 import { ServiceFournisseurService } from '../../fournisseurs/service-fournisseur.service';
 import { Fournisseur } from '../../fournisseurs/fournisseur.model';
@@ -37,6 +37,12 @@ export class ProduitListComponent implements OnInit {
 
   showScanner = false;
   scannerTarget: 'new' | 'edit' = 'new';
+
+  showAchatForm = false;
+  achatLignes: AchatLigne[] = [];
+  achatLoading = false;
+  achatSuccess = '';
+  achatError = '';
 
   constructor(private svc: ProduitService, private fournisseurSvc: ServiceFournisseurService) {}
 
@@ -90,6 +96,7 @@ export class ProduitListComponent implements OnInit {
     this.showAddForm = !this.showAddForm;
     this.editId = null;
     this.deleteId = null;
+    this.showAchatForm = false;
     if (this.showAddForm) this.newProduit = this.emptyForm();
   }
 
@@ -106,6 +113,7 @@ export class ProduitListComponent implements OnInit {
     this.editFile = null;
     this.deleteId = null;
     this.showAddForm = false;
+    this.showAchatForm = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -162,5 +170,78 @@ export class ProduitListComponent implements OnInit {
     } else {
       this.editData.codeBarre = code;
     }
+  }
+
+  toggleAchatForm() {
+    this.showAchatForm = !this.showAchatForm;
+    this.achatSuccess = '';
+    this.achatError = '';
+    if (this.showAchatForm) {
+      this.showAddForm = false;
+      this.editId = null;
+      this.achatLignes = [this.emptyAchatLigneExistant()];
+    }
+  }
+
+  emptyAchatLigneExistant(): AchatLigne {
+    return { type: 'existant', produit_id: null, quantite: null, prix_achat_unitaire: null };
+  }
+
+  emptyAchatLigneNouveau(): AchatLigne {
+    return { type: 'nouveau', nomProd: '', prixAchat: null, prixVente: null, quantite: null, qteMin: null, codeBarre: '', fournisseur: null };
+  }
+
+  addAchatLigne(type: 'existant' | 'nouveau') {
+    this.achatLignes.push(type === 'existant' ? this.emptyAchatLigneExistant() : this.emptyAchatLigneNouveau());
+  }
+
+  removeAchatLigne(i: number) {
+    this.achatLignes.splice(i, 1);
+  }
+
+  onAchatProduitChange(ligne: AchatLigne) {
+    const p = this.produits.find(pr => pr.id === ligne.produit_id);
+    if (p) ligne.prix_achat_unitaire = p.prixAchat;
+  }
+
+  ligneCout(ligne: AchatLigne): number {
+    const qte = ligne.quantite || 0;
+    const prix = ligne.type === 'existant' ? (ligne.prix_achat_unitaire || 0) : (ligne.prixAchat || 0);
+    return qte * prix;
+  }
+
+  achatTotal(): number {
+    return this.achatLignes.reduce((sum, l) => sum + this.ligneCout(l), 0);
+  }
+
+  achatValide(): boolean {
+    if (this.achatLignes.length === 0) return false;
+    return this.achatLignes.every(l => {
+      if (!l.quantite || l.quantite <= 0) return false;
+      return l.type === 'existant' ? !!l.produit_id : !!(l.nomProd && l.nomProd.trim());
+    });
+  }
+
+  submitAchat() {
+    if (!this.achatValide()) {
+      this.achatError = 'Vérifie que chaque ligne a une quantité et un produit renseignés.';
+      return;
+    }
+    this.achatLoading = true;
+    this.achatError = '';
+    this.svc.achatMarchandise(this.achatLignes).subscribe({
+      next: (res) => {
+        this.achatLoading = false;
+        this.achatSuccess = `Achat enregistré : ${res.total_deduit}€ déduits du compte courant.`;
+        this.showAchatForm = false;
+        this.achatLignes = [];
+        this.load();
+        setTimeout(() => this.achatSuccess = '', 5000);
+      },
+      error: (err) => {
+        this.achatLoading = false;
+        this.achatError = err?.error?.error || 'Erreur lors de l\'enregistrement de l\'achat.';
+      }
+    });
   }
 }

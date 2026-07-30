@@ -5,6 +5,7 @@ from django.http import JsonResponse
 # Chemins toujours publics, quelle que soit la méthode HTTP
 PUBLIC_PATHS = {
     '/transcript/auth/google/',
+    '/transcript/auth/dev-login/',
     '/transcript/create-stripe-session/',
 }
 

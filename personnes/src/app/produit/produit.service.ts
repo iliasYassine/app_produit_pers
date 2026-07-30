@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Produit } from './produit.model';
+import { Produit, AchatLigne, AchatMarchandiseResponse } from './produit.model';
 import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,7 @@ export class ProduitService {
   private API_URL = `${environment.apiUrl}/transcript/`;
   private PRODUIT_URL = `${this.API_URL}produits/`;
   private CREATE_ENDPOINT = `${this.API_URL}create_produits/`;
+  private ACHAT_ENDPOINT = `${this.API_URL}achat-marchandise/`;
   private endpoint_email = `${this.API_URL}send-mail/`;
 
   constructor(private httpClient:HttpClient) { }
@@ -47,5 +48,9 @@ export class ProduitService {
 
   patchProduitWithFile(id: number, fd: FormData): Observable<Produit> {
     return this.httpClient.patch<Produit>(`${this.PRODUIT_URL}${id}/`, fd);
+  }
+
+  achatMarchandise(lignes: AchatLigne[]): Observable<AchatMarchandiseResponse> {
+    return this.httpClient.post<AchatMarchandiseResponse>(this.ACHAT_ENDPOINT, { lignes });
   }
 }

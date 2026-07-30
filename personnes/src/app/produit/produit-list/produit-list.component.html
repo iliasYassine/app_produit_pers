@@ -23,12 +23,139 @@
       </button>
       <span *ngIf="emailError" class="text-red-600 text-xs">{{ emailError }}</span>
       <button
+        (click)="toggleAchatForm()"
+        class="flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-sm font-semibold transition-all active:scale-95 shadow-lg shadow-sky-600/20"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m-10-4h10"/></svg>
+        {{ showAchatForm ? 'Fermer' : 'Achat marchandise' }}
+      </button>
+      <button
         (click)="toggleAddForm()"
         class="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-semibold transition-all active:scale-95 shadow-lg shadow-violet-600/20"
       >
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
         {{ showAddForm ? 'Fermer' : 'Ajouter' }}
       </button>
+    </div>
+  </div>
+
+  <!-- Achat marchandise feedback -->
+  <div *ngIf="achatSuccess" class="mb-4 px-4 py-2.5 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-sm">
+    {{ achatSuccess }}
+  </div>
+
+  <!-- Achat marchandise form -->
+  <div *ngIf="showAchatForm" class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 mb-6">
+    <div class="flex items-center gap-2 mb-1">
+      <div class="w-1.5 h-5 rounded-full bg-sky-500"></div>
+      <h2 class="text-slate-900 font-semibold text-sm">Achat de marchandise</h2>
+    </div>
+    <p class="text-slate-400 text-xs mb-5 ml-3.5">Réapprovisionne un produit existant ou ajoute un nouveau produit ; le montant total est déduit du compte courant.</p>
+
+    <div *ngIf="achatError" class="mb-4 px-3 py-2 bg-rose-50 border border-rose-200 text-rose-600 rounded-lg text-xs">
+      {{ achatError }}
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <div *ngFor="let ligne of achatLignes; let i = index" class="border border-slate-200 rounded-xl p-4 bg-slate-50/60">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[11px] font-semibold uppercase tracking-wide"
+            [class.text-sky-600]="ligne.type === 'existant'" [class.text-violet-600]="ligne.type === 'nouveau'">
+            {{ ligne.type === 'existant' ? 'Produit existant' : 'Nouveau produit' }}
+          </span>
+          <button type="button" (click)="removeAchatLigne(i)" class="text-slate-400 hover:text-rose-600 transition-all" title="Retirer cette ligne">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Ligne produit existant -->
+        <div *ngIf="ligne.type === 'existant'" class="grid grid-cols-2 md:grid-cols-4 gap-3 items-end">
+          <div class="col-span-2">
+            <label class="text-slate-500 text-xs mb-1.5 block">Produit</label>
+            <select [(ngModel)]="ligne.produit_id" (ngModelChange)="onAchatProduitChange(ligne)"
+              class="w-full bg-white border border-slate-200 text-slate-900 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-sky-500/60 transition-all">
+              <option [ngValue]="null">— Choisir —</option>
+              <option *ngFor="let p of produits" [ngValue]="p.id">{{ p.nomProd }} (stock: {{ p.qte }})</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-500 text-xs mb-1.5 block">Quantité achetée</label>
+            <input type="number" [(ngModel)]="ligne.quantite" placeholder="0"
+              class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-sky-500/60 transition-all"/>
+          </div>
+          <div>
+            <label class="text-slate-500 text-xs mb-1.5 block">Prix d'achat unitaire (€)</label>
+            <input type="number" [(ngModel)]="ligne.prix_achat_unitaire" placeholder="0.00"
+              class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-sky-500/60 transition-all"/>
+          </div>
+        </div>
+
+        <!-- Ligne nouveau produit -->
+        <div *ngIf="ligne.type === 'nouveau'" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="col-span-2">
+            <label class="text-slate-500 text-xs mb-1.5 block">Nom du produit *</label>
+            <input type="text" [(ngModel)]="ligne.nomProd" placeholder="Ex: Coca-Cola 33cl"
+              class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+          </div>
+          <div>
+            <label class="text-slate-500 text-xs mb-1.5 block">Quantité achetée</label>
+            <input type="number" [(ngModel)]="ligne.quantite" placeholder="0"
+              class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+          </div>
+          <div>
+            <label class="text-slate-500 text-xs mb-1.5 block">Prix d'achat (€)</label>
+            <input type="number" [(ngModel)]="ligne.prixAchat" placeholder="0.00"
+              class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+          </div>
+          <div>
+            <label class="text-slate-500 text-xs mb-1.5 block">Prix de vente (€)</label>
+            <input type="number" [(ngModel)]="ligne.prixVente" placeholder="0.00"
+              class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+          </div>
+          <div>
+            <label class="text-slate-500 text-xs mb-1.5 block">Stock minimum</label>
+            <input type="number" [(ngModel)]="ligne.qteMin" placeholder="0"
+              class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+          </div>
+          <div>
+            <label class="text-slate-500 text-xs mb-1.5 block">Code-barre</label>
+            <input type="text" [(ngModel)]="ligne.codeBarre" placeholder="3017620422003"
+              class="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
+          </div>
+          <div>
+            <label class="text-slate-500 text-xs mb-1.5 block">Fournisseur</label>
+            <select [(ngModel)]="ligne.fournisseur"
+              class="w-full bg-white border border-slate-200 text-slate-900 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all">
+              <option [ngValue]="null">— Aucun —</option>
+              <option *ngFor="let f of fournisseurs" [ngValue]="f.id">{{ f.nom }}</option>
+            </select>
+          </div>
+        </div>
+
+        <p class="text-right text-slate-500 text-xs mt-2">Coût de la ligne : <span class="font-semibold text-slate-700">{{ ligneCout(ligne) }}€</span></p>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mt-4">
+      <button type="button" (click)="addAchatLigne('existant')"
+        class="px-4 py-2 bg-sky-600/10 hover:bg-sky-600/20 text-sky-600 rounded-xl text-xs font-medium transition-all">
+        + Réapprovisionner un produit existant
+      </button>
+      <button type="button" (click)="addAchatLigne('nouveau')"
+        class="px-4 py-2 bg-violet-600/10 hover:bg-violet-600/20 text-violet-600 rounded-xl text-xs font-medium transition-all">
+        + Ajouter un nouveau produit
+      </button>
+    </div>
+
+    <div class="flex items-center gap-3 mt-5 pt-5 border-t border-slate-200">
+      <button (click)="submitAchat()" [disabled]="achatLoading"
+        class="px-6 py-2.5 bg-sky-600 hover:bg-sky-500 text-white rounded-xl text-sm font-semibold transition-all active:scale-95 disabled:opacity-50">
+        {{ achatLoading ? 'Enregistrement...' : 'Valider l\'achat' }}
+      </button>
+      <button (click)="showAchatForm = false" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-600 hover:text-slate-900 rounded-xl text-sm transition-all">
+        Annuler
+      </button>
+      <span class="ml-auto text-slate-900 text-sm font-bold">Total à déduire : {{ achatTotal() }}€</span>
     </div>
   </div>
 
