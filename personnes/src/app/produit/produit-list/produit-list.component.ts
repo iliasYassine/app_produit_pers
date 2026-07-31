@@ -52,7 +52,7 @@ export class ProduitListComponent implements OnInit {
   }
 
   emptyForm(): Partial<Produit> {
-    return { nomProd: '', prixAchat: null, prixVente: null, qte: null, qteMin: null, codeBarre: '', fournisseur: null };
+    return { nomProd: '', prixAchat: null, prixVente: null, prixVenteGros: null, qte: null, qteMin: null, codeBarre: '', fournisseur: null };
   }
 
   load() {
@@ -83,6 +83,7 @@ export class ProduitListComponent implements OnInit {
     fd.append('nomProd', data.nomProd || '');
     if (data.prixAchat != null) fd.append('prixAchat', String(data.prixAchat));
     if (data.prixVente != null) fd.append('prixVente', String(data.prixVente));
+    if (data.prixVenteGros != null) fd.append('prixVenteGros', String(data.prixVenteGros));
     if (data.qte != null) fd.append('qte', String(data.qte));
     if (data.qteMin != null) fd.append('qteMin', String(data.qteMin));
     fd.append('codeBarre', data.codeBarre || '');
@@ -188,7 +189,7 @@ export class ProduitListComponent implements OnInit {
   }
 
   emptyAchatLigneNouveau(): AchatLigne {
-    return { type: 'nouveau', nomProd: '', prixAchat: null, prixVente: null, quantite: null, qteMin: null, codeBarre: '', fournisseur: null };
+    return { type: 'nouveau', nomProd: '', prixAchat: null, prixVente: null, prixVenteGros: null, quantite: null, qteMin: null, codeBarre: '', fournisseur: null };
   }
 
   addAchatLigne(type: 'existant' | 'nouveau') {

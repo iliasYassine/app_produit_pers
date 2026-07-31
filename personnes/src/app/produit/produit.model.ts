@@ -4,6 +4,7 @@ export interface Produit {
     nomProd: string;
     prixAchat: number|null;
     prixVente: number|null;
+    prixVenteGros: number|null;
     qte: number|null;
     qteMin: number|null;
     codeBarre: string;
@@ -19,6 +20,7 @@ export interface AchatLigne {
   nomProd?: string;
   prixAchat?: number | null;
   prixVente?: number | null;
+  prixVenteGros?: number | null;
   qteMin?: number | null;
   codeBarre?: string;
   fournisseur?: number | null;

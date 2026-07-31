@@ -200,6 +200,32 @@ export class CaisseEnregistreuseComponent implements OnInit {
     });
   }
 
+  setPrixTier(ligne: LignesTransaction, tier: 'detail' | 'gros') {
+    const prix = tier === 'gros' ? ligne.produitDetails?.prixVenteGros : ligne.produitDetails?.prixVente;
+    if (prix == null) return;
+    this.updateLignePrix(ligne, prix);
+  }
 
+  isTierActive(ligne: LignesTransaction, tier: 'detail' | 'gros'): boolean {
+    const prix = tier === 'gros' ? ligne.produitDetails?.prixVenteGros : ligne.produitDetails?.prixVente;
+    return prix != null && Number(ligne.prix_unitaire) === Number(prix);
+  }
+
+  onPrixChange(ligne: LignesTransaction, event: Event) {
+    const value = parseFloat((event.target as HTMLInputElement).value);
+    if (isNaN(value) || value < 0) return;
+    this.updateLignePrix(ligne, value);
+  }
+
+  private updateLignePrix(ligne: LignesTransaction, prix: number) {
+    if (!ligne.id) return;
+    this.caisseService.updateLignePrix(ligne.id, prix).subscribe(data => {
+      const index = this.ligneTransaction.findIndex(l => l.id === ligne.id);
+      if (index !== -1) {
+        this.ligneTransaction[index] = { ...this.ligneTransaction[index], ...data };
+      }
+      this.totalTransaction = this.ligneTransaction.reduce((sum, l) => sum + parseFloat(String(l.total)), 0);
+    });
+  }
 
 }

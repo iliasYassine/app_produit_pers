@@ -178,9 +178,34 @@
               <p class="text-slate-900 text-xs font-medium truncate">
                 {{ ligne.description_libre || ligne.produitDetails?.nomProd }}
               </p>
-              <div class="flex justify-between items-center mt-1">
-                <span class="text-slate-400 text-[10px]">{{ ligne.prix_unitaire }}€/u</span>
-                <span class="text-emerald-600 text-xs font-bold">{{ ligne.total }}€</span>
+              <div class="flex items-center gap-1 mt-1">
+                <input
+                  type="number"
+                  [ngModel]="ligne.prix_unitaire"
+                  (change)="onPrixChange(ligne, $event)"
+                  title="Prix unitaire (modifiable)"
+                  class="w-14 bg-white border border-slate-200 rounded-md px-1 py-0.5 text-[10px] text-slate-700 focus:outline-none focus:border-violet-500/60"
+                />
+                <span class="text-slate-400 text-[9px]">€/u</span>
+                <span class="ml-auto text-emerald-600 text-xs font-bold">{{ ligne.total }}€</span>
+              </div>
+              <div *ngIf="ligne.produitDetails?.prixVenteGros != null" class="flex gap-1 mt-1.5">
+                <button
+                  (click)="setPrixTier(ligne, 'detail')"
+                  [class.bg-violet-600]="isTierActive(ligne, 'detail')"
+                  [class.text-white]="isTierActive(ligne, 'detail')"
+                  [class.bg-slate-100]="!isTierActive(ligne, 'detail')"
+                  [class.text-slate-500]="!isTierActive(ligne, 'detail')"
+                  class="flex-1 text-[9px] font-medium py-0.5 rounded transition-all"
+                >Détail</button>
+                <button
+                  (click)="setPrixTier(ligne, 'gros')"
+                  [class.bg-violet-600]="isTierActive(ligne, 'gros')"
+                  [class.text-white]="isTierActive(ligne, 'gros')"
+                  [class.bg-slate-100]="!isTierActive(ligne, 'gros')"
+                  [class.text-slate-500]="!isTierActive(ligne, 'gros')"
+                  class="flex-1 text-[9px] font-medium py-0.5 rounded transition-all"
+                >Gros</button>
               </div>
             </div>
           </div>

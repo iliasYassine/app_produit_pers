@@ -202,6 +202,7 @@ class AchatMarchandiseView(APIView):
                             nomProd=nom,
                             prixAchat=prix_unitaire,
                             prixVente=ligne.get('prixVente') or None,
+                            prixVenteGros=ligne.get('prixVenteGros') or None,
                             qte=quantite,
                             qteMin=ligne.get('qteMin') or None,
                             codeBarre=ligne.get('codeBarre') or '',
@@ -286,11 +287,36 @@ class LigneTransactionDetails(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    def patch(self, request, pk, format=None):
+        ligne = get_object_or_404(LigneTransaction, pk=pk)
+        prix = request.data.get('prix_unitaire')
+        if prix is None:
+            return Response({'erreur': 'prix_unitaire requis.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            prix = Decimal(str(prix))
+        except Exception:
+            return Response({'erreur': 'prix_unitaire invalide.'}, status=status.HTTP_400_BAD_REQUEST)
+        if prix < 0:
+            return Response({'erreur': 'Le prix ne peut pas être négatif.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        with db_transaction.atomic():
+            ligne.prix_unitaire = prix
+            ligne.save()
+
+            transaction = ligne.transaction
+            if transaction:
+                transaction_total = transaction.lignes.all().aggregate(total_sum=Sum('total'))['total_sum'] or 0
+                transaction.total = transaction_total
+                transaction.save()
+
+        serializer = LigneTransactionSerializer(ligne)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def delete(self, request, pk, format=None):
         lignTransac = get_object_or_404(LigneTransaction, pk=pk)
         lignTransac.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)  
-    
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class TransactionView(APIView):
     # GET, PUT, DELETE /users/<id>/
     

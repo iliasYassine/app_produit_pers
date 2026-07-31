@@ -53,4 +53,8 @@ export class CaisseService {
   decrementerLigne(ligneId: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/transcript/decrement-ligne/`, { ligne_id: ligneId });
   }
+
+  updateLignePrix(ligneId: number, prixUnitaire: number): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/transcript/ligneTransaction/${ligneId}/`, { prix_unitaire: prixUnitaire });
+  }
 }
