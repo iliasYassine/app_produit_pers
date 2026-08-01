@@ -52,5 +52,10 @@ export class ProduitService {
 
   achatMarchandise(lignes: AchatLigne[]): Observable<AchatMarchandiseResponse> {
     return this.httpClient.post<AchatMarchandiseResponse>(this.ACHAT_ENDPOINT, { lignes });
+  
+  }
+
+  exportGrossistePdf(): Observable<Blob> {
+    return this.httpClient.get(`${this.API_URL}export-grossiste/`, { responseType: 'blob' });
   }
 }

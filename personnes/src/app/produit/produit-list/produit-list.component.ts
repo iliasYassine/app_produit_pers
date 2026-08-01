@@ -223,6 +223,17 @@ export class ProduitListComponent implements OnInit {
     });
   }
 
+  exportGrossiste() {
+    this.svc.exportGrossistePdf().subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'tarif_grossiste.pdf';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  }
+
   submitAchat() {
     if (!this.achatValide()) {
       this.achatError = 'Vérifie que chaque ligne a une quantité et un produit renseignés.';

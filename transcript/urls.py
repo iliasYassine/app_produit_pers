@@ -60,4 +60,6 @@ urlpatterns = [
    path('decrement-ligne/', views.DecrementLigne.as_view(), name='decrement-ligne'),
    path('frais-generaux/', views.FraisGenerauxView.as_view(), name='frais-generaux'),
    path('frais-generaux/<int:pk>/', views.FraisGenerauxView.as_view(), name='frais-generaux-detail'),
+   path('export-grossiste/', views.ExportGrossisteView.as_view(), name='export-grossiste'),
+ 
 ]

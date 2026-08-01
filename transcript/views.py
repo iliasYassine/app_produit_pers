@@ -10,7 +10,7 @@ from myproject import settings
 from transcript.models import transaction
 from .models.personne import Users
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.core import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -54,6 +54,7 @@ import datetime
 from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_requests
 urllib3.disable_warnings()
+
 
 
 class UsersList(APIView):
@@ -226,6 +227,58 @@ class AchatMarchandiseView(APIView):
         except Exception as e:
             import traceback
             return Response({'error': str(e), 'trace': traceback.format_exc()}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ExportGrossisteView(APIView):
+    """
+    Génère un PDF (tarif grossiste) listant les produits en stock suffisant
+    (qte > 5) ayant un prix de vente gros configuré, avec une colonne
+    "Total" vide à remplir à la main lors de la préparation d'une commande B2B.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+        from reportlab.lib import colors
+        from reportlab.lib.styles import getSampleStyleSheet
+        from reportlab.lib.units import mm
+
+        produits = Produit.objects.filter(qte__gt=5, prixVenteGros__isnull=False).order_by('nomProd')
+
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4, title="Tarif grossiste")
+        styles = getSampleStyleSheet()
+
+        elements = [
+            Paragraph("Tarif grossiste", styles['Title']),
+            Paragraph(datetime.date.today().strftime('%d/%m/%Y'), styles['Normal']),
+            Spacer(1, 12),
+        ]
+
+        data = [["Produit", "Qté", "Prix unitaire (€)", "Total (€)"]]
+        for p in produits:
+            data.append([p.nomProd or '', str(p.qte), f"{p.prixVenteGros:.2f}", ""])
+
+        table = Table(data, colWidths=[80 * mm, 25 * mm, 35 * mm, 35 * mm], repeatRows=1)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#7c3aed')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f8fafc')]),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('TOPPADDING', (0, 0), (-1, -1), 6),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ]))
+        elements.append(table)
+        doc.build(elements)
+        buffer.seek(0)
+
+        response = HttpResponse(buffer, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="tarif_grossiste.pdf"'
+        return response
+
+
 
 
 ###########Fournisseur##############
