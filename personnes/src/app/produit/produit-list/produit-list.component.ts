@@ -23,10 +23,6 @@ export class ProduitListComponent implements OnInit {
   apiUrl = environment.apiUrl;
   loading = false;
 
-  showAddForm = false;
-  newProduit: Partial<Produit> = this.emptyForm();
-  newFile: File | null = null;
-
   editId: number | null = null;
   editData: Partial<Produit> = {};
   editFile: File | null = null;
@@ -36,7 +32,6 @@ export class ProduitListComponent implements OnInit {
   emailError = '';
 
   showScanner = false;
-  scannerTarget: 'new' | 'edit' = 'new';
 
   showAchatForm = false;
   achatLignes: AchatLigne[] = [];
@@ -51,10 +46,6 @@ export class ProduitListComponent implements OnInit {
     this.fournisseurSvc.getFournisseur().subscribe(f => this.fournisseurs = f);
   }
 
-  emptyForm(): Partial<Produit> {
-    return { nomProd: '', prixAchat: null, prixVente: null, prixVenteGros: null, qte: null, qteMin: null, codeBarre: '', fournisseur: null };
-  }
-
   load() {
     this.loading = true;
     this.svc.getProduit().subscribe({
@@ -66,11 +57,6 @@ export class ProduitListComponent implements OnInit {
   applyFilter() {
     const t = this.search.toLowerCase();
     this.filtered = this.produits.filter(p => (p.nomProd || '').toLowerCase().includes(t));
-  }
-
-  onNewFile(e: Event) {
-    const f = (e.target as HTMLInputElement).files;
-    this.newFile = f?.length ? f[0] : null;
   }
 
   onEditFile(e: Event) {
@@ -93,27 +79,11 @@ export class ProduitListComponent implements OnInit {
     return fd;
   }
 
-  toggleAddForm() {
-    this.showAddForm = !this.showAddForm;
-    this.editId = null;
-    this.deleteId = null;
-    this.showAchatForm = false;
-    if (this.showAddForm) this.newProduit = this.emptyForm();
-  }
-
-  create() {
-    const fd = this.buildFormData(this.newProduit, this.newFile);
-    this.svc.createProduitWithFile(fd).subscribe({
-      next: () => { this.showAddForm = false; this.newProduit = this.emptyForm(); this.newFile = null; this.load(); }
-    });
-  }
-
   startEdit(p: Produit) {
     this.editId = p.id;
     this.editData = { ...p };
     this.editFile = null;
     this.deleteId = null;
-    this.showAddForm = false;
     this.showAchatForm = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -159,18 +129,13 @@ export class ProduitListComponent implements OnInit {
     });
   }
 
-  openScanner(target: 'new' | 'edit') {
-    this.scannerTarget = target;
+  openScanner() {
     this.showScanner = true;
   }
 
   onBarcodeScanned(code: string) {
     this.showScanner = false;
-    if (this.scannerTarget === 'new') {
-      this.newProduit.codeBarre = code;
-    } else {
-      this.editData.codeBarre = code;
-    }
+    this.editData.codeBarre = code;
   }
 
   toggleAchatForm() {
@@ -178,7 +143,6 @@ export class ProduitListComponent implements OnInit {
     this.achatSuccess = '';
     this.achatError = '';
     if (this.showAchatForm) {
-      this.showAddForm = false;
       this.editId = null;
       this.achatLignes = [this.emptyAchatLigneExistant()];
     }

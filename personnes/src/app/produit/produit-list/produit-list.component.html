@@ -37,13 +37,6 @@
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m-10-4h10"/></svg>
         {{ showAchatForm ? 'Fermer' : 'Achat marchandise' }}
       </button>
-      <button
-        (click)="toggleAddForm()"
-        class="flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-semibold transition-all active:scale-95 shadow-lg shadow-violet-600/20"
-      >
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-        {{ showAddForm ? 'Fermer' : 'Ajouter' }}
-      </button>
     </div>
   </div>
 
@@ -172,87 +165,14 @@
     </div>
   </div>
 
-  <!-- Add / Edit Form -->
-  <div *ngIf="showAddForm || editId != null" class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 mb-6">
+  <!-- Edit Form -->
+  <div *ngIf="editId != null" class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 mb-6">
     <div class="flex items-center gap-2 mb-5">
-      <div class="w-1.5 h-5 rounded-full" [class]="editId ? 'bg-amber-500' : 'bg-violet-500'"></div>
-      <h2 class="text-slate-900 font-semibold text-sm">{{ editId ? 'Modifier le produit' : 'Nouveau produit' }}</h2>
+      <div class="w-1.5 h-5 rounded-full bg-amber-500"></div>
+      <h2 class="text-slate-900 font-semibold text-sm">Modifier le produit</h2>
     </div>
 
-    <!-- Add form fields -->
-    <ng-container *ngIf="showAddForm && !editId">
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <div>
-          <label class="text-slate-500 text-xs mb-1.5 block">Nom du produit *</label>
-          <input type="text" [(ngModel)]="newProduit.nomProd" placeholder="Ex: Coca-Cola 33cl"
-            class="w-full bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
-        </div>
-        <div>
-          <label class="text-slate-500 text-xs mb-1.5 block">Prix d'achat (€)</label>
-          <input type="number" [(ngModel)]="newProduit.prixAchat" placeholder="0.00"
-            class="w-full bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
-        </div>
-        <div>
-          <label class="text-slate-500 text-xs mb-1.5 block">Prix de vente (€)</label>
-          <input type="number" [(ngModel)]="newProduit.prixVente" placeholder="0.00"
-            class="w-full bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
-        </div>
-        <div>
-          <label class="text-slate-500 text-xs mb-1.5 block">Prix de vente gros (€)</label>
-          <input type="number" [(ngModel)]="newProduit.prixVenteGros" placeholder="Optionnel"
-            class="w-full bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
-        </div>
-        <div>
-          <label class="text-slate-500 text-xs mb-1.5 block">Quantité</label>
-          <input type="number" [(ngModel)]="newProduit.qte" placeholder="0"
-            class="w-full bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
-        </div>
-        <div>
-          <label class="text-slate-500 text-xs mb-1.5 block">Stock minimum</label>
-          <input type="number" [(ngModel)]="newProduit.qteMin" placeholder="0"
-            class="w-full bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
-        </div>
-        <div>
-          <label class="text-slate-500 text-xs mb-1.5 block">Code-barre</label>
-          <div class="flex gap-2">
-            <input type="text" [(ngModel)]="newProduit.codeBarre" placeholder="3017620422003"
-              class="flex-1 bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all"/>
-            <button type="button" (click)="openScanner('new')" title="Scanner avec la caméra"
-              class="px-3 py-2.5 bg-violet-600/20 hover:bg-violet-600/40 border border-violet-500/30 text-violet-600 rounded-xl transition-all flex-shrink-0">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-            </button>
-          </div>
-        </div>
-        <div>
-          <label class="text-slate-500 text-xs mb-1.5 block">Fournisseur</label>
-          <select [(ngModel)]="newProduit.fournisseur"
-            class="w-full bg-slate-100 border border-slate-200 text-slate-900 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-violet-500/60 transition-all">
-            <option [ngValue]="null">— Aucun —</option>
-            <option *ngFor="let f of fournisseurs" [ngValue]="f.id">{{ f.nom }}</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-slate-500 text-xs mb-1.5 block">Photo</label>
-          <label class="flex items-center gap-2 w-full bg-slate-100 border border-dashed border-slate-300 hover:border-violet-400 text-slate-500 hover:text-slate-700 px-3 py-2.5 rounded-xl text-xs cursor-pointer transition-all">
-            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            <span class="truncate">{{ newFile?.name || 'Choisir une photo…' }}</span>
-            <input type="file" accept="image/*" class="hidden" (change)="onNewFile($event)"/>
-          </label>
-        </div>
-      </div>
-      <div class="flex items-center gap-3 mt-5 pt-5 border-t border-slate-200">
-        <button (click)="create()" class="px-6 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm font-semibold transition-all active:scale-95">
-          Créer le produit
-        </button>
-        <button (click)="showAddForm = false" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-600 hover:text-slate-900 rounded-xl text-sm transition-all">
-          Annuler
-        </button>
-      </div>
-    </ng-container>
-
-    <!-- Edit form fields -->
-    <ng-container *ngIf="editId != null">
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <div>
           <label class="text-slate-500 text-xs mb-1.5 block">Nom du produit *</label>
           <input type="text" [(ngModel)]="editData.nomProd" placeholder="Ex: Coca-Cola 33cl"
@@ -288,7 +208,7 @@
           <div class="flex gap-2">
             <input type="text" [(ngModel)]="editData.codeBarre" placeholder="3017620422003"
               class="flex-1 bg-slate-100 border border-slate-200 text-slate-900 placeholder-slate-400 px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-amber-500/60 transition-all"/>
-            <button type="button" (click)="openScanner('edit')" title="Scanner avec la caméra"
+            <button type="button" (click)="openScanner()" title="Scanner avec la caméra"
               class="px-3 py-2.5 bg-amber-500/20 hover:bg-amber-500/40 border border-amber-500/30 text-amber-600 rounded-xl transition-all flex-shrink-0">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
             </button>
@@ -319,7 +239,6 @@
           Annuler
         </button>
       </div>
-    </ng-container>
   </div>
 
   <!-- Loading spinner -->
@@ -328,12 +247,12 @@
   </div>
 
   <!-- Empty state -->
-  <div *ngIf="!loading && filtered.length === 0 && !showAddForm" class="flex flex-col items-center justify-center py-24 text-center">
+  <div *ngIf="!loading && filtered.length === 0" class="flex flex-col items-center justify-center py-24 text-center">
     <div class="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4 border border-slate-200">
       <svg class="w-7 h-7 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
     </div>
     <p class="text-slate-500 font-medium">Aucun produit trouvé</p>
-    <p class="text-slate-400 text-sm mt-1">{{ search ? 'Essayez un autre terme de recherche' : 'Cliquez sur Ajouter pour commencer' }}</p>
+    <p class="text-slate-400 text-sm mt-1">{{ search ? 'Essayez un autre terme de recherche' : 'Utilisez "Achat marchandise" pour ajouter un produit' }}</p>
   </div>
 
   <!-- Products Grid -->

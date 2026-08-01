@@ -254,11 +254,11 @@ class ExportGrossisteView(APIView):
             Spacer(1, 12),
         ]
 
-        data = [["Produit", "Qté", "Prix unitaire (€)", "Total (€)"]]
+        data = [["Produit", "Qté", "Qté souhaitée", "Prix unitaire (€)", "Total (€)"]]
         for p in produits:
-            data.append([p.nomProd or '', str(p.qte), f"{p.prixVenteGros:.2f}", ""])
+            data.append([p.nomProd or '', str(p.qte), "", f"{p.prixVenteGros:.2f}", ""])
 
-        table = Table(data, colWidths=[80 * mm, 25 * mm, 35 * mm, 35 * mm], repeatRows=1)
+        table = Table(data, colWidths=[60 * mm, 20 * mm, 30 * mm, 30 * mm, 30 * mm], repeatRows=1)
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#7c3aed')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
